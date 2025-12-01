@@ -1,0 +1,2114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text 1 - Instructions in Case of Fire</title>
+    <!-- Fixed CDN with integrity check -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" 
+            integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" 
+            crossorigin="anonymous" 
+            referrerpolicy="no-referrer"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            box-shadow: 0 30px 90px rgba(0,0,0,0.4);
+            overflow: hidden;
+            animation: slideIn 0.8s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e3c72, #2a5298, #3b6ec9);
+            background-size: 200% 200%;
+            animation: headerGradient 8s ease infinite;
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: sparkle 10s linear infinite;
+        }
+        
+        @keyframes headerGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes sparkle {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: titlePulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes titlePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .back-btn {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            background: rgba(255,255,255,0.25);
+            color: white;
+            border: 2px solid white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            backdrop-filter: blur(10px);
+            z-index: 2;
+        }
+        
+        .back-btn:hover {
+            background: white;
+            color: #1e3c72;
+            transform: scale(1.1) translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        
+        .tabs {
+            display: flex;
+            background: linear-gradient(to right, #f0f4f8, #e2e8f0);
+            border-bottom: 3px solid #cbd5e0;
+            position: relative;
+        }
+        
+        .tab-indicator {
+            position: absolute;
+            bottom: -3px;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            padding: 20px 10px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #4a5568;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        
+        .tab-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .tab-btn:hover::before {
+            left: 100%;
+        }
+        
+        .tab-btn:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: #2d3748;
+            transform: translateY(-2px);
+        }
+        
+        .tab-btn.active {
+            color: #2a5298;
+            background: white;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 40px;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .audio-control {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .audio-control::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .audio-control:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+        }
+        
+        .audio-btn {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+        
+        .audio-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
+        .audio-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .reading-text {
+            background: linear-gradient(135deg, #ebf4ff 0%, #e3f2fd 100%);
+            padding: 35px;
+            border-radius: 15px;
+            border-left: 6px solid #3182ce;
+            line-height: 1.8;
+            font-size: 16px;
+            box-shadow: 0 5px 20px rgba(49, 130, 206, 0.15);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 5px 20px rgba(49, 130, 206, 0.15); }
+            50% { box-shadow: 0 8px 30px rgba(49, 130, 206, 0.25); }
+        }
+        
+        .reading-text h3 {
+            color: #2c5282;
+            margin-bottom: 25px;
+            font-size: 24px;
+            text-align: center;
+            animation: slideInLeft 0.8s ease-out;
+        }
+        
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .instruction-item {
+            background: white;
+            padding: 22px;
+            margin: 18px 0;
+            border-radius: 12px;
+            border-left: 5px solid #2a5298;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            animation: slideInRight 0.6s ease-out backwards;
+        }
+        
+        .instruction-item:nth-child(2) { animation-delay: 0.1s; }
+        .instruction-item:nth-child(3) { animation-delay: 0.2s; }
+        .instruction-item:nth-child(4) { animation-delay: 0.3s; }
+        .instruction-item:nth-child(5) { animation-delay: 0.4s; }
+        .instruction-item:nth-child(6) { animation-delay: 0.5s; }
+        
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .instruction-item:hover {
+            box-shadow: 0 10px 30px rgba(42, 82, 152, 0.3);
+            transform: translateX(8px) scale(1.02);
+            border-left-width: 8px;
+        }
+        
+        .clickable-word {
+            color: #667eea;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 3px 6px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            position: relative;
+            display: inline-block;
+            text-decoration: underline;
+            text-decoration-color: #f472b6;
+            text-decoration-thickness: 2px;
+            text-underline-offset: 3px;
+        }
+        
+        .clickable-word::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+        
+        .clickable-word:hover::after {
+            width: 100%;
+        }
+        
+        .clickable-word:hover {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            text-decoration: none;
+        }
+        
+        .tooltip {
+            position: fixed;
+            background: linear-gradient(135deg, #2d3748, #1a202c);
+            color: white;
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-size: 15px;
+            z-index: 1000;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            display: none;
+            max-width: 320px;
+            border: 2px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .tooltip.show {
+            display: block;
+            animation: tooltipBounce 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        @keyframes tooltipBounce {
+            0% {
+                opacity: 0;
+                transform: scale(0.8) translateY(-10px);
+            }
+            70% {
+                transform: scale(1.05);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        .vocab-list {
+            display: grid;
+            gap: 25px;
+        }
+        
+        .vocab-card {
+            background: linear-gradient(135deg, #e0f2fe 0%, #bfdbfe 100%);
+            padding: 28px;
+            border-radius: 15px;
+            border-left: 6px solid #2a5298;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 5px 20px rgba(42, 82, 152, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .vocab-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .vocab-card:hover::before {
+            opacity: 1;
+        }
+        
+        .vocab-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(42, 82, 152, 0.3);
+            border-left-width: 10px;
+        }
+        
+        .vocab-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+        
+        .vocab-word {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e3c72;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            animation: wordFloat 3s ease-in-out infinite;
+        }
+        
+        @keyframes wordFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+        
+        .vocab-speak-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .vocab-speak-btn:hover {
+            transform: scale(1.2) rotate(15deg);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+        
+        .vocab-speak-btn:active {
+            transform: scale(0.9);
+        }
+        
+        .vocab-chinese {
+            color: #c53030;
+            font-size: 22px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-shadow: 1px 1px 2px rgba(197, 48, 48, 0.1);
+        }
+        
+        .vocab-pos {
+            color: #4a5568;
+            font-style: italic;
+            margin-bottom: 18px;
+        }
+        
+        .vocab-example {
+            background: white;
+            padding: 18px;
+            border-radius: 10px;
+            margin-top: 18px;
+            font-style: italic;
+            color: #2d3748;
+            border-left: 3px solid #667eea;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .vocab-example:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .vocab-collocations, .vocab-synonyms {
+            margin-top: 15px;
+        }
+        
+        .vocab-collocations strong, .vocab-synonyms strong {
+            color: #2a5298;
+            display: block;
+            margin-bottom: 8px;
+        }
+        
+        .tag {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            margin: 4px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+        
+        .tag:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.5);
+        }
+        
+        .language-focus {
+            background: linear-gradient(135deg, #e6f2ff 0%, #cfe2ff 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(30, 60, 114, 0.15);
+            border: 2px solid rgba(42, 82, 152, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .language-focus:hover {
+            box-shadow: 0 10px 35px rgba(30, 60, 114, 0.25);
+            transform: translateY(-3px);
+        }
+        
+        .language-focus h3 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+            font-size: 24px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .language-focus h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+        
+        .language-focus h4 {
+            color: #2a5298;
+            margin-top: 25px;
+            margin-bottom: 12px;
+        }
+        
+        .language-focus ul {
+            margin: 15px 0 15px 30px;
+            line-height: 1.8;
+        }
+        
+        .example-box {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            margin: 18px 0;
+            border-left: 5px solid #2a5298;
+            box-shadow: 0 3px 15px rgba(42, 82, 152, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .example-box:hover {
+            transform: translateX(8px);
+            box-shadow: 0 5px 25px rgba(42, 82, 152, 0.2);
+            border-left-width: 8px;
+        }
+        
+        .scale-bar {
+            background: linear-gradient(to right, #48bb78, #ecc94b, #ed8936, #f56565);
+            height: 60px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            color: white;
+            font-weight: bold;
+            margin: 25px 0;
+            padding: 0 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            animation: scaleGlow 2s ease-in-out infinite;
+        }
+        
+        @keyframes scaleGlow {
+            0%, 100% { box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
+            50% { box-shadow: 0 8px 35px rgba(0,0,0,0.4); }
+        }
+        
+        /* FORM STYLES */
+        .quiz-form {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .form-section {
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+            padding: 35px;
+            border-radius: 15px;
+            margin-bottom: 35px;
+            border: 3px solid #2a5298;
+            box-shadow: 0 10px 30px rgba(42, 82, 152, 0.2);
+            animation: infoGlow 3s ease-in-out infinite;
+        }
+        
+        @keyframes infoGlow {
+            0%, 100% { box-shadow: 0 10px 30px rgba(42, 82, 152, 0.2); }
+            50% { box-shadow: 0 10px 40px rgba(42, 82, 152, 0.35); }
+        }
+        
+        .form-section h3 {
+            color: #1e3c72;
+            margin-bottom: 25px;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+        
+        .form-field {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-field label {
+            color: #2d3748;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .required {
+            color: #e53e3e;
+            font-size: 20px;
+            animation: requiredPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes requiredPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        
+        .form-field input[type="text"],
+        .form-field input[type="email"],
+        .form-field input[type="date"] {
+            padding: 14px 18px;
+            border: 2px solid #cbd5e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.4s ease;
+            background: white;
+        }
+        
+        .form-field input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .form-field input.error {
+            border-color: #e53e3e;
+            animation: shake 0.5s ease;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .error-message {
+            color: #e53e3e;
+            font-size: 14px;
+            margin-top: 6px;
+            display: none;
+            font-weight: 600;
+        }
+        
+        .error-message.show {
+            display: block;
+            animation: errorSlide 0.3s ease-out;
+        }
+        
+        @keyframes errorSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .question-section {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            padding: 28px;
+            margin: 25px 0;
+            border-radius: 15px;
+            border-left: 6px solid #2a5298;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .question-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 35px rgba(0,0,0,0.15);
+        }
+        
+        .question-section.correct {
+            background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%);
+            border-left-color: #38a169;
+            animation: correctBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        @keyframes correctBounce {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .question-section.incorrect {
+            background: linear-gradient(135deg, #fed7d7 0%, #fc8181 100%);
+            border-left-color: #e53e3e;
+            animation: incorrectShake 0.5s ease;
+        }
+        
+        @keyframes incorrectShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+        
+        .question-section.unanswered {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-left-color: #d97706;
+        }
+        
+        .question-text {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 18px;
+            color: #2d3748;
+        }
+        
+        .options-group {
+            margin-top: 18px;
+        }
+        
+        .option-label {
+            display: block;
+            padding: 14px;
+            margin: 10px 0;
+            background: white;
+            border: 2px solid #cbd5e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .option-label:hover {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #ebf4ff, #e3f2fd);
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+        
+        .option-label input[type="radio"] {
+            margin-right: 12px;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
+        
+        .text-answer {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #cbd5e0;
+            border-radius: 10px;
+            font-size: 16px;
+            margin-top: 12px;
+            transition: all 0.4s ease;
+        }
+        
+        .text-answer:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .reference-text {
+            background: linear-gradient(135deg, #fef5e7, #fdebd0);
+            padding: 18px;
+            border-radius: 10px;
+            margin-top: 18px;
+            font-size: 14px;
+            border-left: 4px solid #d69e2e;
+            box-shadow: 0 3px 10px rgba(214, 158, 46, 0.15);
+        }
+        
+        .form-buttons {
+            display: flex;
+            gap: 20px;
+            margin-top: 35px;
+            flex-wrap: wrap;
+        }
+        
+        .form-btn {
+            flex: 1;
+            min-width: 200px;
+            padding: 18px 35px;
+            border: none;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .form-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .form-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+        
+        .form-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+        }
+        
+        .submit-btn:active:not(:disabled) {
+            transform: translateY(-2px);
+        }
+        
+        .download-btn {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+        }
+        
+        .download-btn:hover:not(:disabled) {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(72, 187, 120, 0.5);
+        }
+        
+        .download-btn:active:not(:disabled) {
+            transform: translateY(-2px);
+        }
+        
+        .reset-btn {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+        
+        .reset-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.5);
+        }
+        
+        .reset-btn:active {
+            transform: translateY(-2px);
+        }
+        
+        .feedback {
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            animation: feedbackSlide 0.4s ease-out;
+        }
+        
+        @keyframes feedbackSlide {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .feedback.correct {
+            background: linear-gradient(135deg, #c6f6d5, #9ae6b4);
+            color: #22543d;
+        }
+        
+        .feedback.incorrect {
+            background: linear-gradient(135deg, #fed7d7, #fc8181);
+            color: #742a2a;
+        }
+        
+        .feedback.unanswered {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            color: #78350f;
+        }
+        
+        .score-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 25px;
+            font-size: 24px;
+            font-weight: 700;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.5);
+            animation: scoreReveal 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        @keyframes scoreReveal {
+            0% {
+                opacity: 0;
+                transform: scale(0.8) rotateX(-90deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotateX(0);
+            }
+        }
+        
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: float 15s infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(100px);
+                opacity: 0;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 25px 20px;
+            }
+            
+            .back-btn {
+                position: static;
+                display: inline-block;
+                margin-bottom: 15px;
+            }
+            
+            .tab-content {
+                padding: 25px;
+            }
+            
+            .form-buttons {
+                flex-direction: column;
+            }
+            
+            .form-btn {
+                width: 100%;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tab-btn {
+                font-size: 14px;
+                padding: 15px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <div class="header">
+            <a href="./" class="back-btn">← Back to Home</a>
+            <h1>🔥 Text 1: Instructions in Case of Fire</h1>
+            <p>Learn essential fire safety procedures for workplace safety</p>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab-indicator" id="tabIndicator"></div>
+            <button class="tab-btn active" onclick="openTab(event, 'reading')" data-tab="0">📖 Reading</button>
+            <button class="tab-btn" onclick="openTab(event, 'vocabulary')" data-tab="1">📚 Vocabulary</button>
+            <button class="tab-btn" onclick="openTab(event, 'language')" data-tab="2">🎯 Language Focus</button>
+            <button class="tab-btn" onclick="openTab(event, 'quiz')" data-tab="3">✏️ e-Quiz Practice</button>
+        </div>
+        
+        <!-- Tab 1: Reading -->
+        <div id="reading" class="tab-content active">
+            <div class="audio-control">
+                <div style="flex: 1; position: relative; z-index: 1;">
+                    <h3 style="margin-bottom: 5px;">🔊 Listen to the Text</h3>
+                    <p style="opacity: 0.95; font-size: 14px;">Click the button to hear the complete text</p>
+                </div>
+                <button class="audio-btn" onclick="readFullText()">
+                    <span>▶️</span> Play Audio
+                </button>
+            </div>
+            
+            <div class="reading-text">
+                <h3>Instructions in case of fire</h3>
+                
+                <div class="instruction-item">
+                    <strong>[I.]</strong> In case of <span class="clickable-word" data-word="fire" data-chinese="火" data-pos="noun (名詞)">fire</span>, <span class="clickable-word" data-word="activate" data-chinese="啟動" data-pos="verb (動詞)">activate</span> the <span class="clickable-word" data-word="fire alarm" data-chinese="火警警報器" data-pos="noun (名詞)">fire alarm</span> and call the <span class="clickable-word" data-word="Fire Services Department" data-chinese="消防處" data-pos="noun (名詞)">Fire Services Department</span>.
+                </div>
+                
+                <div class="instruction-item">
+                    <strong>[II.]</strong> If a fire <span class="clickable-word" data-word="occurs" data-chinese="發生" data-pos="verb (動詞)">occurs</span> in a building, do not use <span class="clickable-word" data-word="lifts" data-chinese="電梯" data-pos="noun (名詞)">lifts</span> to <span class="clickable-word" data-word="evacuate" data-chinese="疏散" data-pos="verb (動詞)">evacuate</span>.
+                </div>
+                
+                <div class="instruction-item">
+                    <strong>[III.]</strong> If you see a fire in your <span class="clickable-word" data-word="escape route" data-chinese="逃生路線" data-pos="noun (名詞)">escape route</span>, <span class="clickable-word" data-word="stay" data-chinese="停留" data-pos="verb (動詞)">stay</span> in a <span class="clickable-word" data-word="safe place" data-chinese="安全地點" data-pos="noun (名詞)">safe place</span> with the door closed.
+                </div>
+                
+                <div class="instruction-item">
+                    <strong>[IV.]</strong> You should <span class="clickable-word" data-word="extinguish" data-chinese="撲滅" data-pos="verb (動詞)">extinguish</span> the fire with <span class="clickable-word" data-word="available" data-chinese="可用的" data-pos="adjective (形容詞)">available</span> <span class="clickable-word" data-word="equipment" data-chinese="設備" data-pos="noun (名詞)">equipment</span> only if it is safe to do so.
+                </div>
+                
+                <div class="instruction-item">
+                    <strong>[V.]</strong> You should not <span class="clickable-word" data-word="re-enter" data-chinese="再進入" data-pos="verb (動詞)">re-enter</span> the <span class="clickable-word" data-word="workplace" data-chinese="工作場所" data-pos="noun (名詞)">workplace</span> unless it is <span class="clickable-word" data-word="certified" data-chinese="經認證的" data-pos="adjective (形容詞)">certified</span> safe to do so.
+                </div>
+                
+                <p style="margin-top: 30px; font-style: italic; color: #4a5568; text-align: center;">
+                    Adapted from 'Guidance Notes on Fire Safety at Workplaces' published by the Labour Department
+                </p>
+            </div>
+        </div>
+        
+        <!-- Tab 2: Vocabulary -->
+        <div id="vocabulary" class="tab-content">
+            <h2 style="color: #1e3c72; margin-bottom: 30px; text-align: center; font-size: 32px;">📚 Vocabulary Building</h2>
+            
+            <div class="vocab-list">
+                <div class="vocab-card">
+                    <div class="vocab-header">
+                        <div class="vocab-word">activate</div>
+                        <button class="vocab-speak-btn" onclick="speakWord('activate')">🔊</button>
+                    </div>
+                    <div class="vocab-chinese">啟動</div>
+                    <div class="vocab-pos">verb (動詞)</div>
+                    <div class="vocab-example">
+                        💡 Example: "You must activate the fire alarm immediately when you see smoke."
+                    </div>
+                    <div class="vocab-collocations">
+                        <strong>Collocations:</strong>
+                        <span class="tag">activate alarm</span>
+                        <span class="tag">activate system</span>
+                        <span class="tag">activate device</span>
+                    </div>
+                    <div class="vocab-synonyms">
+                        <strong>Synonyms:</strong>
+                        <span class="tag">switch on</span>
+                        <span class="tag">turn on</span>
+                        <span class="tag">trigger</span>
+                    </div>
+                </div>
+                
+                <div class="vocab-card">
+                    <div class="vocab-header">
+                        <div class="vocab-word">available</div>
+                        <button class="vocab-speak-btn" onclick="speakWord('available')">🔊</button>
+                    </div>
+                    <div class="vocab-chinese">可用的</div>
+                    <div class="vocab-pos">adjective (形容詞)</div>
+                    <div class="vocab-example">
+                        💡 Example: "Use the available equipment to put out small fires."
+                    </div>
+                    <div class="vocab-collocations">
+                        <strong>Collocations:</strong>
+                        <span class="tag">available equipment</span>
+                        <span class="tag">available resources</span>
+                        <span class="tag">readily available</span>
+                    </div>
+                    <div class="vocab-synonyms">
+                        <strong>Synonyms:</strong>
+                        <span class="tag">accessible</span>
+                        <span class="tag">obtainable</span>
+                        <span class="tag">at hand</span>
+                    </div>
+                </div>
+                
+                <div class="vocab-card">
+                    <div class="vocab-header">
+                        <div class="vocab-word">certified</div>
+                        <button class="vocab-speak-btn" onclick="speakWord('certified')">🔊</button>
+                    </div>
+                    <div class="vocab-chinese">經認證的</div>
+                    <div class="vocab-pos">adjective (形容詞)</div>
+                    <div class="vocab-example">
+                        💡 Example: "Only certified safety officers can enter the area."
+                    </div>
+                    <div class="vocab-collocations">
+                        <strong>Collocations:</strong>
+                        <span class="tag">certified safe</span>
+                        <span class="tag">certified worker</span>
+                        <span class="tag">officially certified</span>
+                    </div>
+                    <div class="vocab-synonyms">
+                        <strong>Synonyms:</strong>
+                        <span class="tag">confirmed</span>
+                        <span class="tag">verified</span>
+                        <span class="tag">approved</span>
+                    </div>
+                </div>
+                
+                <div class="vocab-card">
+                    <div class="vocab-header">
+                        <div class="vocab-word">equipment</div>
+                        <button class="vocab-speak-btn" onclick="speakWord('equipment')">🔊</button>
+                    </div>
+                    <div class="vocab-chinese">設備</div>
+                    <div class="vocab-pos">noun (名詞)</div>
+                    <div class="vocab-example">
+                        💡 Example: "Fire-fighting equipment should be checked regularly."
+                    </div>
+                    <div class="vocab-collocations">
+                        <strong>Collocations:</strong>
+                        <span class="tag">safety equipment</span>
+                        <span class="tag">fire-fighting equipment</span>
+                        <span class="tag">protective equipment</span>
+                    </div>
+                    <div class="vocab-synonyms">
+                        <strong>Synonyms:</strong>
+                        <span class="tag">apparatus</span>
+                        <span class="tag">gear</span>
+                        <span class="tag">tools</span>
+                    </div>
+                </div>
+                
+                <div class="vocab-card">
+                    <div class="vocab-header">
+                        <div class="vocab-word">escape route</div>
+                        <button class="vocab-speak-btn" onclick="speakWord('escape route')">🔊</button>
+                    </div>
+                    <div class="vocab-chinese">逃生路線</div>
+                    <div class="vocab-pos">noun (名詞)</div>
+                    <div class="vocab-example">
+                        💡 Example: "Always know your escape routes in case of emergency."
+                    </div>
+                    <div class="vocab-collocations">
+                        <strong>Collocations:</strong>
+                        <span class="tag">emergency escape route</span>
+                        <span class="tag">clear escape route</span>
+                        <span class="tag">alternative escape route</span>
+                    </div>
+                    <div class="vocab-synonyms">
+                        <strong>Synonyms:</strong>
+                        <span class="tag">exit path</span>
+                        <span class="tag">evacuation route</span>
+                        <span class="tag">emergency exit</span>
+                    </div>
+                </div>
+                
+                <div class="vocab-card">
+                    <div class="vocab-header">
+                        <div class="vocab-word">evacuate</div>
+                        <button class="vocab-speak-btn" onclick="speakWord('evacuate')">🔊</button>
+                    </div>
+                    <div class="vocab-chinese">疏散</div>
+                    <div class="vocab-pos">verb (動詞)</div>
+                    <div class="vocab-example">
+                        💡 Example: "Staff must evacuate the building immediately during a fire drill."
+                    </div>
+                    <div class="vocab-collocations">
+                        <strong>Collocations:</strong>
+                        <span class="tag">evacuate building</span>
+                        <span class="tag">evacuate immediately</span>
+                        <span class="tag">safely evacuate</span>
+                    </div>
+                    <div class="vocab-synonyms">
+                        <strong>Synonyms:</strong>
+                        <span class="tag">leave</span>
+                        <span class="tag">exit</span>
+                        <span class="tag">get out</span>
+                    </div>
+                </div>
+                
+                <div class="vocab-card">
+                    <div class="vocab-header">
+                        <div class="vocab-word">extinguish</div>
+                        <button class="vocab-speak-btn" onclick="speakWord('extinguish')">🔊</button>
+                    </div>
+                    <div class="vocab-chinese">撲滅</div>
+                    <div class="vocab-pos">verb (動詞)</div>
+                    <div class="vocab-example">
+                        💡 Example: "Use a fire extinguisher to extinguish small fires quickly."
+                    </div>
+                    <div class="vocab-collocations">
+                        <strong>Collocations:</strong>
+                        <span class="tag">extinguish fire</span>
+                        <span class="tag">extinguish flames</span>
+                        <span class="tag">quickly extinguish</span>
+                    </div>
+                    <div class="vocab-synonyms">
+                        <strong>Synonyms:</strong>
+                        <span class="tag">put out</span>
+                        <span class="tag">douse</span>
+                        <span class="tag">quench</span>
+                    </div>
+                </div>
+                
+                <div class="vocab-card">
+                    <div class="vocab-header">
+                        <div class="vocab-word">fire alarm</div>
+                        <button class="vocab-speak-btn" onclick="speakWord('fire alarm')">🔊</button>
+                    </div>
+                    <div class="vocab-chinese">火警警報器</div>
+                    <div class="vocab-pos">noun (名詞)</div>
+                    <div class="vocab-example">
+                        💡 Example: "The fire alarm system is tested every month."
+                    </div>
+                    <div class="vocab-collocations">
+                        <strong>Collocations:</strong>
+                        <span class="tag">fire alarm system</span>
+                        <span class="tag">sound fire alarm</span>
+                        <span class="tag">activate fire alarm</span>
+                    </div>
+                    <div class="vocab-synonyms">
+                        <strong>Synonyms:</strong>
+                        <span class="tag">smoke alarm</span>
+                        <span class="tag">fire bell</span>
+                        <span class="tag">alarm system</span>
+                    </div>
+                </div>
+                
+                <div class="vocab-card">
+                    <div class="vocab-header">
+                        <div class="vocab-word">occur</div>
+                        <button class="vocab-speak-btn" onclick="speakWord('occur')">🔊</button>
+                    </div>
+                    <div class="vocab-chinese">發生</div>
+                    <div class="vocab-pos">verb (動詞)</div>
+                    <div class="vocab-example">
+                        💡 Example: "If a fire occurs in a building, evacuate immediately."
+                    </div>
+                    <div class="vocab-collocations">
+                        <strong>Collocations:</strong>
+                        <span class="tag">fire occurs</span>
+                        <span class="tag">accident occurs</span>
+                        <span class="tag">problem occurs</span>
+                    </div>
+                    <div class="vocab-synonyms">
+                        <strong>Synonyms:</strong>
+                        <span class="tag">happen</span>
+                        <span class="tag">take place</span>
+                        <span class="tag">arise</span>
+                    </div>
+                </div>
+                
+                <div class="vocab-card">
+                    <div class="vocab-header">
+                        <div class="vocab-word">re-enter</div>
+                        <button class="vocab-speak-btn" onclick="speakWord('re-enter')">🔊</button>
+                    </div>
+                    <div class="vocab-chinese">再進入</div>
+                    <div class="vocab-pos">verb (動詞)</div>
+                    <div class="vocab-example">
+                        💡 Example: "Do not re-enter the building until firefighters say it is safe."
+                    </div>
+                    <div class="vocab-collocations">
+                        <strong>Collocations:</strong>
+                        <span class="tag">re-enter building</span>
+                        <span class="tag">safely re-enter</span>
+                        <span class="tag">re-enter workplace</span>
+                    </div>
+                    <div class="vocab-synonyms">
+                        <strong>Synonyms:</strong>
+                        <span class="tag">go back in</span>
+                        <span class="tag">return to</span>
+                        <span class="tag">enter again</span>
+                    </div>
+                </div>
+                
+                <div class="vocab-card">
+                    <div class="vocab-header">
+                        <div class="vocab-word">workplace</div>
+                        <button class="vocab-speak-btn" onclick="speakWord('workplace')">🔊</button>
+                    </div>
+                    <div class="vocab-chinese">工作場所</div>
+                    <div class="vocab-pos">noun (名詞)</div>
+                    <div class="vocab-example">
+                        💡 Example: "Safety rules must be followed in every workplace."
+                    </div>
+                    <div class="vocab-collocations">
+                        <strong>Collocations:</strong>
+                        <span class="tag">workplace safety</span>
+                        <span class="tag">safe workplace</span>
+                        <span class="tag">workplace accident</span>
+                    </div>
+                    <div class="vocab-synonyms">
+                        <strong>Synonyms:</strong>
+                        <span class="tag">work site</span>
+                        <span class="tag">office</span>
+                        <span class="tag">place of work</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tab 3: Language Focus -->
+        <div id="language" class="tab-content">
+            <h2 style="color: #1e3c72; margin-bottom: 35px; text-align: center; font-size: 32px;">🎯 Language Focus</h2>
+            
+            <div class="language-focus">
+                <h3>1. Understanding rules and regulations</h3>
+                
+                <h4>Usage</h4>
+                <p>Rules and regulations are sets of principles that people must follow for a particular activity. In guides and COPs, rules and regulations are given to practitioners in the specific industry to ensure that they can carry out their work properly.</p>
+                
+                <h4>Strength of Obligation Scale</h4>
+                <p>In safety instructions, different words show different levels of obligation (how strongly you must follow the rule):</p>
+                
+                <div class="scale-bar">
+                    <span>may</span>
+                    <span>should</span>
+                    <span>must/shall</span>
+                    <span>imperative</span>
+                </div>
+                <p style="text-align: center; color: #4a5568; margin-top: -10px;">
+                    WEAKEST ←―――――――――――――――――――→ STRONGEST<br>
+                    <small>(suggestion) &nbsp; &nbsp; (expected) &nbsp; &nbsp; (required by law) &nbsp; &nbsp; (direct command)</small>
+                </p>
+                
+                <h4>Feature</h4>
+                <p>We can identify rules and regulations with the following language features:</p>
+                
+                <div class="example-box">
+                    <strong>Imperative:</strong><br>
+                    Activate the fire alarm and call the Fire Services Department.
+                </div>
+                
+                <div class="example-box">
+                    <strong>Should:</strong><br>
+                    You should extinguish the fire with available equipment
+                </div>
+                
+                <div class="example-box">
+                    <strong>Shall:</strong><br>
+                    Employers or managers shall give briefing sessions and written instructions on fire safety to all newly appointed employees before they start work.
+                </div>
+                
+                <div class="example-box">
+                    <strong>Must:</strong><br>
+                    All employers must ensure that all means of escape are unobstructed and can be reached safely at all times.
+                </div>
+            </div>
+            
+            <div class="language-focus">
+                <h3>2. Understanding conditions</h3>
+                
+                <h4>Usage</h4>
+                <p>In guides and COPs, conditional sentences are usually used to talk about rules and regulations with conditions.</p>
+                
+                <h4>Feature</h4>
+                <p>We can identify conditions with the following language features:</p>
+                
+                <div class="example-box">
+                    <strong>If:</strong><br>
+                    If a fire occurs in a building, do not use lifts to evacuate.
+                </div>
+                
+                <div class="example-box">
+                    <strong>In case (of):</strong><br>
+                    In case of fire, activate the fire alarm and call the Fire Services Department.
+                </div>
+                
+                <div class="example-box">
+                    <strong>Unless:</strong><br>
+                    You should not re-enter the workplace unless it is certified safe to do so
+                </div>
+                
+                <div class="example-box">
+                    <strong>Only if:</strong><br>
+                    You should extinguish the fire only if it is safe to do so.
+                </div>
+            </div>
+            
+            <div class="language-focus">
+                <h3>3. Recognising synonyms (similar words)</h3>
+                
+                <h4>Usage</h4>
+                <p>Synonyms are different words that have similar or the same meanings. Learning synonyms helps you:</p>
+                <ul>
+                    <li>Understand the text better</li>
+                    <li>Match information in questions with words in the text</li>
+                    <li>Expand your vocabulary</li>
+                </ul>
+                
+                <h4>Example in Text 1</h4>
+                
+                <div class="example-box">
+                    <strong>extinguish</strong> ⟷ <strong>put out</strong>
+                </div>
+                
+                <div class="example-box">
+                    <strong>certify</strong> ⟷ <strong>confirm</strong>
+                </div>
+                
+                <div class="example-box">
+                    <strong>activate</strong> ⟷ <strong>switch on</strong>
+                </div>
+                
+                <div class="example-box">
+                    <strong>route</strong> ⟷ <strong>path</strong>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tab 4: e-Quiz Practice (FORM-BASED) -->
+        <div id="quiz" class="tab-content">
+            <h2 style="color: #1e3c72; margin-bottom: 35px; text-align: center; font-size: 32px;">✏️ e-Quiz Practice</h2>
+            
+            <form id="quizForm" class="quiz-form">
+                <!-- Student Information Section -->
+                <div class="form-section">
+                    <h3>👤 Student Information</h3>
+                    <div class="form-grid">
+                        <div class="form-field">
+                            <label for="studentName">Student Name <span class="required">*</span></label>
+                            <input type="text" id="studentName" name="studentName" placeholder="Enter your full name" required>
+                            <span class="error-message" id="nameError">Please enter your name</span>
+                        </div>
+                        <div class="form-field">
+                            <label for="studentID">Student ID</label>
+                            <input type="text" id="studentID" name="studentID" placeholder="Enter your student ID (optional)">
+                        </div>
+                        <div class="form-field">
+                            <label for="studentClass">Class</label>
+                            <input type="text" id="studentClass" name="studentClass" placeholder="Enter your class (optional)">
+                        </div>
+                        <div class="form-field">
+                            <label for="completionDate">Completion Date</label>
+                            <input type="date" id="completionDate" name="completionDate">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Question 1 -->
+                <div class="question-section" data-question="1" data-answer="if">
+                    <div class="question-text">
+                        <strong>Question 1:</strong> You should set off the fire alarm ___________ a fire starts.
+                    </div>
+                    <div class="options-group">
+                        <label class="option-label">
+                            <input type="radio" name="q1" value="if" required> if
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q1" value="unless"> unless
+                        </label>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+                
+                <!-- Question 2 -->
+                <div class="question-section" data-question="2" data-answer="if">
+                    <div class="question-text">
+                        <strong>Question 2:</strong> You should contact the Fire Services Department ___________ a fire starts.
+                    </div>
+                    <div class="options-group">
+                        <label class="option-label">
+                            <input type="radio" name="q2" value="if" required> if
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q2" value="unless"> unless
+                        </label>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+                
+                <!-- Question 3 -->
+                <div class="question-section" data-question="3" data-answer="in case">
+                    <div class="question-text">
+                        <strong>Question 3:</strong> You should stay in a safe place ___________ there is a fire in your escape route.
+                    </div>
+                    <div class="options-group">
+                        <label class="option-label">
+                            <input type="radio" name="q3" value="unless" required> unless
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q3" value="in case"> in case
+                        </label>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+                
+                <!-- Question 4 -->
+                <div class="question-section" data-question="4" data-answer="in case">
+                    <div class="question-text">
+                        <strong>Question 4:</strong> You should not use lifts ___________ there is a fire in the building.
+                    </div>
+                    <div class="options-group">
+                        <label class="option-label">
+                            <input type="radio" name="q4" value="unless" required> unless
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q4" value="in case"> in case
+                        </label>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+                
+                <!-- Question 5 -->
+                <div class="question-section" data-question="5" data-answer="only if">
+                    <div class="question-text">
+                        <strong>Question 5:</strong> ___________ it is certified safe, you can re-enter the workplace.
+                    </div>
+                    <div class="options-group">
+                        <label class="option-label">
+                            <input type="radio" name="q5" value="only if" required> only if
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q5" value="unless"> unless
+                        </label>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+                
+                <!-- Question 6 -->
+                <div class="question-section" data-question="6" data-answer="unless">
+                    <div class="question-text">
+                        <strong>Question 6:</strong> You should not try to put off the fire with firefighting equipment ___________ it is safe to do so.
+                    </div>
+                    <div class="options-group">
+                        <label class="option-label">
+                            <input type="radio" name="q6" value="only if" required> only if
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q6" value="unless"> unless
+                        </label>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+                
+                <!-- Question 7 -->
+                <div class="question-section" data-question="7" data-answer="occurs">
+                    <div class="question-text">
+                        <strong>Question 7:</strong> Find a word in [II.] which has a similar meaning to 'happen'
+                    </div>
+                    <div class="reference-text">
+                        [II.] If a fire occurs in a building, do not use lifts to evacuate.
+                    </div>
+                    <input type="text" class="text-answer" name="q7" placeholder="Type your answer here" required>
+                    <div class="feedback"></div>
+                </div>
+                
+                <!-- Question 8 -->
+                <div class="question-section" data-question="8" data-answer="available">
+                    <div class="question-text">
+                        <strong>Question 8:</strong> Find a word in [IV.] which has a similar meaning to 'can be used'
+                    </div>
+                    <div class="reference-text">
+                        [IV.] You should extinguish the fire with available equipment only if it is safe to do so.
+                    </div>
+                    <input type="text" class="text-answer" name="q8" placeholder="Type your answer here" required>
+                    <div class="feedback"></div>
+                </div>
+                
+                <!-- Question 9 -->
+                <div class="question-section" data-question="9" data-answer="re-enter">
+                    <div class="question-text">
+                        <strong>Question 9:</strong> Find a word in [V.] which has a similar meaning to 'go back into'
+                    </div>
+                    <div class="reference-text">
+                        [V.] You should not re-enter the workplace unless it is certified safe to do so.
+                    </div>
+                    <input type="text" class="text-answer" name="q9" placeholder="Type your answer here" required>
+                    <div class="feedback"></div>
+                </div>
+                
+                <!-- Question 10 -->
+                <div class="question-section" data-question="10" data-answer="evacuate">
+                    <div class="question-text">
+                        <strong>Question 10:</strong> Find a word in [II.] which has a similar meaning to 'get out'
+                    </div>
+                    <div class="reference-text">
+                        [II.] If a fire occurs in a building, do not use lifts to evacuate.
+                    </div>
+                    <input type="text" class="text-answer" name="q10" placeholder="Type your answer here" required>
+                    <div class="feedback"></div>
+                </div>
+                
+                <!-- Form Buttons -->
+                <div class="form-buttons">
+                    <button type="submit" class="form-btn submit-btn">✓ Check Answers</button>
+                    <button type="button" class="form-btn download-btn" onclick="downloadPDF()">💾 Download as PDF</button>
+                    <button type="button" class="form-btn reset-btn" onclick="resetForm()">🔄 Reset Quiz</button>
+                </div>
+                
+                <div class="score-display" id="scoreDisplay" style="display: none;"></div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="tooltip" id="tooltip"></div>
+    
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        createParticles();
+        
+        // Tab functionality
+        function openTab(evt, tabName) {
+            const tabContents = document.getElementsByClassName('tab-content');
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove('active');
+            }
+            
+            const tabBtns = document.getElementsByClassName('tab-btn');
+            for (let i = 0; i < tabBtns.length; i++) {
+                tabBtns[i].classList.remove('active');
+            }
+            
+            document.getElementById(tabName).classList.add('active');
+            evt.currentTarget.classList.add('active');
+            
+            const tabIndex = parseInt(evt.currentTarget.dataset.tab);
+            const indicator = document.getElementById('tabIndicator');
+            const tabWidth = evt.currentTarget.offsetWidth;
+            indicator.style.width = tabWidth + 'px';
+            indicator.style.left = (tabWidth * tabIndex) + 'px';
+        }
+        
+        window.addEventListener('load', function() {
+            const firstTab = document.querySelector('.tab-btn.active');
+            const indicator = document.getElementById('tabIndicator');
+            indicator.style.width = firstTab.offsetWidth + 'px';
+            indicator.style.left = '0px';
+            
+            // Set default date to today
+            const today = new Date();
+            document.getElementById('completionDate').valueAsDate = today;
+        });
+        
+        window.addEventListener('resize', function() {
+            const activeTab = document.querySelector('.tab-btn.active');
+            if (activeTab) {
+                const indicator = document.getElementById('tabIndicator');
+                const tabIndex = parseInt(activeTab.dataset.tab);
+                const tabWidth = activeTab.offsetWidth;
+                indicator.style.width = tabWidth + 'px';
+                indicator.style.left = (tabWidth * tabIndex) + 'px';
+            }
+        });
+        
+        // Text-to-speech
+        function speakWord(word) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(word);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.8;
+                window.speechSynthesis.speak(utterance);
+            } else {
+                console.log('Text-to-speech not supported on this browser');
+            }
+        }
+        
+        function readFullText() {
+            const text = `Instructions in case of fire.
+            In case of fire, activate the fire alarm and call the Fire Services Department.
+            If a fire occurs in a building, do not use lifts to evacuate.
+            If you see a fire in your escape route, stay in a safe place with the door closed.
+            You should extinguish the fire with available equipment only if it is safe to do so.
+            You should not re-enter the workplace unless it is certified safe to do so.`;
+            
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.9;
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert('Sorry, your browser does not support text-to-speech.');
+            }
+        }
+        
+        // Tooltip for clickable words - IMPROVED POSITIONING
+        const clickableWords = document.querySelectorAll('.clickable-word');
+        const tooltip = document.getElementById('tooltip');
+        
+        clickableWords.forEach(word => {
+            word.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const wordText = this.dataset.word;
+                const chinese = this.dataset.chinese;
+                const pos = this.dataset.pos;
+                
+                tooltip.innerHTML = `
+                    <strong>${wordText}</strong><br>
+                    ${chinese}<br>
+                    <em>${pos}</em>
+                `;
+                
+                tooltip.classList.add('show');
+                
+                // Get the position of the clicked word
+                const wordRect = this.getBoundingClientRect();
+                const tooltipRect = tooltip.getBoundingClientRect();
+                
+                // Position tooltip directly below the word (centered horizontally)
+                let left = wordRect.left + (wordRect.width / 2) - (tooltipRect.width / 2);
+                let top = wordRect.bottom + window.scrollY + 8; // 8px gap below the word
+                
+                // Adjust if tooltip goes off the right edge of screen
+                if (left + tooltipRect.width > window.innerWidth - 10) {
+                    left = window.innerWidth - tooltipRect.width - 10;
+                }
+                
+                // Adjust if tooltip goes off the left edge of screen
+                if (left < 10) {
+                    left = 10;
+                }
+                
+                // If tooltip would go below viewport, show it above the word instead
+                if (top + tooltipRect.height > window.innerHeight + window.scrollY - 10) {
+                    top = wordRect.top + window.scrollY - tooltipRect.height - 8;
+                }
+                
+                tooltip.style.left = left + 'px';
+                tooltip.style.top = top + 'px';
+                
+                speakWord(wordText);
+            });
+        });
+        
+        document.addEventListener('click', function(e) {
+            if (!e.target.classList.contains('clickable-word')) {
+                tooltip.classList.remove('show');
+            }
+        });
+        
+        // Form validation and submission
+        const quizForm = document.getElementById('quizForm');
+        
+        quizForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Validate student name
+            const studentName = document.getElementById('studentName').value.trim();
+            if (studentName === '') {
+                const nameError = document.getElementById('nameError');
+                const nameInput = document.getElementById('studentName');
+                nameError.classList.add('show');
+                nameInput.classList.add('error');
+                nameInput.focus();
+                alert('⚠️ Please enter your name before checking answers.');
+                return;
+            }
+            
+            checkAnswers();
+        });
+        
+        // Check answers function
+        function checkAnswers() {
+            const formData = new FormData(quizForm);
+            let correctCount = 0;
+            const totalQuestions = 10;
+            
+            // Process each question
+            for (let i = 1; i <= totalQuestions; i++) {
+                const questionSection = document.querySelector(`[data-question="${i}"]`);
+                const correctAnswer = questionSection.dataset.answer.toLowerCase();
+                const userAnswer = formData.get(`q${i}`)?.trim().toLowerCase() || '';
+                const feedback = questionSection.querySelector('.feedback');
+                
+                // Remove previous classes
+                questionSection.classList.remove('correct', 'incorrect', 'unanswered');
+                
+                if (userAnswer === '') {
+                    questionSection.classList.add('unanswered');
+                    feedback.className = 'feedback unanswered';
+                    feedback.textContent = '⚠ Not answered. Correct answer: ' + questionSection.dataset.answer;
+                } else if (userAnswer === correctAnswer) {
+                    questionSection.classList.add('correct');
+                    feedback.className = 'feedback correct';
+                    feedback.textContent = '✓ Correct!';
+                    correctCount++;
+                } else {
+                    questionSection.classList.add('incorrect');
+                    feedback.className = 'feedback incorrect';
+                    feedback.textContent = '✗ Incorrect. Correct answer: ' + questionSection.dataset.answer;
+                }
+            }
+            
+            // Display score
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            const percentage = Math.round((correctCount / totalQuestions) * 100);
+            let emoji = '';
+            if (percentage >= 90) emoji = '🎉';
+            else if (percentage >= 70) emoji = '👍';
+            else if (percentage >= 50) emoji = '💪';
+            else emoji = '📚';
+            
+            scoreDisplay.innerHTML = `${emoji} Your Score: ${correctCount}/${totalQuestions} (${percentage}%) ${emoji}`;
+            scoreDisplay.style.display = 'block';
+            
+            scoreDisplay.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        
+        // Reset form
+        function resetForm() {
+            if (confirm('Are you sure you want to reset the quiz? All your answers will be cleared.')) {
+                quizForm.reset();
+                
+                // Remove all status classes and feedback
+                const questionSections = document.querySelectorAll('.question-section');
+                questionSections.forEach(section => {
+                    section.classList.remove('correct', 'incorrect', 'unanswered');
+                    const feedback = section.querySelector('.feedback');
+                    feedback.className = 'feedback';
+                    feedback.textContent = '';
+                });
+                
+                // Hide score display
+                document.getElementById('scoreDisplay').style.display = 'none';
+                
+                // Reset date to today
+                const today = new Date();
+                document.getElementById('completionDate').valueAsDate = today;
+                
+                // Scroll to top
+                document.querySelector('.form-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+        
+        // Download PDF - IMPROVED VERSION
+        function downloadPDF() {
+            const formData = new FormData(quizForm);
+            const studentName = formData.get('studentName')?.trim() || '';
+            
+            if (studentName === '') {
+                alert('⚠️ Please enter your name before downloading.');
+                document.getElementById('studentName').focus();
+                return;
+            }
+            
+            // Check if html2pdf library is loaded
+            if (typeof html2pdf === 'undefined') {
+                alert('⚠️ PDF library is loading. Please try again in a moment.');
+                return;
+            }
+            
+            const studentID = formData.get('studentID')?.trim() || 'N/A';
+            const studentClass = formData.get('studentClass')?.trim() || 'N/A';
+            const completionDate = formData.get('completionDate') || new Date().toISOString().slice(0, 10);
+            
+            // Calculate score
+            let correctCount = 0;
+            let totalQuestions = 10;
+            let answeredCount = 0;
+            
+            let questionsHTML = '';
+            
+            for (let i = 1; i <= totalQuestions; i++) {
+                const questionSection = document.querySelector(`[data-question="${i}"]`);
+                const correctAnswer = questionSection.dataset.answer;
+                const userAnswer = formData.get(`q${i}`)?.trim() || 'Not answered';
+                const questionText = questionSection.querySelector('.question-text').textContent.trim();
+                const referenceText = questionSection.querySelector('.reference-text')?.textContent.trim() || '';
+                
+                let status = '';
+                let bgColor = '#fef3c7';
+                let borderColor = '#d97706';
+                
+                if (userAnswer !== 'Not answered') {
+                    answeredCount++;
+                    if (userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
+                        correctCount++;
+                        status = '✓ Correct';
+                        bgColor = '#c6f6d5';
+                        borderColor = '#38a169';
+                    } else {
+                        status = '✗ Incorrect';
+                        bgColor = '#fed7d7';
+                        borderColor = '#e53e3e';
+                    }
+                } else {
+                    status = '⚠ Not answered';
+                }
+                
+                questionsHTML += `
+                    <div style="background: ${bgColor}; padding: 15px; margin-bottom: 15px; border-radius: 8px; border-left: 4px solid ${borderColor}; page-break-inside: avoid;">
+                        <p style="margin: 0 0 8px 0; font-weight: bold; color: #1e3c72;">${questionText}</p>
+                        ${referenceText ? `<p style="font-size: 13px; color: #555; font-style: italic; margin: 5px 0; background: #f9f9f9; padding: 8px; border-radius: 4px;">${referenceText}</p>` : ''}
+                        <p style="margin: 5px 0; font-size: 14px;"><strong>Your answer:</strong> <span style="color: #2563eb;">${userAnswer}</span></p>
+                        <p style="margin: 5px 0; font-size: 14px;"><strong>Correct answer:</strong> <span style="color: #059669;">${correctAnswer}</span></p>
+                        <p style="margin: 5px 0 0 0; font-size: 14px;"><strong>Result:</strong> ${status}</p>
+                    </div>
+                `;
+            }
+            
+            const percentage = Math.round((correctCount / totalQuestions) * 100);
+            
+            // Create PDF content
+            const pdfContent = `
+                <div style="font-family: 'Segoe UI', Arial, sans-serif; padding: 30px; max-width: 800px; margin: 0 auto; background: white;">
+                    
+                    <div style="background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; padding: 25px; margin-bottom: 25px; border-radius: 12px; text-align: center;">
+                        <h1 style="margin: 0 0 8px 0; font-size: 26px;">🔥 Text 1: Instructions in Case of Fire</h1>
+                        <h2 style="margin: 0; font-size: 20px; font-weight: normal;">e-Quiz Practice Results</h2>
+                    </div>
+                    
+                    <div style="background: #e0f2fe; padding: 18px; margin-bottom: 20px; border-radius: 10px; border: 2px solid #2a5298;">
+                        <h3 style="margin: 0 0 12px 0; color: #1e3c72; font-size: 18px;">👤 Student Information</h3>
+                        <table style="width: 100%; font-size: 14px; border-collapse: collapse;">
+                            <tr><td style="padding: 4px 0;"><strong>Student Name:</strong></td><td>${studentName}</td></tr>
+                            <tr><td style="padding: 4px 0;"><strong>Student ID:</strong></td><td>${studentID}</td></tr>
+                            <tr><td style="padding: 4px 0;"><strong>Class:</strong></td><td>${studentClass}</td></tr>
+                            <tr><td style="padding: 4px 0;"><strong>Completion Date:</strong></td><td>${completionDate}</td></tr>
+                            <tr><td style="padding: 4px 0;"><strong>Submission Time:</strong></td><td>${new Date().toLocaleString('en-US', { 
+                                year: 'numeric', 
+                                month: 'long', 
+                                day: 'numeric', 
+                                hour: '2-digit', 
+                                minute: '2-digit' 
+                            })}</td></tr>
+                        </table>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 20px; margin: 20px 0; border-radius: 12px; text-align: center;">
+                        <h2 style="margin: 0 0 8px 0; font-size: 24px;">📊 Overall Score</h2>
+                        <p style="margin: 0; font-size: 32px; font-weight: bold;">${correctCount} / ${totalQuestions} (${percentage}%)</p>
+                        <p style="margin: 8px 0 0 0; font-size: 16px;">Questions Answered: ${answeredCount} / ${totalQuestions}</p>
+                    </div>
+                    
+                    <div style="margin-top: 30px;">
+                        <h3 style="color: #1e3c72; margin-bottom: 15px; font-size: 20px; border-bottom: 2px solid #2a5298; padding-bottom: 8px;">📝 Detailed Results</h3>
+                        ${questionsHTML}
+                    </div>
+                    
+                    <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e5e7eb; text-align: center; color: #6b7280; font-size: 12px;">
+                        <p style="margin: 0;">Generated on ${new Date().toLocaleString('en-US', { 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric', 
+                            hour: '2-digit', 
+                            minute: '2-digit', 
+                            second: '2-digit'
+                        })}</p>
+                        <p style="margin: 5px 0 0 0;">Text 1 e-Quiz Practice - Fire Safety Instructions</p>
+                    </div>
+                    
+                </div>
+            `;
+            
+            // Create temporary container
+            const element = document.createElement('div');
+            element.innerHTML = pdfContent;
+            element.style.position = 'absolute';
+            element.style.left = '-9999px';
+            document.body.appendChild(element);
+            
+            // PDF options
+            const opt = {
+                margin: [10, 10, 10, 10],
+                filename: `Text1_Quiz_${studentName.replace(/\s+/g, '_')}_${completionDate}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { 
+                    scale: 2, 
+                    useCORS: true, 
+                    logging: false,
+                    letterRendering: true
+                },
+                jsPDF: { 
+                    unit: 'mm', 
+                    format: 'a4', 
+                    orientation: 'portrait',
+                    compress: true
+                },
+                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+            };
+            
+            // Show loading message
+            const downloadBtn = document.querySelector('.download-btn');
+            const originalText = downloadBtn.innerHTML;
+            downloadBtn.innerHTML = '⏳ Generating PDF...';
+            downloadBtn.disabled = true;
+            
+            // Generate PDF
+            html2pdf().set(opt).from(element).save().then(() => {
+                // Clean up
+                document.body.removeChild(element);
+                downloadBtn.innerHTML = originalText;
+                downloadBtn.disabled = false;
+                alert('✅ PDF downloaded successfully!');
+            }).catch((error) => {
+                document.body.removeChild(element);
+                downloadBtn.innerHTML = originalText;
+                downloadBtn.disabled = false;
+                console.error('PDF generation error:', error);
+                alert('❌ PDF generation failed. Please try the "Check Answers" button first, then download again.');
+            });
+        }
+        
+        // Clear error on input
+        document.getElementById('studentName').addEventListener('input', function() {
+            if (this.value.trim() !== '') {
+                document.getElementById('nameError').classList.remove('show');
+                this.classList.remove('error');
+            }
+        });
+    </script>
+</body>
+</html>

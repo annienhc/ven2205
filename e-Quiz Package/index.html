@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>e-Quiz Package - VEN2205</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+        }
+        
+        .header {
+            background: white;
+            padding: 40px;
+            border-radius: 20px 20px 0 0;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 {
+            color: #667eea;
+            font-size: 32px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        .header h2 {
+            color: #764ba2;
+            font-size: 24px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+        
+        .course-code {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-top: 15px;
+        }
+        
+        .content {
+            background: white;
+            padding: 50px 40px;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        
+        .intro {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .intro h3 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+        
+        .intro p {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .text-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .text-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 3px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .text-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+        
+        .text-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            border-color: #667eea;
+        }
+        
+        .text-card.text1::before {
+            background: linear-gradient(90deg, #ff6b6b, #ee5a6f);
+        }
+        
+        .text-card.text2::before {
+            background: linear-gradient(90deg, #4ecdc4, #44a08d);
+        }
+        
+        .text-card.text3::before {
+            background: linear-gradient(90deg, #f7b733, #fc4a1a);
+        }
+        
+        .text-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .text-card h3 {
+            color: #333;
+            font-size: 22px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .text-card p {
+            color: #666;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+        
+        .start-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .start-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 50px;
+            padding-top: 40px;
+            border-top: 2px solid #eee;
+        }
+        
+        .feature-item {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .feature-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+        
+        .feature-item h4 {
+            color: #667eea;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        
+        .feature-item p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 30px 20px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .header h2 {
+                font-size: 18px;
+            }
+            
+            .content {
+                padding: 30px 20px;
+            }
+            
+            .text-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Diploma of Vocational Education</h1>
+            <h2>Earn and Learn Scheme</h2>
+            <p>English for Workplace Communication:<br>Reading Guides and Codes of Practice</p>
+            <span class="course-code">VEN2205</span>
+        </div>
+        
+        <div class="content">
+            <div class="intro">
+                <h3>📚 e-Quiz Package</h3>
+                <p>Welcome to the interactive e-Quiz package! This comprehensive learning system will help you master workplace safety communication in English. Each text includes reading materials, vocabulary building exercises, language focus sections, and interactive quizzes.</p>
+            </div>
+            
+            <div class="text-grid">
+                <div class="text-card text1">
+                    <div class="text-icon">🔥</div>
+                    <h3>Text 1</h3>
+                    <h4>Instructions in Case of Fire</h4>
+                    <p>Learn essential fire safety instructions and emergency procedures for workplace safety.</p>
+                    <a href="text1.html" class="start-btn">Start Learning →</a>
+                </div>
+                
+                <div class="text-card text2">
+                    <div class="text-icon">👨‍🏫</div>
+                    <h3>Text 2</h3>
+                    <h4>Fire Safety Training in Workplaces</h4>
+                    <p>Understand fire safety training requirements and workplace safety regulations.</p>
+                    <a href="text2.html" class="start-btn">Start Learning →</a>
+                </div>
+                
+                <div class="text-card text3">
+                    <div class="text-icon">⚠️</div>
+                    <h3>Text 3</h3>
+                    <h4>General Guide on Occupational Safety and Health</h4>
+                    <p>Explore comprehensive occupational safety guidelines and health protection measures.</p>
+                    <a href="text3.html" class="start-btn">Start Learning →</a>
+                </div>
+            </div>
+            
+            <div class="features">
+                <div class="feature-item">
+                    <div class="feature-icon">📖</div>
+                    <h4>Interactive Reading</h4>
+                    <p>Click words to see meanings</p>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">🔊</div>
+                    <h4>Audio Support</h4>
+                    <p>Listen to pronunciations</p>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">📝</div>
+                    <h4>Self-Assessment</h4>
+                    <p>Check your answers instantly</p>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">💾</div>
+                    <h4>Download Results</h4>
+                    <p>Save your work as PDF</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

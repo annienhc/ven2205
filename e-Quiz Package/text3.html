@@ -1,0 +1,2026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text 3 - Occupational Safety and Health Guide</title>
+    <!-- Fixed CDN with integrity check -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" 
+            integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" 
+            crossorigin="anonymous" 
+            referrerpolicy="no-referrer"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            box-shadow: 0 30px 90px rgba(0,0,0,0.4);
+            overflow: hidden;
+            animation: slideIn 0.8s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e3c72, #2a5298, #3b6ec9);
+            background-size: 200% 200%;
+            animation: headerGradient 8s ease infinite;
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: sparkle 10s linear infinite;
+        }
+        
+        @keyframes headerGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes sparkle {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: titlePulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes titlePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .back-btn {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            background: rgba(255,255,255,0.25);
+            color: white;
+            border: 2px solid white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            backdrop-filter: blur(10px);
+            z-index: 2;
+        }
+        
+        .back-btn:hover {
+            background: white;
+            color: #1e3c72;
+            transform: scale(1.1) translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        
+        .tabs {
+            display: flex;
+            background: linear-gradient(to right, #f0f4f8, #e2e8f0);
+            border-bottom: 3px solid #cbd5e0;
+            position: relative;
+        }
+        
+        .tab-indicator {
+            position: absolute;
+            bottom: -3px;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            padding: 20px 10px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #4a5568;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        
+        .tab-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .tab-btn:hover::before {
+            left: 100%;
+        }
+        
+        .tab-btn:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: #2d3748;
+            transform: translateY(-2px);
+        }
+        
+        .tab-btn.active {
+            color: #2a5298;
+            background: white;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 40px;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .audio-control {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .audio-control::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .audio-control:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+        }
+        
+        .audio-btn {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+        
+        .audio-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
+        .audio-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .reading-text {
+            background: linear-gradient(135deg, #ebf4ff 0%, #e3f2fd 100%);
+            padding: 35px;
+            border-radius: 15px;
+            border-left: 6px solid #3182ce;
+            line-height: 1.8;
+            font-size: 16px;
+            box-shadow: 0 5px 20px rgba(49, 130, 206, 0.15);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 5px 20px rgba(49, 130, 206, 0.15); }
+            50% { box-shadow: 0 8px 30px rgba(49, 130, 206, 0.25); }
+        }
+        
+        .reading-text h3 {
+            color: #2c5282;
+            margin-bottom: 25px;
+            font-size: 24px;
+            text-align: center;
+            animation: slideInLeft 0.8s ease-out;
+        }
+        
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .excerpt-box {
+            background: white;
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 12px;
+            border-left: 5px solid #2a5298;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            animation: slideInRight 0.6s ease-out backwards;
+        }
+        
+        .excerpt-box:nth-child(2) { animation-delay: 0.1s; }
+        .excerpt-box:nth-child(3) { animation-delay: 0.2s; }
+        .excerpt-box:nth-child(4) { animation-delay: 0.3s; }
+        
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .excerpt-box:hover {
+            box-shadow: 0 10px 30px rgba(42, 82, 152, 0.3);
+            transform: translateX(8px) scale(1.02);
+            border-left-width: 8px;
+        }
+        
+        .excerpt-title {
+            color: #1e3c72;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .clickable-word {
+            color: #667eea;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 3px 6px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            position: relative;
+            display: inline-block;
+            text-decoration: underline;
+            text-decoration-color: #f472b6;
+            text-decoration-thickness: 2px;
+            text-underline-offset: 3px;
+        }
+        
+        .clickable-word::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+        
+        .clickable-word:hover::after {
+            width: 100%;
+        }
+        
+        .clickable-word:hover {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            text-decoration: none;
+        }
+        
+        .tooltip {
+            position: fixed;
+            background: linear-gradient(135deg, #2d3748, #1a202c);
+            color: white;
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-size: 15px;
+            z-index: 10000;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            display: none;
+            max-width: 320px;
+            border: 2px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            pointer-events: none;
+        }
+        
+        .tooltip::before {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid #1a202c;
+        }
+        
+        .tooltip.show {
+            display: block;
+            animation: tooltipBounce 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        @keyframes tooltipBounce {
+            0% {
+                opacity: 0;
+                transform: scale(0.8) translateY(10px);
+            }
+            70% {
+                transform: scale(1.05) translateY(0);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        .vocab-list {
+            display: grid;
+            gap: 25px;
+        }
+        
+        .vocab-card {
+            background: linear-gradient(135deg, #e0f2fe 0%, #bfdbfe 100%);
+            padding: 28px;
+            border-radius: 15px;
+            border-left: 6px solid #2a5298;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 5px 20px rgba(42, 82, 152, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .vocab-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .vocab-card:hover::before {
+            opacity: 1;
+        }
+        
+        .vocab-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(42, 82, 152, 0.3);
+            border-left-width: 10px;
+        }
+        
+        .vocab-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+        
+        .vocab-word {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e3c72;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            animation: wordFloat 3s ease-in-out infinite;
+        }
+        
+        @keyframes wordFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+        
+        .vocab-speak-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .vocab-speak-btn:hover {
+            transform: scale(1.2) rotate(15deg);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+        
+        .vocab-speak-btn:active {
+            transform: scale(0.9);
+        }
+        
+        .vocab-chinese {
+            color: #c53030;
+            font-size: 22px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-shadow: 1px 1px 2px rgba(197, 48, 48, 0.1);
+        }
+        
+        .vocab-pos {
+            color: #4a5568;
+            font-style: italic;
+            margin-bottom: 18px;
+        }
+        
+        .language-focus {
+            background: linear-gradient(135deg, #e6f2ff 0%, #cfe2ff 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(30, 60, 114, 0.15);
+            border: 2px solid rgba(42, 82, 152, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .language-focus:hover {
+            box-shadow: 0 10px 35px rgba(30, 60, 114, 0.25);
+            transform: translateY(-3px);
+        }
+        
+        .language-focus h3 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+            font-size: 24px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .language-focus h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+        
+        .language-focus h4 {
+            color: #2a5298;
+            margin-top: 25px;
+            margin-bottom: 12px;
+        }
+        
+        .example-box {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            margin: 18px 0;
+            border-left: 5px solid #2a5298;
+            box-shadow: 0 3px 15px rgba(42, 82, 152, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .example-box:hover {
+            transform: translateX(8px);
+            box-shadow: 0 5px 25px rgba(42, 82, 152, 0.2);
+            border-left-width: 8px;
+        }
+        
+        /* FORM STYLES */
+        .quiz-form {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .form-section {
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+            padding: 35px;
+            border-radius: 15px;
+            margin-bottom: 35px;
+            border: 3px solid #2a5298;
+            box-shadow: 0 10px 30px rgba(42, 82, 152, 0.2);
+            animation: infoGlow 3s ease-in-out infinite;
+        }
+        
+        @keyframes infoGlow {
+            0%, 100% { box-shadow: 0 10px 30px rgba(42, 82, 152, 0.2); }
+            50% { box-shadow: 0 10px 40px rgba(42, 82, 152, 0.35); }
+        }
+        
+        .form-section h3 {
+            color: #1e3c72;
+            margin-bottom: 25px;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+        
+        .form-field {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-field label {
+            color: #2d3748;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .required {
+            color: #e53e3e;
+            font-size: 20px;
+            animation: requiredPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes requiredPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        
+        .form-field input[type="text"],
+        .form-field input[type="email"],
+        .form-field input[type="date"] {
+            padding: 14px 18px;
+            border: 2px solid #cbd5e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.4s ease;
+            background: white;
+        }
+        
+        .form-field input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .form-field input.error {
+            border-color: #e53e3e;
+            animation: shake 0.5s ease;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .error-message {
+            color: #e53e3e;
+            font-size: 14px;
+            margin-top: 6px;
+            display: none;
+            font-weight: 600;
+        }
+        
+        .error-message.show {
+            display: block;
+            animation: errorSlide 0.3s ease-out;
+        }
+        
+        @keyframes errorSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .question-section {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            padding: 28px;
+            margin: 25px 0;
+            border-radius: 15px;
+            border-left: 6px solid #2a5298;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .question-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 35px rgba(0,0,0,0.15);
+        }
+        
+        .question-section.correct {
+            background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%);
+            border-left-color: #38a169;
+            animation: correctBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        @keyframes correctBounce {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .question-section.incorrect {
+            background: linear-gradient(135deg, #fed7d7 0%, #fc8181 100%);
+            border-left-color: #e53e3e;
+            animation: incorrectShake 0.5s ease;
+        }
+        
+        @keyframes incorrectShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+        
+        .question-section.unanswered {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-left-color: #d97706;
+        }
+        
+        .question-text {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 18px;
+            color: #2d3748;
+        }
+        
+        .options-group {
+            margin-top: 18px;
+        }
+        
+        .option-label {
+            display: block;
+            padding: 14px;
+            margin: 10px 0;
+            background: white;
+            border: 2px solid #cbd5e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .option-label:hover {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #ebf4ff, #e3f2fd);
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+        
+        .option-label input[type="radio"] {
+            margin-right: 12px;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
+        
+        .text-answer {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #cbd5e0;
+            border-radius: 10px;
+            font-size: 16px;
+            margin-top: 12px;
+            transition: all 0.4s ease;
+        }
+        
+        .text-answer:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .fill-blank-section {
+            background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 25px 0;
+            border-left: 6px solid #ea580c;
+            box-shadow: 0 5px 20px rgba(234, 88, 12, 0.15);
+        }
+        
+        .fill-blank-section h4 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+        
+        .word-bank {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border: 2px solid #fed7aa;
+        }
+        
+        .word-bank strong {
+            color: #1e3c72;
+            font-size: 18px;
+        }
+        
+        .word-bank-items {
+            margin-top: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        
+        .word-bank-item {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .word-bank-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.5);
+        }
+        
+        .fill-blank-text {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+            line-height: 2.2;
+            font-size: 16px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+        
+        .blank-input {
+            display: inline-block;
+            padding: 8px 15px;
+            border: 2px solid #2a5298;
+            border-radius: 8px;
+            min-width: 180px;
+            font-size: 16px;
+            margin: 0 5px;
+            transition: all 0.3s ease;
+            background: #f0f9ff;
+        }
+        
+        .blank-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+            background: white;
+        }
+        
+        .form-buttons {
+            display: flex;
+            gap: 20px;
+            margin-top: 35px;
+            flex-wrap: wrap;
+        }
+        
+        .form-btn {
+            flex: 1;
+            min-width: 200px;
+            padding: 18px 35px;
+            border: none;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .form-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .form-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+        
+        .form-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+        }
+        
+        .submit-btn:active:not(:disabled) {
+            transform: translateY(-2px);
+        }
+        
+        .download-btn {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+        }
+        
+        .download-btn:hover:not(:disabled) {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(72, 187, 120, 0.5);
+        }
+        
+        .download-btn:active:not(:disabled) {
+            transform: translateY(-2px);
+        }
+        
+        .reset-btn {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+        
+        .reset-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.5);
+        }
+        
+        .reset-btn:active {
+            transform: translateY(-2px);
+        }
+        
+        .feedback {
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            animation: feedbackSlide 0.4s ease-out;
+        }
+        
+        @keyframes feedbackSlide {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .feedback.correct {
+            background: linear-gradient(135deg, #c6f6d5, #9ae6b4);
+            color: #22543d;
+        }
+        
+        .feedback.incorrect {
+            background: linear-gradient(135deg, #fed7d7, #fc8181);
+            color: #742a2a;
+        }
+        
+        .feedback.unanswered {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            color: #78350f;
+        }
+        
+        .score-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 25px;
+            font-size: 24px;
+            font-weight: 700;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.5);
+            animation: scoreReveal 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        @keyframes scoreReveal {
+            0% {
+                opacity: 0;
+                transform: scale(0.8) rotateX(-90deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotateX(0);
+            }
+        }
+        
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: float 15s infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(100px);
+                opacity: 0;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 25px 20px;
+            }
+            
+            .back-btn {
+                position: static;
+                display: inline-block;
+                margin-bottom: 15px;
+            }
+            
+            .tab-content {
+                padding: 25px;
+            }
+            
+            .form-buttons {
+                flex-direction: column;
+            }
+            
+            .form-btn {
+                width: 100%;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tab-btn {
+                font-size: 14px;
+                padding: 15px 8px;
+            }
+            
+            .word-bank-items {
+                flex-direction: column;
+            }
+            
+            .blank-input {
+                display: block;
+                width: 100%;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <div class="header">
+            <a href="./" class="back-btn">← Back to Home</a>
+            <h1>📚 Text 3: Occupational Safety and Health Guide</h1>
+            <p>General Guide on Occupational Safety and Health</p>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab-indicator" id="tabIndicator"></div>
+            <button class="tab-btn active" onclick="openTab(event, 'reading')" data-tab="0">📖 Reading</button>
+            <button class="tab-btn" onclick="openTab(event, 'vocabulary')" data-tab="1">📚 Vocabulary</button>
+            <button class="tab-btn" onclick="openTab(event, 'language')" data-tab="2">🎯 Language Focus</button>
+            <button class="tab-btn" onclick="openTab(event, 'quiz')" data-tab="3">✏️ e-Quiz Practice</button>
+        </div>
+        
+        <!-- Tab 1: Reading -->
+        <div id="reading" class="tab-content active">
+            <div class="audio-control">
+                <div style="flex: 1; position: relative; z-index: 1;">
+                    <h3 style="margin-bottom: 5px;">🔊 Listen to the Text</h3>
+                    <p style="opacity: 0.95; font-size: 14px;">Click the button to hear the complete text</p>
+                </div>
+                <button class="audio-btn" onclick="readFullText()">
+                    <span>▶️</span> Play Audio
+                </button>
+            </div>
+            
+            <div class="reading-text">
+                <h3>General Guide on Occupational Safety and Health</h3>
+                
+                <div class="excerpt-box">
+                    <div class="excerpt-title">🔧 Excerpt (a) - Tool Safety</div>
+                    <p>Many workplace <span class="clickable-word" data-word="accidents" data-chinese="意外" data-pos="noun (名詞)">accidents</span> occurred because of selecting a wrong <span class="clickable-word" data-word="tool" data-chinese="工具" data-pos="noun (名詞)">tool</span>, <span class="clickable-word" data-word="misuse" data-chinese="誤用" data-pos="noun (名詞)">misuse</span> of <span class="clickable-word" data-word="tools" data-chinese="工具" data-pos="noun (名詞)">tools</span> and <span class="clickable-word" data-word="accessories" data-chinese="配件" data-pos="noun (名詞)">accessories</span> or lack of <span class="clickable-word" data-word="proper" data-chinese="適當的" data-pos="adjective (形容詞)">proper</span> <span class="clickable-word" data-word="maintenance" data-chinese="維護" data-pos="noun (名詞)">maintenance</span> of <span class="clickable-word" data-word="tools" data-chinese="工具" data-pos="noun (名詞)">tools</span>. Therefore, <span class="clickable-word" data-word="workers" data-chinese="工人" data-pos="noun (名詞)">workers</span> should select a <span class="clickable-word" data-word="tool" data-chinese="工具" data-pos="noun (名詞)">tool</span> <span class="clickable-word" data-word="suitable" data-chinese="合適的" data-pos="adjective (形容詞)">suitable</span> for the <span class="clickable-word" data-word="specific" data-chinese="特定的" data-pos="adjective (形容詞)">specific</span> job and follow the <span class="clickable-word" data-word="safe instructions" data-chinese="安全指示" data-pos="noun (名詞)">safe instructions</span> to use and maintain it. <span class="clickable-word" data-word="Employers" data-chinese="雇主" data-pos="noun (名詞)">Employers</span> or <span class="clickable-word" data-word="responsible persons" data-chinese="負責人" data-pos="noun (名詞)">responsible persons</span> should make sure that <span class="clickable-word" data-word="workers" data-chinese="工人" data-pos="noun (名詞)">workers</span> have received <span class="clickable-word" data-word="training" data-chinese="訓練" data-pos="noun (名詞)">training</span> in the <span class="clickable-word" data-word="safe operating procedures" data-chinese="安全操作程序" data-pos="noun (名詞)">safe operating procedures</span> and <span class="clickable-word" data-word="skills" data-chinese="技能" data-pos="noun (名詞)">skills</span> for the <span class="clickable-word" data-word="tools" data-chinese="工具" data-pos="noun (名詞)">tools</span> concerned.</p>
+                </div>
+                
+                <div class="excerpt-box">
+                    <div class="excerpt-title">🪜 Excerpt (b) - Ladder and Height Safety</div>
+                    <p><span class="clickable-word" data-word="Ladders" data-chinese="梯子" data-pos="noun (名詞)">Ladders</span> should be used for <span class="clickable-word" data-word="access" data-chinese="進入" data-pos="noun (名詞)">access</span> to and <span class="clickable-word" data-word="egress" data-chinese="出口" data-pos="noun (名詞)">egress</span> from high places only. It is unsafe for <span class="clickable-word" data-word="workers" data-chinese="工人" data-pos="noun (名詞)">workers</span> to work on a <span class="clickable-word" data-word="ladder" data-chinese="梯子" data-pos="noun (名詞)">ladder</span> as they may fall from it during work. Many serious <span class="clickable-word" data-word="injuries" data-chinese="傷害" data-pos="noun (名詞)">injuries</span> or even <span class="clickable-word" data-word="fatalities" data-chinese="死亡事故" data-pos="noun (名詞)">fatalities</span> are due to using <span class="clickable-word" data-word="ladders" data-chinese="梯子" data-pos="noun (名詞)">ladders</span> <span class="clickable-word" data-word="inappropriately" data-chinese="不合適的" data-pos="adverb (副詞)">inappropriately</span>. A working <span class="clickable-word" data-word="platform" data-chinese="平台" data-pos="noun (名詞)">platform</span> should be used instead for common work above the ground. To ensure safety, a <span class="clickable-word" data-word="risk assessment" data-chinese="風險評估" data-pos="noun (名詞)">risk assessment</span> should be conducted before working at <span class="clickable-word" data-word="height" data-chinese="高處" data-pos="noun (名詞)">height</span> by a <span class="clickable-word" data-word="competent person" data-chinese="合資格人士" data-pos="noun (名詞)">competent person</span> to <span class="clickable-word" data-word="eliminate" data-chinese="消除" data-pos="verb (動詞)">eliminate</span> or <span class="clickable-word" data-word="minimise" data-chinese="減少到最低" data-pos="verb (動詞)">minimise</span> the <span class="clickable-word" data-word="fall hazards" data-chinese="墜落危險" data-pos="noun (名詞)">fall hazards</span>. <span class="clickable-word" data-word="Fall prevention equipment" data-chinese="防墜設備" data-pos="noun (名詞)">Fall prevention equipment</span> should also be provided as far as <span class="clickable-word" data-word="practicable" data-chinese="可行的" data-pos="adjective (形容詞)">practicable</span> to <span class="clickable-word" data-word="safeguard" data-chinese="保護" data-pos="verb (動詞)">safeguard</span> <span class="clickable-word" data-word="workers" data-chinese="工人" data-pos="noun (名詞)">workers</span> working at <span class="clickable-word" data-word="height" data-chinese="高處" data-pos="noun (名詞)">height</span>.</p>
+                </div>
+                
+                <div class="excerpt-box">
+                    <div class="excerpt-title">⚠️ Excerpt (c) - Confined Space Safety</div>
+                    <p><span class="clickable-word" data-word="Workers" data-chinese="工人" data-pos="noun (名詞)">Workers</span> are exposed to <span class="clickable-word" data-word="toxic gases" data-chinese="有毒氣體" data-pos="noun (名詞)">toxic gases</span> when working in <span class="clickable-word" data-word="confined spaces" data-chinese="密閉空間" data-pos="noun (名詞)">confined spaces</span> such as <span class="clickable-word" data-word="tunnels" data-chinese="隧道" data-pos="noun (名詞)">tunnels</span> and wells. Other potential <span class="clickable-word" data-word="hazards" data-chinese="危害" data-pos="noun (名詞)">hazards</span> in <span class="clickable-word" data-word="confined spaces" data-chinese="密閉空間" data-pos="noun (名詞)">confined spaces</span> include <span class="clickable-word" data-word="suffocation" data-chinese="窒息" data-pos="noun (名詞)">suffocation</span>, fire, rush of sewage and caving in of sand. To protect themselves, <span class="clickable-word" data-word="workers" data-chinese="工人" data-pos="noun (名詞)">workers</span> shall use <span class="clickable-word" data-word="suitable" data-chinese="合適的" data-pos="adjective (形容詞)">suitable</span> types of <span class="clickable-word" data-word="breathing apparatus" data-chinese="呼吸器" data-pos="noun (名詞)">breathing apparatus</span> or gas mask during work. As the work environment may change continuously, which increases the risk of the work, a <span class="clickable-word" data-word="competent person" data-chinese="合資格人士" data-pos="noun (名詞)">competent person</span> shall recommend the use of <span class="clickable-word" data-word="appropriate" data-chinese="合適的" data-pos="adjective (形容詞)">appropriate</span> air <span class="clickable-word" data-word="monitoring equipment" data-chinese="監測設備" data-pos="noun (名詞)">monitoring equipment</span>. Also, only <span class="clickable-word" data-word="certified" data-chinese="經認證的" data-pos="adjective (形容詞)">certified</span> <span class="clickable-word" data-word="workers" data-chinese="工人" data-pos="noun (名詞)">workers</span> shall be allowed to enter the <span class="clickable-word" data-word="confined spaces" data-chinese="密閉空間" data-pos="noun (名詞)">confined spaces</span> or work inside there.</p>
+                </div>
+                
+                <p style="margin-top: 30px; font-style: italic; color: #4a5568; text-align: center;">
+                    Adapted from 'Occupational Safety and Health Management in Renovation and Maintenance Works for the Property Management Industry' published by the Labour Department
+                </p>
+            </div>
+        </div>
+        
+        <!-- Tab 2: Vocabulary -->
+        <div id="vocabulary" class="tab-content">
+            <h2 style="color: #1e3c72; margin-bottom: 30px; text-align: center; font-size: 32px;">📚 Vocabulary Building</h2>
+            
+            <div class="vocab-list">
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">access</div><button class="vocab-speak-btn" onclick="speakWord('access')">🔊</button></div><div class="vocab-chinese">進入</div><div class="vocab-pos">noun (名詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">accessories</div><button class="vocab-speak-btn" onclick="speakWord('accessories')">🔊</button></div><div class="vocab-chinese">配件</div><div class="vocab-pos">noun (名詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">apparatus</div><button class="vocab-speak-btn" onclick="speakWord('apparatus')">🔊</button></div><div class="vocab-chinese">設備</div><div class="vocab-pos">noun (名詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">appropriate</div><button class="vocab-speak-btn" onclick="speakWord('appropriate')">🔊</button></div><div class="vocab-chinese">合適的</div><div class="vocab-pos">adjective (形容詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">breathing apparatus</div><button class="vocab-speak-btn" onclick="speakWord('breathing apparatus')">🔊</button></div><div class="vocab-chinese">呼吸器</div><div class="vocab-pos">noun (名詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">certified</div><button class="vocab-speak-btn" onclick="speakWord('certified')">🔊</button></div><div class="vocab-chinese">經認證的</div><div class="vocab-pos">adjective (形容詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">competent person</div><button class="vocab-speak-btn" onclick="speakWord('competent person')">🔊</button></div><div class="vocab-chinese">合資格人士</div><div class="vocab-pos">noun (名詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">confined space</div><button class="vocab-speak-btn" onclick="speakWord('confined space')">🔊</button></div><div class="vocab-chinese">密閉空間</div><div class="vocab-pos">noun (名詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">egress</div><button class="vocab-speak-btn" onclick="speakWord('egress')">🔊</button></div><div class="vocab-chinese">出口</div><div class="vocab-pos">noun (名詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">eliminate</div><button class="vocab-speak-btn" onclick="speakWord('eliminate')">🔊</button></div><div class="vocab-chinese">消除</div><div class="vocab-pos">verb (動詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">employer</div><button class="vocab-speak-btn" onclick="speakWord('employer')">🔊</button></div><div class="vocab-chinese">雇主</div><div class="vocab-pos">noun (名詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">equipment</div><button class="vocab-speak-btn" onclick="speakWord('equipment')">🔊</button></div><div class="vocab-chinese">設備</div><div class="vocab-pos">noun (名詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">fall hazard</div><button class="vocab-speak-btn" onclick="speakWord('fall hazard')">🔊</button></div><div class="vocab-chinese">墜落危險</div><div class="vocab-pos">noun (名詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">fall prevention equipment</div><button class="vocab-speak-btn" onclick="speakWord('fall prevention equipment')">🔊</button></div><div class="vocab-chinese">防墜設備</div><div class="vocab-pos">noun (名詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">fatality</div><button class="vocab-speak-btn" onclick="speakWord('fatality')">🔊</button></div><div class="vocab-chinese">死亡事故</div><div class="vocab-pos">noun (名詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">hazard</div><button class="vocab-speak-btn" onclick="speakWord('hazard')">🔊</button></div><div class="vocab-chinese">危害</div><div class="vocab-pos">noun (名詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">height</div><button class="vocab-speak-btn" onclick="speakWord('height')">🔊</button></div><div class="vocab-chinese">高處</div><div class="vocab-pos">noun (名詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">inappropriate</div><button class="vocab-speak-btn" onclick="speakWord('inappropriate')">🔊</button></div><div class="vocab-chinese">不合適的</div><div class="vocab-pos">adjective (形容詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">injury</div><button class="vocab-speak-btn" onclick="speakWord('injury')">🔊</button></div><div class="vocab-chinese">傷害</div><div class="vocab-pos">noun (名詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">ladder</div><button class="vocab-speak-btn" onclick="speakWord('ladder')">🔊</button></div><div class="vocab-chinese">梯子</div><div class="vocab-pos">noun (名詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">maintenance</div><button class="vocab-speak-btn" onclick="speakWord('maintenance')">🔊</button></div><div class="vocab-chinese">維護</div><div class="vocab-pos">noun (名詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">minimise</div><button class="vocab-speak-btn" onclick="speakWord('minimise')">🔊</button></div><div class="vocab-chinese">減少到最低</div><div class="vocab-pos">verb (動詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">misuse</div><button class="vocab-speak-btn" onclick="speakWord('misuse')">🔊</button></div><div class="vocab-chinese">誤用</div><div class="vocab-pos">noun (名詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">monitoring equipment</div><button class="vocab-speak-btn" onclick="speakWord('monitoring equipment')">🔊</button></div><div class="vocab-chinese">監測設備</div><div class="vocab-pos">noun (名詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">operate</div><button class="vocab-speak-btn" onclick="speakWord('operate')">🔊</button></div><div class="vocab-chinese">操作</div><div class="vocab-pos">verb (動詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">platform</div><button class="vocab-speak-btn" onclick="speakWord('platform')">🔊</button></div><div class="vocab-chinese">平台</div><div class="vocab-pos">noun (名詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">practicable</div><button class="vocab-speak-btn" onclick="speakWord('practicable')">🔊</button></div><div class="vocab-chinese">可行的</div><div class="vocab-pos">adjective (形容詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">procedure</div><button class="vocab-speak-btn" onclick="speakWord('procedure')">🔊</button></div><div class="vocab-chinese">程序</div><div class="vocab-pos">noun (名詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">proper</div><button class="vocab-speak-btn" onclick="speakWord('proper')">🔊</button></div><div class="vocab-chinese">適當的</div><div class="vocab-pos">adjective (形容詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">responsible person</div><button class="vocab-speak-btn" onclick="speakWord('responsible person')">🔊</button></div><div class="vocab-chinese">負責人</div><div class="vocab-pos">noun (名詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">risk assessment</div><button class="vocab-speak-btn" onclick="speakWord('risk assessment')">🔊</button></div><div class="vocab-chinese">風險評估</div><div class="vocab-pos">noun (名詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">safe instruction</div><button class="vocab-speak-btn" onclick="speakWord('safe instruction')">🔊</button></div><div class="vocab-chinese">安全指示</div><div class="vocab-pos">noun (名詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">safe operating procedure</div><button class="vocab-speak-btn" onclick="speakWord('safe operating procedure')">🔊</button></div><div class="vocab-chinese">安全操作程序</div><div class="vocab-pos">noun (名詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">safeguard</div><button class="vocab-speak-btn" onclick="speakWord('safeguard')">🔊</button></div><div class="vocab-chinese">保護</div><div class="vocab-pos">verb (動詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">skills</div><button class="vocab-speak-btn" onclick="speakWord('skills')">🔊</button></div><div class="vocab-chinese">技能</div><div class="vocab-pos">noun (名詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">specific</div><button class="vocab-speak-btn" onclick="speakWord('specific')">🔊</button></div><div class="vocab-chinese">特定的</div><div class="vocab-pos">adjective (形容詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">suffocation</div><button class="vocab-speak-btn" onclick="speakWord('suffocation')">🔊</button></div><div class="vocab-chinese">窒息</div><div class="vocab-pos">noun (名詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">suitable</div><button class="vocab-speak-btn" onclick="speakWord('suitable')">🔊</button></div><div class="vocab-chinese">合適的</div><div class="vocab-pos">adjective (形容詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">tool</div><button class="vocab-speak-btn" onclick="speakWord('tool')">🔊</button></div><div class="vocab-chinese">工具</div><div class="vocab-pos">noun (名詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">toxic gas</div><button class="vocab-speak-btn" onclick="speakWord('toxic gas')">🔊</button></div><div class="vocab-chinese">有毒氣體</div><div class="vocab-pos">noun (名詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">training</div><button class="vocab-speak-btn" onclick="speakWord('training')">🔊</button></div><div class="vocab-chinese">訓練</div><div class="vocab-pos">noun (名詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">tunnel</div><button class="vocab-speak-btn" onclick="speakWord('tunnel')">🔊</button></div><div class="vocab-chinese">隧道</div><div class="vocab-pos">noun (名詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">worker</div><button class="vocab-speak-btn" onclick="speakWord('worker')">🔊</button></div><div class="vocab-chinese">工人</div><div class="vocab-pos">noun (名詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">workplace</div><button class="vocab-speak-btn" onclick="speakWord('workplace')">🔊</button></div><div class="vocab-chinese">工作場所</div><div class="vocab-pos">noun (名詞)</div></div>
+                
+                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">written</div><button class="vocab-speak-btn" onclick="speakWord('written')">🔊</button></div><div class="vocab-chinese">書面的</div><div class="vocab-pos">adjective (形容詞)</div></div>
+            </div>
+        </div>
+        
+        <!-- Tab 3: Language Focus -->
+        <div id="language" class="tab-content">
+            <h2 style="color: #1e3c72; margin-bottom: 35px; text-align: center; font-size: 32px;">🎯 Language Focus</h2>
+            
+            <div class="language-focus">
+                <h3>1. 'Because of' & 'because'</h3>
+                
+                <h4>Usage</h4>
+                <p>We can use 'because of' or 'because' to state the reason for something.</p>
+                
+                <h4>Form & Example</h4>
+                
+                <div class="example-box">
+                    <p><strong>'Because of' is followed by a noun or noun phrase (NP)</strong></p>
+                    <p style="margin-top: 10px;">E.g. Workers may suffer from illness <strong>because of</strong> heat or cold stress.</p>
+                </div>
+                
+                <div class="example-box">
+                    <p><strong>'Because' is followed by a clause (SVO structure)</strong></p>
+                    <p style="margin-top: 10px;">E.g. Workers usually get hurt <strong>because</strong> they use a machine inappropriately.</p>
+                </div>
+            </div>
+            
+            <div class="language-focus">
+                <h3>2. 'Due to' & 'owing to'</h3>
+                
+                <h4>Usage</h4>
+                <p>We can also use 'due to' and 'owing to' to introduce the reason for something. They are commonly used in formal documents such as guides and COP.</p>
+                
+                <h4>Form & Example</h4>
+                
+                <div class="example-box">
+                    <p><strong>Both of them are followed by a noun or noun phrase (NP)</strong></p>
+                    <p style="margin-top: 10px;">E.g. A number of fall accidents are <strong>due to</strong> the lack of suitable fall protection.</p>
+                    <p style="margin-top: 10px;">E.g. <strong>Owing to</strong> the nature of work, some workers have to carry out work on live conductors.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tab 4: e-Quiz Practice -->
+        <div id="quiz" class="tab-content">
+            <h2 style="color: #1e3c72; margin-bottom: 35px; text-align: center; font-size: 32px;">✏️ e-Quiz Practice</h2>
+            
+            <form id="quizForm" class="quiz-form">
+                <!-- Student Information Section -->
+                <div class="form-section">
+                    <h3>👤 Student Information</h3>
+                    <div class="form-grid">
+                        <div class="form-field">
+                            <label for="studentName">Student Name <span class="required">*</span></label>
+                            <input type="text" id="studentName" name="studentName" placeholder="Enter your full name" required>
+                            <span class="error-message" id="nameError">Please enter your name</span>
+                        </div>
+                        <div class="form-field">
+                            <label for="studentID">Student ID</label>
+                            <input type="text" id="studentID" name="studentID" placeholder="Enter your student ID (optional)">
+                        </div>
+                        <div class="form-field">
+                            <label for="studentClass">Class</label>
+                            <input type="text" id="studentClass" name="studentClass" placeholder="Enter your class (optional)">
+                        </div>
+                        <div class="form-field">
+                            <label for="completionDate">Completion Date</label>
+                            <input type="date" id="completionDate" name="completionDate">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- True/False Questions -->
+                <div class="question-section" data-question="1" data-answer="True">
+                    <div class="question-text">
+                        <strong>Question 1:</strong> According to Excerpt (a), a lot of workplace accidents are due to using hand tools and accessories inappropriately.
+                    </div>
+                    <div class="options-group">
+                        <label class="option-label"><input type="radio" name="q1" value="True" required> True</label>
+                        <label class="option-label"><input type="radio" name="q1" value="False"> False</label>
+                        <label class="option-label"><input type="radio" name="q1" value="Not mentioned"> Not mentioned</label>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+                
+                <div class="question-section" data-question="2" data-answer="True">
+                    <div class="question-text">
+                        <strong>Question 2:</strong> According to Excerpt (a), many workplace accidents are caused either by selecting a wrong tool or lack of maintenance of tools.
+                    </div>
+                    <div class="options-group">
+                        <label class="option-label"><input type="radio" name="q2" value="True" required> True</label>
+                        <label class="option-label"><input type="radio" name="q2" value="False"> False</label>
+                        <label class="option-label"><input type="radio" name="q2" value="Not mentioned"> Not mentioned</label>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+                
+                <div class="question-section" data-question="3" data-answer="Not mentioned">
+                    <div class="question-text">
+                        <strong>Question 3:</strong> Employers or responsible persons should know how to operate the tools safely.
+                    </div>
+                    <div class="options-group">
+                        <label class="option-label"><input type="radio" name="q3" value="True" required> True</label>
+                        <label class="option-label"><input type="radio" name="q3" value="False"> False</label>
+                        <label class="option-label"><input type="radio" name="q3" value="Not mentioned"> Not mentioned</label>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+                
+                <div class="question-section" data-question="4" data-answer="Not mentioned">
+                    <div class="question-text">
+                        <strong>Question 4:</strong> Workers should wear suitable protective equipment before using any tools.
+                    </div>
+                    <div class="options-group">
+                        <label class="option-label"><input type="radio" name="q4" value="True" required> True</label>
+                        <label class="option-label"><input type="radio" name="q4" value="False"> False</label>
+                        <label class="option-label"><input type="radio" name="q4" value="Not mentioned"> Not mentioned</label>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+                
+                <div class="question-section" data-question="5" data-answer="False">
+                    <div class="question-text">
+                        <strong>Question 5:</strong> In confined spaces, workers shall not use breathing apparatuses or gas masks.
+                    </div>
+                    <div class="options-group">
+                        <label class="option-label"><input type="radio" name="q5" value="True" required> True</label>
+                        <label class="option-label"><input type="radio" name="q5" value="False"> False</label>
+                        <label class="option-label"><input type="radio" name="q5" value="Not mentioned"> Not mentioned</label>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+                
+                <div class="question-section" data-question="6" data-answer="False">
+                    <div class="question-text">
+                        <strong>Question 6:</strong> Poisoning is the only problem for work in limited spaces.
+                    </div>
+                    <div class="options-group">
+                        <label class="option-label"><input type="radio" name="q6" value="True" required> True</label>
+                        <label class="option-label"><input type="radio" name="q6" value="False"> False</label>
+                        <label class="option-label"><input type="radio" name="q6" value="Not mentioned"> Not mentioned</label>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+                
+                <div class="question-section" data-question="7" data-answer="True">
+                    <div class="question-text">
+                        <strong>Question 7:</strong> Workers working in tunnels may die because of suffocation.
+                    </div>
+                    <div class="options-group">
+                        <label class="option-label"><input type="radio" name="q7" value="True" required> True</label>
+                        <label class="option-label"><input type="radio" name="q7" value="False"> False</label>
+                        <label class="option-label"><input type="radio" name="q7" value="Not mentioned"> Not mentioned</label>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+                
+                <div class="question-section" data-question="8" data-answer="True">
+                    <div class="question-text">
+                        <strong>Question 8:</strong> To work above the ground, workers should use a working platform instead of a ladder.
+                    </div>
+                    <div class="options-group">
+                        <label class="option-label"><input type="radio" name="q8" value="True" required> True</label>
+                        <label class="option-label"><input type="radio" name="q8" value="False"> False</label>
+                        <label class="option-label"><input type="radio" name="q8" value="Not mentioned"> Not mentioned</label>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+                
+                <!-- Fill in the Blanks - Excerpt (b) -->
+                <div class="fill-blank-section">
+                    <h4>📝 Summary of Excerpt (b) - Fill in the blanks</h4>
+                    
+                    <div class="word-bank">
+                        <strong>Word Bank:</strong>
+                        <div class="word-bank-items">
+                            <span class="word-bank-item">inappropriately</span>
+                            <span class="word-bank-item">minimise</span>
+                            <span class="word-bank-item">safeguard</span>
+                        </div>
+                    </div>
+                    
+                    <div class="fill-blank-text">
+                        <p>Many people use ladders <input type="text" class="blank-input" id="blank-b-a" placeholder="(a)"> for work above the ground, which causes injuries or even deaths. Before working at height, conducting a risk assessment can help remove or <input type="text" class="blank-input" id="blank-b-b" placeholder="(b)"> the potential hazards. Wearing personal protective equipment can also <input type="text" class="blank-input" id="blank-b-c" placeholder="(c)"> workers engaged in work above the ground.</p>
+                    </div>
+                    
+                    <div class="feedback" id="feedback-b"></div>
+                </div>
+                
+                <!-- Fill in the Blanks - Excerpt (c) -->
+                <div class="fill-blank-section">
+                    <h4>📝 Summary of Excerpt (c) - Fill in the blanks</h4>
+                    
+                    <div class="word-bank">
+                        <strong>Word Bank:</strong>
+                        <div class="word-bank-items">
+                            <span class="word-bank-item">competent</span>
+                            <span class="word-bank-item">protect</span>
+                            <span class="word-bank-item">certified</span>
+                        </div>
+                    </div>
+                    
+                    <div class="fill-blank-text">
+                        <p>To work in a confined space, a <input type="text" class="blank-input" id="blank-c-a" placeholder="(a)"> person shall recommend suitable equipment to monitor the air condition inside there. Workers must <input type="text" class="blank-input" id="blank-c-b" placeholder="(b)"> themselves by putting on suitable breathing apparatuses or gas masks. No people except the <input type="text" class="blank-input" id="blank-c-c" placeholder="(c)"> workers should be allowed to enter the confined spaces.</p>
+                    </div>
+                    
+                    <div class="feedback" id="feedback-c"></div>
+                </div>
+                
+                <!-- Form Buttons -->
+                <div class="form-buttons">
+                    <button type="submit" class="form-btn submit-btn">✓ Check Answers</button>
+                    <button type="button" class="form-btn download-btn" onclick="downloadPDF()">💾 Download as PDF</button>
+                    <button type="button" class="form-btn reset-btn" onclick="resetForm()">🔄 Reset Quiz</button>
+                </div>
+                
+                <div class="score-display" id="scoreDisplay" style="display: none;"></div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="tooltip" id="tooltip"></div>
+    
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        createParticles();
+        
+        // Tab functionality
+        function openTab(evt, tabName) {
+            const tabContents = document.getElementsByClassName('tab-content');
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove('active');
+            }
+            
+            const tabBtns = document.getElementsByClassName('tab-btn');
+            for (let i = 0; i < tabBtns.length; i++) {
+                tabBtns[i].classList.remove('active');
+            }
+            
+            document.getElementById(tabName).classList.add('active');
+            evt.currentTarget.classList.add('active');
+            
+            const tabIndex = parseInt(evt.currentTarget.dataset.tab);
+            const indicator = document.getElementById('tabIndicator');
+            const tabWidth = evt.currentTarget.offsetWidth;
+            indicator.style.width = tabWidth + 'px';
+            indicator.style.left = (tabWidth * tabIndex) + 'px';
+        }
+        
+        window.addEventListener('load', function() {
+            const firstTab = document.querySelector('.tab-btn.active');
+            const indicator = document.getElementById('tabIndicator');
+            indicator.style.width = firstTab.offsetWidth + 'px';
+            indicator.style.left = '0px';
+            
+            const today = new Date();
+            document.getElementById('completionDate').valueAsDate = today;
+        });
+        
+        window.addEventListener('resize', function() {
+            const activeTab = document.querySelector('.tab-btn.active');
+            if (activeTab) {
+                const indicator = document.getElementById('tabIndicator');
+                const tabIndex = parseInt(activeTab.dataset.tab);
+                const tabWidth = activeTab.offsetWidth;
+                indicator.style.width = tabWidth + 'px';
+                indicator.style.left = (tabWidth * tabIndex) + 'px';
+            }
+        });
+        
+        // Text-to-speech
+        function speakWord(word) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(word);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.8;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+        
+        function readFullText() {
+            const text = `General Guide on Occupational Safety and Health.
+            Excerpt A, Tool Safety.
+            Many workplace accidents occurred because of selecting a wrong tool, misuse of tools and accessories or lack of proper maintenance of tools. Therefore, workers should select a tool suitable for the specific job and follow the safe instructions to use and maintain it. Employers or responsible persons should make sure that workers have received training in the safe operating procedures and skills for the tools concerned.
+            Excerpt B, Ladder and Height Safety.
+            Ladders should be used for access to and egress from high places only. It is unsafe for workers to work on a ladder as they may fall from it during work. Many serious injuries or even fatalities are due to using ladders inappropriately. A working platform should be used instead for common work above the ground. To ensure safety, a risk assessment should be conducted before working at height by a competent person to eliminate or minimise the fall hazards. Fall prevention equipment should also be provided as far as practicable to safeguard workers working at height.
+            Excerpt C, Confined Space Safety.
+            Workers are exposed to toxic gases when working in confined spaces such as tunnels and wells. Other potential hazards in confined spaces include suffocation, fire, rush of sewage and caving in of sand. To protect themselves, workers shall use suitable types of breathing apparatus or gas mask during work. As the work environment may change continuously, which increases the risk of the work, a competent person shall recommend the use of appropriate air monitoring equipment. Also, only certified workers shall be allowed to enter the confined spaces or work inside there.`;
+            
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.9;
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert('Sorry, your browser does not support text-to-speech.');
+            }
+        }
+        
+        // IMPROVED Tooltip for clickable words - ALWAYS SHOWS ABOVE THE WORD
+        const clickableWords = document.querySelectorAll('.clickable-word');
+        const tooltip = document.getElementById('tooltip');
+        
+        clickableWords.forEach(word => {
+            word.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const wordText = this.dataset.word;
+                const chinese = this.dataset.chinese;
+                const pos = this.dataset.pos;
+                
+                tooltip.innerHTML = `
+                    <strong>${wordText}</strong><br>
+                    ${chinese}<br>
+                    <em>${pos}</em>
+                `;
+                
+                tooltip.classList.add('show');
+                
+                // Force layout calculation
+                tooltip.style.display = 'block';
+                
+                // Get the position of the clicked word
+                const wordRect = this.getBoundingClientRect();
+                const tooltipRect = tooltip.getBoundingClientRect();
+                
+                // ALWAYS position tooltip ABOVE the word
+                let left = wordRect.left + (wordRect.width / 2) - (tooltipRect.width / 2);
+                let top = wordRect.top + window.scrollY - tooltipRect.height - 15; // 15px gap above the word
+                
+                // Adjust if tooltip goes off the right edge of screen
+                if (left + tooltipRect.width > window.innerWidth - 10) {
+                    left = window.innerWidth - tooltipRect.width - 10;
+                }
+                
+                // Adjust if tooltip goes off the left edge of screen
+                if (left < 10) {
+                    left = 10;
+                }
+                
+                // If tooltip would go above viewport, add extra scroll padding
+                if (top < window.scrollY + 10) {
+                    top = window.scrollY + 10;
+                }
+                
+                tooltip.style.left = left + 'px';
+                tooltip.style.top = top + 'px';
+                
+                speakWord(wordText);
+            });
+        });
+        
+        document.addEventListener('click', function(e) {
+            if (!e.target.classList.contains('clickable-word')) {
+                tooltip.classList.remove('show');
+            }
+        });
+        
+        // Form validation and submission
+        const quizForm = document.getElementById('quizForm');
+        
+        quizForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const studentName = document.getElementById('studentName').value.trim();
+            if (studentName === '') {
+                const nameError = document.getElementById('nameError');
+                const nameInput = document.getElementById('studentName');
+                nameError.classList.add('show');
+                nameInput.classList.add('error');
+                nameInput.focus();
+                alert('⚠️ Please enter your name before checking answers.');
+                return;
+            }
+            
+            checkAnswers();
+        });
+        
+        // Answers for fill-in-the-blanks
+        const fillBlankAnswers = {
+            b: {
+                a: 'inappropriately',
+                b: 'minimise',
+                c: 'safeguard'
+            },
+            c: {
+                a: 'competent',
+                b: 'protect',
+                c: 'certified'
+            }
+        };
+        
+        // Check answers function
+        function checkAnswers() {
+            let correctCount = 0;
+            const totalQuestions = 14; // 8 True/False + 6 Fill-in-blanks
+            
+            // Check True/False questions (1-8)
+            for (let i = 1; i <= 8; i++) {
+                const questionSection = document.querySelector(`[data-question="${i}"]`);
+                const selectedOption = document.querySelector(`input[name="q${i}"]:checked`);
+                const feedback = questionSection.querySelector('.feedback');
+                const correctAnswer = questionSection.dataset.answer;
+                
+                questionSection.classList.remove('correct', 'incorrect', 'unanswered');
+                
+                if (selectedOption) {
+                    const userAnswer = selectedOption.value;
+                    
+                    if (userAnswer === correctAnswer) {
+                        questionSection.classList.add('correct');
+                        feedback.className = 'feedback correct';
+                        feedback.textContent = '✓ Correct!';
+                        correctCount++;
+                    } else {
+                        questionSection.classList.add('incorrect');
+                        feedback.className = 'feedback incorrect';
+                        feedback.textContent = `✗ Incorrect. The correct answer is: ${correctAnswer}`;
+                    }
+                } else {
+                    questionSection.classList.add('unanswered');
+                    feedback.className = 'feedback unanswered';
+                    feedback.textContent = `⚠ Not answered. Correct answer: ${correctAnswer}`;
+                }
+            }
+            
+            // Check fill-in-the-blanks for Excerpt (b)
+            const blankBAnswers = {
+                a: document.getElementById('blank-b-a').value.trim().toLowerCase(),
+                b: document.getElementById('blank-b-b').value.trim().toLowerCase(),
+                c: document.getElementById('blank-b-c').value.trim().toLowerCase()
+            };
+            
+            let correctBlanksB = 0;
+            let feedbackBText = '';
+            
+            for (let key in blankBAnswers) {
+                if (blankBAnswers[key] === fillBlankAnswers.b[key].toLowerCase()) {
+                    correctBlanksB++;
+                    feedbackBText += `✓ (${key}) Correct! `;
+                } else {
+                    feedbackBText += `✗ (${key}) Incorrect. Correct answer: ${fillBlankAnswers.b[key]} `;
+                }
+            }
+            
+            const feedbackB = document.getElementById('feedback-b');
+            if (correctBlanksB === 3) {
+                feedbackB.className = 'feedback correct';
+                correctCount += 3;
+            } else {
+                feedbackB.className = 'feedback incorrect';
+                correctCount += correctBlanksB;
+            }
+            feedbackB.innerHTML = feedbackBText;
+            
+            // Check fill-in-the-blanks for Excerpt (c)
+            const blankCAnswers = {
+                a: document.getElementById('blank-c-a').value.trim().toLowerCase(),
+                b: document.getElementById('blank-c-b').value.trim().toLowerCase(),
+                c: document.getElementById('blank-c-c').value.trim().toLowerCase()
+            };
+            
+            let correctBlanksC = 0;
+            let feedbackCText = '';
+            
+            for (let key in blankCAnswers) {
+                if (blankCAnswers[key] === fillBlankAnswers.c[key].toLowerCase()) {
+                    correctBlanksC++;
+                    feedbackCText += `✓ (${key}) Correct! `;
+                } else {
+                    feedbackCText += `✗ (${key}) Incorrect. Correct answer: ${fillBlankAnswers.c[key]} `;
+                }
+            }
+            
+            const feedbackC = document.getElementById('feedback-c');
+            if (correctBlanksC === 3) {
+                feedbackC.className = 'feedback correct';
+                correctCount += 3;
+            } else {
+                feedbackC.className = 'feedback incorrect';
+                correctCount += correctBlanksC;
+            }
+            feedbackC.innerHTML = feedbackCText;
+            
+            // Display score
+            const percentage = Math.round((correctCount / totalQuestions) * 100);
+            let emoji = '';
+            if (percentage >= 90) emoji = '🎉';
+            else if (percentage >= 70) emoji = '👍';
+            else if (percentage >= 50) emoji = '💪';
+            else emoji = '📚';
+            
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            scoreDisplay.innerHTML = `${emoji} Your Score: ${correctCount}/${totalQuestions} (${percentage}%) ${emoji}`;
+            scoreDisplay.style.display = 'block';
+            
+            scoreDisplay.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        
+        // Reset form
+        function resetForm() {
+            if (confirm('Are you sure you want to reset the quiz? All your answers will be cleared.')) {
+                quizForm.reset();
+                
+                const questionSections = document.querySelectorAll('.question-section');
+                questionSections.forEach(section => {
+                    section.classList.remove('correct', 'incorrect', 'unanswered');
+                    const feedback = section.querySelector('.feedback');
+                    if (feedback) {
+                        feedback.className = 'feedback';
+                        feedback.textContent = '';
+                    }
+                });
+                
+                document.getElementById('blank-b-a').value = '';
+                document.getElementById('blank-b-b').value = '';
+                document.getElementById('blank-b-c').value = '';
+                document.getElementById('blank-c-a').value = '';
+                document.getElementById('blank-c-b').value = '';
+                document.getElementById('blank-c-c').value = '';
+                
+                document.getElementById('feedback-b').className = 'feedback';
+                document.getElementById('feedback-b').textContent = '';
+                document.getElementById('feedback-c').className = 'feedback';
+                document.getElementById('feedback-c').textContent = '';
+                
+                document.getElementById('scoreDisplay').style.display = 'none';
+                
+                const today = new Date();
+                document.getElementById('completionDate').valueAsDate = today;
+                
+                document.querySelector('.form-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+        
+        // Download PDF
+        function downloadPDF() {
+            const formData = new FormData(quizForm);
+            const studentName = formData.get('studentName')?.trim() || '';
+            
+            if (studentName === '') {
+                alert('⚠️ Please enter your name before downloading.');
+                document.getElementById('studentName').focus();
+                return;
+            }
+            
+            if (typeof html2pdf === 'undefined') {
+                alert('⚠️ PDF library is loading. Please try again in a moment.');
+                return;
+            }
+            
+            const studentID = formData.get('studentID')?.trim() || 'N/A';
+            const studentClass = formData.get('studentClass')?.trim() || 'N/A';
+            const completionDate = formData.get('completionDate') || new Date().toISOString().slice(0, 10);
+            
+            let correctCount = 0;
+            let totalQuestions = 14;
+            let answeredCount = 0;
+            
+            let questionsHTML = '';
+            
+            // Process True/False questions
+            for (let i = 1; i <= 8; i++) {
+                const questionSection = document.querySelector(`[data-question="${i}"]`);
+                const correctAnswer = questionSection.dataset.answer;
+                const userAnswer = formData.get(`q${i}`)?.trim() || 'Not answered';
+                const questionText = questionSection.querySelector('.question-text').textContent.trim();
+                
+                let status = '';
+                let bgColor = '#fef3c7';
+                let borderColor = '#d97706';
+                
+                if (userAnswer !== 'Not answered') {
+                    answeredCount++;
+                    if (userAnswer === correctAnswer) {
+                        correctCount++;
+                        status = '✓ Correct';
+                        bgColor = '#c6f6d5';
+                        borderColor = '#38a169';
+                    } else {
+                        status = '✗ Incorrect';
+                        bgColor = '#fed7d7';
+                        borderColor = '#e53e3e';
+                    }
+                } else {
+                    status = '⚠ Not answered';
+                }
+                
+                questionsHTML += `
+                    <div style="background: ${bgColor}; padding: 15px; margin-bottom: 15px; border-radius: 8px; border-left: 4px solid ${borderColor}; page-break-inside: avoid;">
+                        <p style="margin: 0 0 8px 0; font-weight: bold; color: #1e3c72;">${questionText}</p>
+                        <p style="margin: 5px 0; font-size: 14px;"><strong>Your answer:</strong> <span style="color: #2563eb;">${userAnswer}</span></p>
+                        <p style="margin: 5px 0; font-size: 14px;"><strong>Correct answer:</strong> <span style="color: #059669;">${correctAnswer}</span></p>
+                        <p style="margin: 5px 0 0 0; font-size: 14px;"><strong>Result:</strong> ${status}</p>
+                    </div>
+                `;
+            }
+            
+            // Process fill-in-the-blanks for Excerpt (b)
+            const blankBAnswers = {
+                a: document.getElementById('blank-b-a').value.trim(),
+                b: document.getElementById('blank-b-b').value.trim(),
+                c: document.getElementById('blank-b-c').value.trim()
+            };
+            
+            let blankBStatus = '';
+            for (let key in blankBAnswers) {
+                const userAns = blankBAnswers[key] || 'Not answered';
+                const correctAns = fillBlankAnswers.b[key];
+                
+                if (userAns !== 'Not answered') {
+                    answeredCount++;
+                    if (userAns.toLowerCase() === correctAns.toLowerCase()) {
+                        correctCount++;
+                        blankBStatus += `<p style="margin: 3px 0; color: #059669;">✓ (${key}) ${userAns} - Correct</p>`;
+                    } else {
+                        blankBStatus += `<p style="margin: 3px 0; color: #e53e3e;">✗ (${key}) ${userAns} - Incorrect (Answer: ${correctAns})</p>`;
+                    }
+                } else {
+                    blankBStatus += `<p style="margin: 3px 0; color: #d97706;">⚠ (${key}) Not answered (Answer: ${correctAns})</p>`;
+                }
+            }
+            
+            questionsHTML += `
+                <div style="background: #fff7ed; padding: 15px; margin-bottom: 15px; border-radius: 8px; border-left: 4px solid #ea580c; page-break-inside: avoid;">
+                    <p style="margin: 0 0 10px 0; font-weight: bold; color: #1e3c72;">Fill in the blanks - Summary of Excerpt (b)</p>
+                    ${blankBStatus}
+                </div>
+            `;
+            
+            // Process fill-in-the-blanks for Excerpt (c)
+            const blankCAnswers = {
+                a: document.getElementById('blank-c-a').value.trim(),
+                b: document.getElementById('blank-c-b').value.trim(),
+                c: document.getElementById('blank-c-c').value.trim()
+            };
+            
+            let blankCStatus = '';
+            for (let key in blankCAnswers) {
+                const userAns = blankCAnswers[key] || 'Not answered';
+                const correctAns = fillBlankAnswers.c[key];
+                
+                if (userAns !== 'Not answered') {
+                    answeredCount++;
+                    if (userAns.toLowerCase() === correctAns.toLowerCase()) {
+                        correctCount++;
+                        blankCStatus += `<p style="margin: 3px 0; color: #059669;">✓ (${key}) ${userAns} - Correct</p>`;
+                    } else {
+                        blankCStatus += `<p style="margin: 3px 0; color: #e53e3e;">✗ (${key}) ${userAns} - Incorrect (Answer: ${correctAns})</p>`;
+                    }
+                } else {
+                    blankCStatus += `<p style="margin: 3px 0; color: #d97706;">⚠ (${key}) Not answered (Answer: ${correctAns})</p>`;
+                }
+            }
+            
+            questionsHTML += `
+                <div style="background: #fff7ed; padding: 15px; margin-bottom: 15px; border-radius: 8px; border-left: 4px solid #ea580c; page-break-inside: avoid;">
+                    <p style="margin: 0 0 10px 0; font-weight: bold; color: #1e3c72;">Fill in the blanks - Summary of Excerpt (c)</p>
+                    ${blankCStatus}
+                </div>
+            `;
+            
+            const percentage = Math.round((correctCount / totalQuestions) * 100);
+            
+            const pdfContent = `
+                <div style="font-family: 'Segoe UI', Arial, sans-serif; padding: 30px; max-width: 800px; margin: 0 auto; background: white;">
+                    
+                    <div style="background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; padding: 25px; margin-bottom: 25px; border-radius: 12px; text-align: center;">
+                        <h1 style="margin: 0 0 8px 0; font-size: 26px;">📚 Text 3: Occupational Safety and Health Guide</h1>
+                        <h2 style="margin: 0; font-size: 20px; font-weight: normal;">e-Quiz Practice Results</h2>
+                    </div>
+                    
+                    <div style="background: #e0f2fe; padding: 18px; margin-bottom: 20px; border-radius: 10px; border: 2px solid #2a5298;">
+                        <h3 style="margin: 0 0 12px 0; color: #1e3c72; font-size: 18px;">👤 Student Information</h3>
+                        <table style="width: 100%; font-size: 14px; border-collapse: collapse;">
+                            <tr><td style="padding: 4px 0;"><strong>Student Name:</strong></td><td>${studentName}</td></tr>
+                            <tr><td style="padding: 4px 0;"><strong>Student ID:</strong></td><td>${studentID}</td></tr>
+                            <tr><td style="padding: 4px 0;"><strong>Class:</strong></td><td>${studentClass}</td></tr>
+                            <tr><td style="padding: 4px 0;"><strong>Completion Date:</strong></td><td>${completionDate}</td></tr>
+                            <tr><td style="padding: 4px 0;"><strong>Submission Time:</strong></td><td>${new Date().toLocaleString('en-US', { 
+                                year: 'numeric', 
+                                month: 'long', 
+                                day: 'numeric', 
+                                hour: '2-digit', 
+                                minute: '2-digit' 
+                            })}</td></tr>
+                        </table>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 20px; margin: 20px 0; border-radius: 12px; text-align: center;">
+                        <h2 style="margin: 0 0 8px 0; font-size: 24px;">📊 Overall Score</h2>
+                        <p style="margin: 0; font-size: 32px; font-weight: bold;">${correctCount} / ${totalQuestions} (${percentage}%)</p>
+                        <p style="margin: 8px 0 0 0; font-size: 16px;">Questions Answered: ${answeredCount} / ${totalQuestions}</p>
+                    </div>
+                    
+                    <div style="margin-top: 30px;">
+                        <h3 style="color: #1e3c72; margin-bottom: 15px; font-size: 20px; border-bottom: 2px solid #2a5298; padding-bottom: 8px;">📝 Detailed Results</h3>
+                        ${questionsHTML}
+                    </div>
+                    
+                    <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e5e7eb; text-align: center; color: #6b7280; font-size: 12px;">
+                        <p style="margin: 0;">Generated on ${new Date().toLocaleString('en-US', { 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric', 
+                            hour: '2-digit', 
+                            minute: '2-digit', 
+                            second: '2-digit'
+                        })}</p>
+                        <p style="margin: 5px 0 0 0;">Text 3 e-Quiz Practice - Occupational Safety and Health Guide</p>
+                    </div>
+                    
+                </div>
+            `;
+            
+            const element = document.createElement('div');
+            element.innerHTML = pdfContent;
+            element.style.position = 'absolute';
+            element.style.left = '-9999px';
+            document.body.appendChild(element);
+            
+            const opt = {
+                margin: [10, 10, 10, 10],
+                filename: `Text3_Quiz_${studentName.replace(/\s+/g, '_')}_${completionDate}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { 
+                    scale: 2, 
+                    useCORS: true, 
+                    logging: false,
+                    letterRendering: true
+                },
+                jsPDF: { 
+                    unit: 'mm', 
+                    format: 'a4', 
+                    orientation: 'portrait',
+                    compress: true
+                },
+                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+            };
+            
+            const downloadBtn = document.querySelector('.download-btn');
+            const originalText = downloadBtn.innerHTML;
+            downloadBtn.innerHTML = '⏳ Generating PDF...';
+            downloadBtn.disabled = true;
+            
+            html2pdf().set(opt).from(element).save().then(() => {
+                document.body.removeChild(element);
+                downloadBtn.innerHTML = originalText;
+                downloadBtn.disabled = false;
+                alert('✅ PDF downloaded successfully!');
+            }).catch((error) => {
+                document.body.removeChild(element);
+                downloadBtn.innerHTML = originalText;
+                downloadBtn.disabled = false;
+                console.error('PDF generation error:', error);
+                alert('❌ PDF generation failed. Please try the "Check Answers" button first, then download again.');
+            });
+        }
+        
+        // Clear error on input
+        document.getElementById('studentName').addEventListener('input', function() {
+            if (this.value.trim() !== '') {
+                document.getElementById('nameError').classList.remove('show');
+                this.classList.remove('error');
+            }
+        });
+    </script>
+</body>
+</html>
