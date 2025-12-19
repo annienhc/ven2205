@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Text 1 - Instructions in Case of Fire</title>
-    <!-- Fixed CDN with integrity check -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" 
-            integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" 
-            crossorigin="anonymous" 
-            referrerpolicy="no-referrer"></script>
+    <!-- Use jsPDF library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -377,38 +374,125 @@
             text-decoration: none;
         }
         
-        .tooltip {
+        /* CENTERED TOOLTIP MODAL STYLE */
+        .tooltip-overlay {
             position: fixed;
-            background: linear-gradient(135deg, #2d3748, #1a202c);
-            color: white;
-            padding: 16px 20px;
-            border-radius: 12px;
-            font-size: 15px;
-            z-index: 1000;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
             display: none;
-            max-width: 320px;
-            border: 2px solid rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
         }
         
-        .tooltip.show {
-            display: block;
+        .tooltip-overlay.show {
+            display: flex;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        .tooltip {
+            background: linear-gradient(135deg, #2d3748, #1a202c);
+            color: white;
+            padding: 35px 45px;
+            border-radius: 20px;
+            font-size: 18px;
+            max-width: 500px;
+            width: 90%;
+            border: 3px solid rgba(255,255,255,0.2);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+            text-align: center;
+            position: relative;
             animation: tooltipBounce 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
         
         @keyframes tooltipBounce {
             0% {
                 opacity: 0;
-                transform: scale(0.8) translateY(-10px);
+                transform: scale(0.7) translateY(30px);
             }
             70% {
-                transform: scale(1.05);
+                transform: scale(1.05) translateY(0);
             }
             100% {
                 opacity: 1;
                 transform: scale(1) translateY(0);
             }
+        }
+        
+        .tooltip .word-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #f472b6;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .tooltip .word-chinese {
+            font-size: 28px;
+            color: #fbbf24;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        
+        .tooltip .word-pos {
+            font-size: 16px;
+            color: #cbd5e0;
+            font-style: italic;
+            margin-bottom: 25px;
+        }
+        
+        .tooltip .close-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            margin-top: 10px;
+        }
+        
+        .tooltip .close-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        .tooltip .close-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .tooltip .speak-btn {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+        }
+        
+        .tooltip .speak-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.05);
         }
         
         .vocab-list {
@@ -1063,6 +1147,19 @@
                 font-size: 14px;
                 padding: 15px 8px;
             }
+            
+            .tooltip {
+                width: 95%;
+                padding: 30px 25px;
+            }
+            
+            .tooltip .word-title {
+                font-size: 28px;
+            }
+            
+            .tooltip .word-chinese {
+                font-size: 22px;
+            }
         }
     </style>
 </head>
@@ -1071,7 +1168,7 @@
     
     <div class="container">
         <div class="header">
-            <a href="./" class="back-btn">← Back to Home</a>
+            <a href="./index.html" class="back-btn">← Back to Home</a>
             <h1>🔥 Text 1: Instructions in Case of Fire</h1>
             <p>Learn essential fire safety procedures for workplace safety</p>
         </div>
@@ -1505,7 +1602,7 @@
             </div>
         </div>
         
-        <!-- Tab 4: e-Quiz Practice (FORM-BASED) -->
+        <!-- Tab 4: e-Quiz Practice -->
         <div id="quiz" class="tab-content">
             <h2 style="color: #1e3c72; margin-bottom: 35px; text-align: center; font-size: 32px;">✏️ e-Quiz Practice</h2>
             
@@ -1690,7 +1787,12 @@
         </div>
     </div>
     
-    <div class="tooltip" id="tooltip"></div>
+    <!-- CENTERED TOOLTIP MODAL -->
+    <div class="tooltip-overlay" id="tooltipOverlay" onclick="closeTooltip()">
+        <div class="tooltip" id="tooltip" onclick="event.stopPropagation()">
+            <!-- Content will be dynamically inserted here -->
+        </div>
+    </div>
     
     <script>
         // Create floating particles
@@ -1736,7 +1838,6 @@
             indicator.style.width = firstTab.offsetWidth + 'px';
             indicator.style.left = '0px';
             
-            // Set default date to today
             const today = new Date();
             document.getElementById('completionDate').valueAsDate = today;
         });
@@ -1760,8 +1861,6 @@
                 utterance.lang = 'en-US';
                 utterance.rate = 0.8;
                 window.speechSynthesis.speak(utterance);
-            } else {
-                console.log('Text-to-speech not supported on this browser');
             }
         }
         
@@ -1784,8 +1883,9 @@
             }
         }
         
-        // Tooltip for clickable words
+        // CENTERED TOOLTIP FUNCTIONALITY
         const clickableWords = document.querySelectorAll('.clickable-word');
+        const tooltipOverlay = document.getElementById('tooltipOverlay');
         const tooltip = document.getElementById('tooltip');
         
         clickableWords.forEach(word => {
@@ -1796,46 +1896,28 @@
                 const pos = this.dataset.pos;
                 
                 tooltip.innerHTML = `
-                    <strong>${wordText}</strong><br>
-                    ${chinese}<br>
-                    <em>${pos}</em>
+                    <div class="word-title">${wordText}</div>
+                    <div class="word-chinese">${chinese}</div>
+                    <div class="word-pos">${pos}</div>
+                    <div style="margin-top: 20px;">
+                        <button class="speak-btn" onclick="speakWord('${wordText}'); event.stopPropagation();">🔊 Listen</button>
+                        <button class="close-btn" onclick="closeTooltip(); event.stopPropagation();">Close</button>
+                    </div>
                 `;
                 
-                tooltip.classList.add('show');
-                
-                // Get the position of the clicked word
-                const wordRect = this.getBoundingClientRect();
-                const tooltipRect = tooltip.getBoundingClientRect();
-                
-                // Position tooltip directly below the word (centered horizontally)
-                let left = wordRect.left + (wordRect.width / 2) - (tooltipRect.width / 2);
-                let top = wordRect.bottom + window.scrollY + 8;
-                
-                // Adjust if tooltip goes off the right edge of screen
-                if (left + tooltipRect.width > window.innerWidth - 10) {
-                    left = window.innerWidth - tooltipRect.width - 10;
-                }
-                
-                // Adjust if tooltip goes off the left edge of screen
-                if (left < 10) {
-                    left = 10;
-                }
-                
-                // If tooltip would go below viewport, show it above the word instead
-                if (top + tooltipRect.height > window.innerHeight + window.scrollY - 10) {
-                    top = wordRect.top + window.scrollY - tooltipRect.height - 8;
-                }
-                
-                tooltip.style.left = left + 'px';
-                tooltip.style.top = top + 'px';
-                
+                tooltipOverlay.classList.add('show');
                 speakWord(wordText);
             });
         });
         
-        document.addEventListener('click', function(e) {
-            if (!e.target.classList.contains('clickable-word')) {
-                tooltip.classList.remove('show');
+        function closeTooltip() {
+            tooltipOverlay.classList.remove('show');
+        }
+        
+        // Close on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeTooltip();
             }
         });
         
@@ -1845,7 +1927,6 @@
         quizForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            // Validate student name
             const studentName = document.getElementById('studentName').value.trim();
             if (studentName === '') {
                 const nameError = document.getElementById('nameError');
@@ -1866,14 +1947,12 @@
             let correctCount = 0;
             const totalQuestions = 10;
             
-            // Process each question
             for (let i = 1; i <= totalQuestions; i++) {
                 const questionSection = document.querySelector(`[data-question="${i}"]`);
                 const correctAnswer = questionSection.dataset.answer.toLowerCase();
                 const userAnswer = formData.get(`q${i}`)?.trim().toLowerCase() || '';
                 const feedback = questionSection.querySelector('.feedback');
                 
-                // Remove previous classes
                 questionSection.classList.remove('correct', 'incorrect', 'unanswered');
                 
                 if (userAnswer === '') {
@@ -1892,7 +1971,6 @@
                 }
             }
             
-            // Display score
             const scoreDisplay = document.getElementById('scoreDisplay');
             const percentage = Math.round((correctCount / totalQuestions) * 100);
             let emoji = '';
@@ -1912,7 +1990,6 @@
             if (confirm('Are you sure you want to reset the quiz? All your answers will be cleared.')) {
                 quizForm.reset();
                 
-                // Remove all status classes and feedback
                 const questionSections = document.querySelectorAll('.question-section');
                 questionSections.forEach(section => {
                     section.classList.remove('correct', 'incorrect', 'unanswered');
@@ -1921,19 +1998,16 @@
                     feedback.textContent = '';
                 });
                 
-                // Hide score display
                 document.getElementById('scoreDisplay').style.display = 'none';
                 
-                // Reset date to today
                 const today = new Date();
                 document.getElementById('completionDate').valueAsDate = today;
                 
-                // Scroll to top
                 document.querySelector('.form-section').scrollIntoView({ behavior: 'smooth' });
             }
         }
         
-        // Download PDF - FIXED VERSION
+        // Download PDF - MODIFIED TO HIDE CORRECT ANSWERS FOR INCORRECT RESPONSES
         function downloadPDF() {
             const formData = new FormData(quizForm);
             const studentName = formData.get('studentName')?.trim() || '';
@@ -1944,8 +2018,7 @@
                 return;
             }
             
-            // Check if html2pdf library is loaded
-            if (typeof html2pdf === 'undefined') {
+            if (typeof jspdf === 'undefined') {
                 alert('⚠️ PDF library is loading. Please try again in a moment.');
                 return;
             }
@@ -1954,13 +2027,75 @@
             const studentClass = formData.get('studentClass')?.trim() || 'N/A';
             const completionDate = formData.get('completionDate') || new Date().toISOString().slice(0, 10);
             
-            // Calculate score
             let correctCount = 0;
             let totalQuestions = 10;
             let answeredCount = 0;
             
-            let questionsHTML = '';
+            const { jsPDF } = jspdf;
+            const doc = new jsPDF();
             
+            let y = 20;
+            
+            // Title
+            doc.setFontSize(18);
+            doc.setTextColor(30, 60, 114);
+            doc.text('Text 1: Instructions in Case of Fire', 105, y, { align: 'center' });
+            y += 10;
+            
+            doc.setFontSize(14);
+            doc.text('e-Quiz Practice Results', 105, y, { align: 'center' });
+            y += 15;
+            
+            // Student Info
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text('Student Information:', 20, y);
+            y += 8;
+            
+            doc.setFontSize(10);
+            doc.text(`Name: ${studentName}`, 20, y);
+            y += 6;
+            doc.text(`Student ID: ${studentID}`, 20, y);
+            y += 6;
+            doc.text(`Class: ${studentClass}`, 20, y);
+            y += 6;
+            doc.text(`Completion Date: ${completionDate}`, 20, y);
+            y += 6;
+            doc.text(`Submission Time: ${new Date().toLocaleString()}`, 20, y);
+            y += 12;
+            
+            // Calculate scores first
+            for (let i = 1; i <= totalQuestions; i++) {
+                const questionSection = document.querySelector(`[data-question="${i}"]`);
+                const correctAnswer = questionSection.dataset.answer.toLowerCase();
+                const userAnswer = formData.get(`q${i}`)?.trim().toLowerCase() || '';
+                
+                if (userAnswer !== '') {
+                    answeredCount++;
+                    if (userAnswer === correctAnswer) {
+                        correctCount++;
+                    }
+                }
+            }
+            
+            const percentage = Math.round((correctCount / totalQuestions) * 100);
+            
+            // Score
+            doc.setFontSize(14);
+            doc.setTextColor(102, 126, 234);
+            doc.text(`Overall Score: ${correctCount}/${totalQuestions} (${percentage}%)`, 105, y, { align: 'center' });
+            y += 8;
+            doc.setFontSize(10);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`Questions Answered: ${answeredCount}/${totalQuestions}`, 105, y, { align: 'center' });
+            y += 15;
+            
+            // Questions
+            doc.setFontSize(12);
+            doc.text('Detailed Results:', 20, y);
+            y += 10;
+            
+            // MODIFIED: Only show correct answer if user got it right
             for (let i = 1; i <= totalQuestions; i++) {
                 const questionSection = document.querySelector(`[data-question="${i}"]`);
                 const correctAnswer = questionSection.dataset.answer;
@@ -1969,149 +2104,73 @@
                 const referenceText = questionSection.querySelector('.reference-text')?.textContent.trim() || '';
                 
                 let status = '';
-                let bgColor = '#fef3c7';
-                let borderColor = '#d97706';
-                
+                let isCorrect = false;
                 if (userAnswer !== 'Not answered') {
-                    answeredCount++;
-                    if (userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
-                        correctCount++;
-                        status = '✓ Correct';
-                        bgColor = '#c6f6d5';
-                        borderColor = '#38a169';
-                    } else {
-                        status = '✗ Incorrect';
-                        bgColor = '#fed7d7';
-                        borderColor = '#e53e3e';
-                    }
+                    isCorrect = userAnswer.toLowerCase() === correctAnswer.toLowerCase();
+                    status = isCorrect ? 'Correct' : 'Incorrect';
                 } else {
-                    status = '⚠ Not answered';
+                    status = 'Not answered';
                 }
                 
-                questionsHTML += `
-                    <div style="background: ${bgColor}; padding: 15px; margin-bottom: 15px; border-radius: 8px; border-left: 4px solid ${borderColor}; page-break-inside: avoid;">
-                        <p style="margin: 0 0 8px 0; font-weight: bold; color: #1e3c72;">${questionText}</p>
-                        ${referenceText ? `<p style="font-size: 13px; color: #555; font-style: italic; margin: 5px 0; background: #f9f9f9; padding: 8px; border-radius: 4px;">${referenceText}</p>` : ''}
-                        <p style="margin: 5px 0; font-size: 14px;"><strong>Your answer:</strong> <span style="color: #2563eb;">${userAnswer}</span></p>
-                        <p style="margin: 5px 0; font-size: 14px;"><strong>Correct answer:</strong> <span style="color: #059669;">${correctAnswer}</span></p>
-                        <p style="margin: 5px 0 0 0; font-size: 14px;"><strong>Result:</strong> ${status}</p>
-                    </div>
-                `;
+                // Check if we need a new page
+                if (y > 250) {
+                    doc.addPage();
+                    y = 20;
+                }
+                
+                doc.setFontSize(10);
+                doc.setFont(undefined, 'bold');
+                
+                const questionLines = doc.splitTextToSize(questionText, 170);
+                doc.text(questionLines, 20, y);
+                y += questionLines.length * 6;
+                
+                doc.setFont(undefined, 'normal');
+                
+                if (referenceText) {
+                    const refLines = doc.splitTextToSize(referenceText, 160);
+                    doc.setTextColor(100, 100, 100);
+                    doc.text(refLines, 25, y);
+                    y += refLines.length * 6;
+                    doc.setTextColor(0, 0, 0);
+                }
+                
+                doc.text(`Your answer: ${userAnswer}`, 20, y);
+                y += 6;
+                
+                // ONLY SHOW CORRECT ANSWER IF USER GOT IT RIGHT
+                if (isCorrect) {
+                    doc.text(`Correct answer: ${correctAnswer}`, 20, y);
+                    y += 6;
+                }
+                
+                if (status === 'Correct') {
+                    doc.setTextColor(0, 128, 0);
+                    doc.text(`Result: ${status}`, 20, y);
+                } else if (status === 'Incorrect') {
+                    doc.setTextColor(255, 0, 0);
+                    doc.text(`Result: ${status} - Try again!`, 20, y);
+                } else {
+                    doc.setTextColor(200, 100, 0);
+                    doc.text(`Result: ${status}`, 20, y);
+                }
+                doc.setTextColor(0, 0, 0);
+                y += 10;
             }
             
-            const percentage = Math.round((correctCount / totalQuestions) * 100);
+            // Footer
+            if (y > 260) {
+                doc.addPage();
+                y = 20;
+            }
+            y = 280;
+            doc.setFontSize(8);
+            doc.setTextColor(150, 150, 150);
+            doc.text(`Generated on ${new Date().toLocaleString()}`, 105, y, { align: 'center' });
             
-            // Create PDF content
-            const pdfContent = `
-                <div style="font-family: 'Segoe UI', Arial, sans-serif; padding: 30px; max-width: 800px; margin: 0 auto; background: white;">
-                    
-                    <div style="background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; padding: 25px; margin-bottom: 25px; border-radius: 12px; text-align: center;">
-                        <h1 style="margin: 0 0 8px 0; font-size: 26px;">🔥 Text 1: Instructions in Case of Fire</h1>
-                        <h2 style="margin: 0; font-size: 20px; font-weight: normal;">e-Quiz Practice Results</h2>
-                    </div>
-                    
-                    <div style="background: #e0f2fe; padding: 18px; margin-bottom: 20px; border-radius: 10px; border: 2px solid #2a5298;">
-                        <h3 style="margin: 0 0 12px 0; color: #1e3c72; font-size: 18px;">👤 Student Information</h3>
-                        <table style="width: 100%; font-size: 14px; border-collapse: collapse;">
-                            <tr><td style="padding: 4px 0;"><strong>Student Name:</strong></td><td>${studentName}</td></tr>
-                            <tr><td style="padding: 4px 0;"><strong>Student ID:</strong></td><td>${studentID}</td></tr>
-                            <tr><td style="padding: 4px 0;"><strong>Class:</strong></td><td>${studentClass}</td></tr>
-                            <tr><td style="padding: 4px 0;"><strong>Completion Date:</strong></td><td>${completionDate}</td></tr>
-                            <tr><td style="padding: 4px 0;"><strong>Submission Time:</strong></td><td>${new Date().toLocaleString('en-US', { 
-                                year: 'numeric', 
-                                month: 'long', 
-                                day: 'numeric', 
-                                hour: '2-digit', 
-                                minute: '2-digit' 
-                            })}</td></tr>
-                        </table>
-                    </div>
-                    
-                    <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 20px; margin: 20px 0; border-radius: 12px; text-align: center;">
-                        <h2 style="margin: 0 0 8px 0; font-size: 24px;">📊 Overall Score</h2>
-                        <p style="margin: 0; font-size: 32px; font-weight: bold;">${correctCount} / ${totalQuestions} (${percentage}%)</p>
-                        <p style="margin: 8px 0 0 0; font-size: 16px;">Questions Answered: ${answeredCount} / ${totalQuestions}</p>
-                    </div>
-                    
-                    <div style="margin-top: 30px;">
-                        <h3 style="color: #1e3c72; margin-bottom: 15px; font-size: 20px; border-bottom: 2px solid #2a5298; padding-bottom: 8px;">📝 Detailed Results</h3>
-                        ${questionsHTML}
-                    </div>
-                    
-                    <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e5e7eb; text-align: center; color: #6b7280; font-size: 12px;">
-                        <p style="margin: 0;">Generated on ${new Date().toLocaleString('en-US', { 
-                            year: 'numeric', 
-                            month: 'long', 
-                            day: 'numeric', 
-                            hour: '2-digit', 
-                            minute: '2-digit', 
-                            second: '2-digit'
-                        })}</p>
-                        <p style="margin: 5px 0 0 0;">Text 1 e-Quiz Practice - Fire Safety Instructions</p>
-                    </div>
-                    
-                </div>
-            `;
-            
-            // Create temporary container - KEEP IT VISIBLE
-            const element = document.createElement('div');
-            element.innerHTML = pdfContent;
-            element.style.position = 'fixed';
-            element.style.top = '0';
-            element.style.left = '0';
-            element.style.width = '100%';
-            element.style.zIndex = '99999';
-            element.style.background = 'white';
-            element.style.overflow = 'auto';
-            element.style.maxHeight = '100vh';
-            document.body.appendChild(element);
-            
-            // Show loading message
-            const downloadBtn = document.querySelector('.download-btn');
-            const originalText = downloadBtn.innerHTML;
-            downloadBtn.innerHTML = '⏳ Generating PDF...';
-            downloadBtn.disabled = true;
-            
-            // Scroll to top to ensure content is visible
-            window.scrollTo(0, 0);
-            
-            // PDF options
-            const opt = {
-                margin: [10, 10, 10, 10],
-                filename: `Text1_Quiz_${studentName.replace(/\s+/g, '_')}_${completionDate}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { 
-                    scale: 2, 
-                    useCORS: true, 
-                    logging: false,
-                    letterRendering: true,
-                    windowWidth: 1200
-                },
-                jsPDF: { 
-                    unit: 'mm', 
-                    format: 'a4', 
-                    orientation: 'portrait',
-                    compress: true
-                },
-                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-            };
-            
-            // Generate PDF with a small delay to ensure rendering
-            setTimeout(() => {
-                html2pdf().set(opt).from(element).save().then(() => {
-                    // Clean up
-                    document.body.removeChild(element);
-                    downloadBtn.innerHTML = originalText;
-                    downloadBtn.disabled = false;
-                    alert('✅ PDF downloaded successfully!');
-                }).catch((error) => {
-                    document.body.removeChild(element);
-                    downloadBtn.innerHTML = originalText;
-                    downloadBtn.disabled = false;
-                    console.error('PDF generation error:', error);
-                    alert('❌ PDF generation failed. Please try again.');
-                });
-            }, 100);
+            // Save
+            doc.save(`Text1_Quiz_${studentName.replace(/\s+/g, '_')}_${completionDate}.pdf`);
+            alert('✅ PDF downloaded successfully! Review your incorrect answers and try again to see the correct answers.');
         }
         
         // Clear error on input
