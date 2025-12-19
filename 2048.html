@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Ladder - Learning Hyponyms and Hypernyms</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
+            padding: 20px;
+            min-height: 100vh;
+            transition: background 0.5s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        body.theme-tech {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        body.theme-geo {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        body.theme-business {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        body.theme-language {
+            background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
+        }
+
+        body.theme-fashion {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+        }
+
+        body.theme-music {
+            background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+        }
+        
+        body.theme-food {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 3em;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .subtitle {
+            color: #ffffff;
+            font-size: 1.1em;
+            margin-bottom: 25px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .main-container {
+            display: flex;
+            flex: 1;
+            gap: 20px;
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        .sidebar {
+            width: 250px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .tab {
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: #ffffff;
+            position: relative;
+        }
+
+        .tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            border-radius: 12px;
+        }
+
+        .tab:hover::before {
+            opacity: 1;
+        }
+
+        .tab.tech {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .tab.geo {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .tab.business {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .tab.language {
+            background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
+        }
+
+        .tab.fashion {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+        }
+
+        .tab.music {
+            background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+        }
+        
+        .tab.food {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+        }
+
+        .tab:hover {
+            transform: translateX(5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+
+        .tab.active {
+            transform: translateX(10px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+        }
+
+        .tab-icon {
+            font-size: 1.5em;
+        }
+
+        .game-container {
+            flex: 1;
+            max-width: 700px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .hierarchy-display {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            width: 100%;
+            text-align: center;
+        }
+
+        .hierarchy-title {
+            font-size: 0.9em;
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #776e65;
+        }
+
+        .hierarchy-path {
+            font-size: 0.95em;
+            line-height: 2;
+            color: #8f7a66;
+        }
+
+        .hierarchy-path .unlocked {
+            color: #f67c5f;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .hierarchy-explanation {
+            font-size: 0.85em;
+            color: #776e65;
+            margin-top: 12px;
+            border-top: 1px dashed #d7ccc8;
+            padding-top: 12px;
+            line-height: 1.4;
+        }
+
+        .grid-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            width: 100%;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .cell {
+            aspect-ratio: 1;
+            background: rgba(187, 173, 160, 0.3);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #776e65;
+            position: relative;
+            transition: all 0.1s ease;
+        }
+
+        .tile {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+            word-wrap: break-word;
+            line-height: 1.3;
+        }
+
+        .tile.new {
+            animation: appear 0.2s ease;
+        }
+
+        .tile.merged {
+            animation: pop 0.2s ease;
+        }
+
+        @keyframes appear {
+            0% { opacity: 0; transform: scale(0); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+
+        .tile-1 { background: #eee4da; color: #776e65; font-size: 1em; }
+        .tile-2 { background: #ede0c8; color: #776e65; font-size: 0.95em; }
+        .tile-3 { background: #f2b179; color: #f9f6f2; font-size: 0.9em; }
+        .tile-4 { background: #f59563; color: #f9f6f2; font-size: 0.85em; }
+        .tile-5 { background: #f67c5f; color: #f9f6f2; font-size: 0.8em; }
+        .tile-6 { background: #f65e3b; color: #f9f6f2; font-size: 0.75em; }
+        .tile-7 { background: #edcf72; color: #f9f6f2; font-size: 0.7em; }
+        .tile-8 { background: #edcc61; color: #f9f6f2; font-size: 0.65em; }
+        .tile-9 { background: #edc850; color: #f9f6f2; font-size: 0.6em; }
+
+        .controls {
+            text-align: center;
+            color: #ffffff;
+            margin-bottom: 20px;
+            font-size: 1em;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            width: 100%;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            width: 100%;
+        }
+
+        button.action-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.95);
+            color: #776e65;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        button.action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+
+        .info-bubble {
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            width: 100%;
+            text-align: center;
+        }
+
+        .info-bubble h3 {
+            color: #776e65;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .info-bubble p {
+            color: #776e65;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        .theme-explanation {
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            width: 100%;
+            text-align: center;
+            display: none;
+        }
+
+        .theme-explanation.active {
+            display: block;
+        }
+
+        .theme-explanation h3 {
+            color: #776e65;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .theme-explanation p {
+            color: #776e65;
+            font-size: 1em;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .game-over-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(119, 110, 101, 0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .game-over-overlay.show {
+            display: flex;
+        }
+
+        .game-over-content {
+            text-align: center;
+            padding: 50px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            max-width: 90%;
+        }
+
+        .game-over-content h2 {
+            font-size: 3.5em;
+            color: #776e65;
+            margin-bottom: 25px;
+        }
+
+        .game-over-content p {
+            color: #776e65;
+            font-size: 1.3em;
+            margin-bottom: 35px;
+        }
+
+        .game-over-content .final-word {
+            color: #f67c5f;
+            font-weight: bold;
+            font-size: 1.5em;
+        }
+
+        @media (max-width: 900px) {
+            .main-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .sidebar {
+                width: 100%;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                margin-bottom: 20px;
+            }
+
+            .tab {
+                width: calc(33.33% - 10px);
+                padding: 10px;
+                justify-content: center;
+                text-align: center;
+                flex-direction: column;
+            }
+
+            .tab:hover, .tab.active {
+                transform: translateY(-3px);
+            }
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2.5em;
+            }
+
+            .subtitle {
+                font-size: 0.9em;
+            }
+
+            .tab {
+                width: calc(50% - 10px);
+                font-size: 0.9em;
+            }
+
+            .grid {
+                gap: 10px;
+            }
+
+            .tile {
+                font-size: 0.85em;
+                padding: 6px;
+            }
+
+            .hierarchy-path {
+                font-size: 0.8em;
+            }
+
+            .hierarchy-explanation {
+                font-size: 0.75em;
+            }
+
+            .game-over-content h2 {
+                font-size: 2.5em;
+            }
+        }
+    </style>
+</head>
+<body class="theme-tech">
+    <div class="header">
+        <h1>Word Ladder</h1>
+        <p class="subtitle">Learn hyponyms (specific terms) and hypernyms (general terms) through play!</p>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <button class="tab tech active" onclick="switchMode('tech')">
+                <span class="tab-icon">📱</span>
+                <span>Technology</span>
+            </button>
+            <button class="tab geo" onclick="switchMode('geo')">
+                <span class="tab-icon">🗺️</span>
+                <span>Geography</span>
+            </button>
+            <button class="tab business" onclick="switchMode('business')">
+                <span class="tab-icon">💼</span>
+                <span>Business</span>
+            </button>
+            <button class="tab language" onclick="switchMode('language')">
+                <span class="tab-icon">🔤</span>
+                <span>Language</span>
+            </button>
+            <button class="tab fashion" onclick="switchMode('fashion')">
+                <span class="tab-icon">👗</span>
+                <span>Fashion</span>
+            </button>
+            <button class="tab music" onclick="switchMode('music')">
+                <span class="tab-icon">🎵</span>
+                <span>Music</span>
+            </button>
+            <button class="tab food" onclick="switchMode('food')">
+                <span class="tab-icon">🍽️</span>
+                <span>Food</span>
+            </button>
+        </div>
+
+        <div class="game-container">
+            <div class="hierarchy-display">
+                <div class="hierarchy-title">Your Progress Path</div>
+                <div class="hierarchy-path" id="hierarchyPath"></div>
+                <div class="hierarchy-explanation" id="hierarchyExplanation"></div>
+            </div>
+
+            <div class="grid-container">
+                <div class="grid" id="grid"></div>
+            </div>
+
+            <div class="controls">
+                <strong>Use arrow keys ⬆️ ⬇️ ⬅️ ➡️</strong> to move tiles. Merge same words to discover broader categories!
+            </div>
+
+            <div class="button-group">
+                <button class="action-btn" onclick="resetGame()">🔄 New Game</button>
+            </div>
+
+            <div class="info-bubble">
+                <h3>What are Hyponyms and Hypernyms?</h3>
+                <p><strong>Hyponym</strong>: A more specific word (e.g., "smartphone" is a hyponym of "gadget").<br>
+                <strong>Hypernym</strong>: A more general word (e.g., "technology" is a hypernym of "electronics").<br>
+                In this game, merging identical terms creates their hypernym (broader category)!</p>
+            </div>
+
+            <!-- Theme Explanations -->
+            <div id="tech-explanation" class="theme-explanation active">
+                <h3>Technology Theme</h3>
+                <p>This theme explores the progression from specific devices to broader concepts in technology. Start with smartphones and discover how individual gadgets relate to broader concepts like innovation and human progress.</p>
+                <p>Understanding this hierarchy helps grasp how specific technologies contribute to larger technological developments and ultimately to human advancement.</p>
+            </div>
+
+            <div id="geo-explanation" class="theme-explanation">
+                <h3>Geography Theme</h3>
+                <p>The geography theme demonstrates the spatial organization from local streets to the global world. By merging geographic terms, you'll see how smaller units combine to form larger geographical entities.</p>
+                <p>This perspective helps understand how geographers organize space from the local to the global scale.</p>
+            </div>
+
+            <div id="business-explanation" class="theme-explanation">
+                <h3>Business Theme</h3>
+                <p>The business theme reveals organizational structure from individual employees to the broader economy. Learn how business entities are nested within progressively larger frameworks.</p>
+                <p>This hierarchy illustrates how business structures scale from the individual to collective economic systems.</p>
+            </div>
+
+            <div id="language-explanation" class="theme-explanation">
+                <h3>Language Theme</h3>
+                <p>The language theme demonstrates how communication builds from individual letters to comprehensive systems of language. By combining linguistic elements, you'll discover how language components form increasingly complex structures.</p>
+                <p>This progression illustrates the hierarchical nature of language from its smallest components to its role in communication.</p>
+            </div>
+
+            <div id="fashion-explanation" class="theme-explanation">
+                <h3>Fashion Theme</h3>
+                <p>The fashion theme explores how individual clothing items relate to broader fashion concepts. Starting with specific garments, you'll discover how they combine to create outfits and eventually influence fashion trends.</p>
+                <p>This sequence helps understand how individual style choices connect to the broader world of fashion and design.</p>
+            </div>
+
+            <div id="music-explanation" class="theme-explanation">
+                <h3>Music Theme</h3>
+                <p>The music theme reveals how individual notes build up to create the rich world of musical expression. From basic notes to complex styles, explore how musical elements combine to form increasingly comprehensive musical concepts.</p>
+                <p>This progression helps understand the structural organization of music from its fundamental components to diverse styles.</p>
+            </div>
+
+            <div id="food-explanation" class="theme-explanation">
+                <h3>Food Theme</h3>
+                <p>The food theme demonstrates how individual ingredients combine to create culinary experiences. From basic components to cultural cuisines, discover the hierarchical nature of food preparation and cultural food traditions.</p>
+                <p>This sequence illustrates how food preparation scales from individual ingredients to diverse culinary expressions.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="game-over-overlay" id="gameOverOverlay">
+        <div class="game-over-content">
+            <h2 id="gameOverTitle">Game Over!</h2>
+            <p id="gameOverMessage"></p>
+            <button class="action-btn" onclick="resetGame()" style="width: 250px;">🔄 Try Again</button>
+        </div>
+    </div>
+
+    <script>
+        const hierarchies = {
+            tech: [
+                'smartphone', // A specific electronic device
+                'gadget', // Smartphones are a type of gadget
+                'electronics', // Gadgets are electronic devices
+                'device', // Electronics are technological devices
+                'technology', // Devices are forms of technology
+                'innovation', // Technology represents innovation
+                'invention', // Innovations come from invention
+                'human progress' // Inventions drive human progress
+            ],
+            geo: [
+                'street', // A specific path for travel
+                'neighborhood', // Streets combine to form a neighborhood
+                'city', // Neighborhoods make up a city
+                'region', // Cities are located in a region
+                'country', // Regions form countries
+                'continent', // Countries are found on continents
+                'hemisphere', // Continents are in hemispheres
+                'world' // Hemispheres make up the world
+            ],
+            business: [
+                'employee', // An individual worker
+                'team', // Employees work together in teams
+                'department', // Teams are organized into departments
+                'division', // Departments form divisions
+                'company', // Divisions operate within a company
+                'corporation', // Companies can be part of corporations
+                'industry', // Corporations operate in industries
+                'economy' // Industries collectively form the economy
+            ],
+            language: [
+                'letter', // Basic written symbols (like A, B, C)
+                'word', // Letters combine to form words
+                'phrase', // Words group together to create phrases
+                'clause', // Phrases expand to become clauses
+                'sentence', // Clauses connect to form sentences
+                'paragraph', // Related sentences build paragraphs
+                'text', // Multiple paragraphs create a complete text
+                'language', // Texts are written according to the rules of a language
+                'communication' // Language is a method of communication
+            ],
+            fashion: [
+                'shirt', // A specific garment worn on the upper body
+                'clothing', // A shirt is one type of clothing
+                'apparel', // Clothing is the main component of apparel
+                'outfit', // Apparel items are combined to create an outfit
+                'collection', // Multiple outfits form a designer's collection
+                'fashion trend' // Popular collections create fashion trends
+            ],
+            music: [
+                'note', // Individual sounds with specific pitch and duration
+                'melody', // Notes arranged in sequence create a melody
+                'song', // Melodies combined with structure form a song
+                'album', // Multiple songs packaged together make an album
+                'genre', // Albums with similar characteristics belong to a genre
+                'style', // Related genres create broader styles
+                'music' // All styles are expressions of music
+            ],
+            food: [
+                'ingredient', // Individual food components
+                'recipe', // Ingredients combined according to instructions form a recipe
+                'dish', // Following a recipe produces a dish
+                'meal', // Multiple dishes served together create a meal
+                'cuisine', // Distinctive meal patterns form a cuisine
+                'food' // All cuisines are expressions of food
+            ]
+        };
+
+        const explanations = {
+            tech: [
+                null,
+                'Smartphones are a type of gadget',
+                'Gadgets are electronic devices',
+                'Electronics are technological devices',
+                'Devices are forms of technology',
+                'Technology represents innovation',
+                'Innovations come from invention',
+                'Inventions drive human progress'
+            ],
+            geo: [
+                null,
+                'Streets combine to form a neighborhood',
+                'Neighborhoods make up a city',
+                'Cities are located in a region',
+                'Regions form countries',
+                'Countries are found on continents',
+                'Continents are in hemispheres',
+                'Hemispheres make up the world'
+            ],
+            business: [
+                null,
+                'Employees work together in teams',
+                'Teams are organized into departments',
+                'Departments form divisions',
+                'Divisions operate within a company',
+                'Companies can be part of corporations',
+                'Corporations operate in industries',
+                'Industries collectively form the economy'
+            ],
+            language: [
+                null,
+                'Letters combine to form words',
+                'Words group together to create phrases',
+                'Phrases expand to become clauses',
+                'Clauses connect to form sentences',
+                'Related sentences build paragraphs',
+                'Multiple paragraphs create a complete text',
+                'Texts are written according to the rules of a language',
+                'Language is a method of communication'
+            ],
+            fashion: [
+                null,
+                'A shirt is one type of clothing',
+                'Clothing is the main component of apparel',
+                'Apparel items are combined to create an outfit',
+                'Multiple outfits form a designer\'s collection',
+                'Popular collections create fashion trends'
+            ],
+            music: [
+                null,
+                'Notes arranged in sequence create a melody',
+                'Melodies combined with structure form a song',
+                'Multiple songs packaged together make an album',
+                'Albums with similar characteristics belong to a genre',
+                'Related genres create broader styles',
+                'All styles are expressions of music'
+            ],
+            food: [
+                null,
+                'Ingredients combined according to instructions form a recipe',
+                'Following a recipe produces a dish',
+                'Multiple dishes served together create a meal',
+                'Distinctive meal patterns form a cuisine',
+                'All cuisines are expressions of food'
+            ]
+        };
+
+        let grid = [];
+        let score = 0;
+        let currentMode = 'tech';
+        let currentHierarchy = [];
+        let currentExplanations = [];
+
+        function switchMode(mode) {
+            currentMode = mode;
+            currentHierarchy = hierarchies[mode];
+            currentExplanations = explanations[mode];
+            
+            // Update body theme
+            document.body.className = `theme-${mode}`;
+            
+            // Update tab active state
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            // Update theme explanation
+            document.querySelectorAll('.theme-explanation').forEach(explanation => explanation.classList.remove('active'));
+            document.getElementById(`${mode}-explanation`).classList.add('active');
+            
+            // Reset game with new mode
+            resetGame();
+        }
+
+        function initGame() {
+            grid = Array(4).fill(null).map(() => Array(4).fill(0));
+            score = 0;
+            currentHierarchy = hierarchies[currentMode];
+            currentExplanations = explanations[currentMode];
+            
+            addRandomTile();
+            addRandomTile();
+            
+            updateDisplay();
+        }
+
+        function addRandomTile() {
+            const emptyCells = [];
+            for (let i = 0; i < 4; i++) {
+                for (let j = 0; j < 4; j++) {
+                    if (grid[i][j] === 0) {
+                        emptyCells.push({row: i, col: j});
+                    }
+                }
+            }
+            
+            if (emptyCells.length > 0) {
+                const {row, col} = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+                grid[row][col] = Math.random() < 0.9 ? 1 : 2;
+            }
+        }
+
+        function updateDisplay() {
+            const gridElement = document.getElementById('grid');
+            gridElement.innerHTML = '';
+            
+            for (let i = 0; i < 4; i++) {
+                for (let j = 0; j < 4; j++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    
+                    const value = grid[i][j];
+                    if (value > 0) {
+                        const tile = document.createElement('div');
+                        tile.className = `tile tile-${value}`;
+                        tile.textContent = currentHierarchy[value - 1];
+                        cell.appendChild(tile);
+                    }
+                    
+                    gridElement.appendChild(cell);
+                }
+            }
+            
+            updateHierarchyDisplay();
+        }
+
+        function updateHierarchyDisplay() {
+            const maxLevel = Math.max(...grid.flat());
+            const pathElement = document.getElementById('hierarchyPath');
+            const explanationElement = document.getElementById('hierarchyExplanation');
+            
+            let html = '';
+            for (let i = 0; i < currentHierarchy.length; i++) {
+                if (i > 0) html += ' → ';
+                if (i < maxLevel) {
+                    html += `<span class="unlocked">${currentHierarchy[i]}</span>`;
+                } else {
+                    html += currentHierarchy[i];
+                }
+            }
+            
+            pathElement.innerHTML = html;
+            
+            // Update explanation for the last unlocked level
+            if (maxLevel > 1) {
+                explanationElement.textContent = `${currentHierarchy[maxLevel-2]} → ${currentHierarchy[maxLevel-1]}: ${currentExplanations[maxLevel-1]}`;
+            } else {
+                explanationElement.textContent = 'Merge two tiles with the same word to discover their broader category!';
+            }
+        }
+
+        function move(direction) {
+            let moved = false;
+            const oldGrid = grid.map(row => [...row]);
+            
+            if (direction === 'left' || direction === 'right') {
+                for (let i = 0; i < 4; i++) {
+                    const row = direction === 'left' ? grid[i] : [...grid[i]].reverse();
+                    const newRow = slide(row);
+                    grid[i] = direction === 'left' ? newRow : newRow.reverse();
+                }
+            } else {
+                for (let j = 0; j < 4; j++) {
+                    const col = grid.map(row => row[j]);
+                    const newCol = direction === 'up' ? slide(col) : slide([...col].reverse()).reverse();
+                    for (let i = 0; i < 4; i++) {
+                        grid[i][j] = newCol[i];
+                    }
+                }
+            }
+            
+            // Check if anything moved
+            for (let i = 0; i < 4; i++) {
+                for (let j = 0; j < 4; j++) {
+                    if (grid[i][j] !== oldGrid[i][j]) {
+                        moved = true;
+                    }
+                }
+            }
+            
+            if (moved) {
+                addRandomTile();
+                updateDisplay();
+                
+                checkWin();
+                
+                if (!canMove()) {
+                    gameOver(false);
+                }
+            }
+        }
+
+        function slide(row) {
+            // Filter out zeros
+            let arr = row.filter(val => val !== 0);
+            let newRow = [];
+            
+            for (let i = 0; i < arr.length; i++) {
+                if (i < arr.length - 1 && arr[i] === arr[i + 1] && arr[i] < currentHierarchy.length) {
+                    // Merge tiles
+                    newRow.push(arr[i] + 1);
+                    score += Math.pow(2, arr[i] + 1);
+                    i++; // Skip next tile as it's merged
+                } else {
+                    newRow.push(arr[i]);
+                }
+            }
+            
+            // Fill the rest with zeros
+            while (newRow.length < 4) {
+                newRow.push(0);
+            }
+            
+            return newRow;
+        }
+
+        function canMove() {
+            // Check for empty cells
+            for (let i = 0; i < 4; i++) {
+                for (let j = 0; j < 4; j++) {
+                    if (grid[i][j] === 0) return true;
+                }
+            }
+            
+            // Check for possible merges horizontally
+            for (let i = 0; i < 4; i++) {
+                for (let j = 0; j < 3; j++) {
+                    if (grid[i][j] === grid[i][j + 1]) return true;
+                }
+            }
+            
+            // Check for possible merges vertically
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 4; j++) {
+                    if (grid[i][j] === grid[i + 1][j]) return true;
+                }
+            }
+            
+            return false;
+        }
+
+        function checkWin() {
+            for (let i = 0; i < 4; i++) {
+                for (let j = 0; j < 4; j++) {
+                    if (grid[i][j] === currentHierarchy.length) {
+                        gameOver(true);
+                        return;
+                    }
+                }
+            }
+        }
+
+        function gameOver(won) {
+            const overlay = document.getElementById('gameOverOverlay');
+            const title = document.getElementById('gameOverTitle');
+            const message = document.getElementById('gameOverMessage');
+            
+            if (won) {
+                title.textContent = 'You Win! 🎉';
+                message.innerHTML = `You reached <span class="final-word">${currentHierarchy[currentHierarchy.length - 1]}</span>!`;
+            } else {
+                title.textContent = 'Game Over!';
+                message.innerHTML = `No more moves available!`;
+            }
+            
+            overlay.classList.add('show');
+        }
+
+        function resetGame() {
+            document.getElementById('gameOverOverlay').classList.remove('show');
+            initGame();
+        }
+
+        // Keyboard controls
+        document.addEventListener('keydown', (e) => {
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                e.preventDefault();
+                
+                if (e.key === 'ArrowUp') move('up');
+                else if (e.key === 'ArrowDown') move('down');
+                else if (e.key === 'ArrowLeft') move('left');
+                else if (e.key === 'ArrowRight') move('right');
+            }
+        });
+
+        // Touch controls for mobile
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            const touchEndX = e.changedTouches[0].clientX;
+            const touchEndY = e.changedTouches[0].clientY;
+            
+            const deltaX = touchEndX - touchStartX;
+            const deltaY = touchEndY - touchStartY;
+            
+            const minSwipeDistance = 50;
+            
+            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                if (Math.abs(deltaX) > minSwipeDistance) {
+                    move(deltaX > 0 ? 'right' : 'left');
+                }
+            } else {
+                if (Math.abs(deltaY) > minSwipeDistance) {
+                    move(deltaY > 0 ? 'down' : 'up');
+                }
+            }
+        });
+
+        // Initialize game on load
+        initGame();
+    </script>
+</body>
+</html>

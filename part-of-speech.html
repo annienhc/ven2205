@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parts of Speech Tetris</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Poppins:wght@400;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .game-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 35px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 50px rgba(138, 43, 226, 0.3);
+            max-width: 1100px;
+            width: 100%;
+            position: relative;
+        }
+
+        .game-container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #f7b731, #5f27cd);
+            background-size: 400%;
+            border-radius: 25px;
+            z-index: -1;
+            animation: borderGlow 3s ease infinite;
+            opacity: 0.7;
+        }
+
+        @keyframes borderGlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .game-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .game-header h1 {
+            font-family: 'Press Start 2P', cursive;
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.2em;
+            margin-bottom: 12px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            letter-spacing: 2px;
+        }
+
+        .game-header p {
+            color: #555;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 25px;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 18px 28px;
+            border-radius: 18px;
+            text-align: center;
+            flex: 1;
+            min-width: 130px;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .stat-box:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-box.speed-indicator {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .stat-box.speed-indicator.fast {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff4b2b 100%);
+            animation: speedPulse 0.5s ease-in-out infinite;
+        }
+
+        @keyframes speedPulse {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-3px) scale(1.05); }
+        }
+
+        .stat-label {
+            font-size: 0.85em;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: 800;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        .game-area {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .tetris-container {
+            position: relative;
+            width: 620px;
+            height: 720px;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            border: 6px solid #764ba2;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 
+                0 0 30px rgba(138, 43, 226, 0.5),
+                inset 0 0 50px rgba(0,0,0,0.5),
+                0 20px 50px rgba(0,0,0,0.4);
+        }
+
+        .grid-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(138, 43, 226, 0.1) 39px, rgba(138, 43, 226, 0.1) 40px),
+                repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(138, 43, 226, 0.1) 39px, rgba(138, 43, 226, 0.1) 40px);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .category-zones {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            height: 140px;
+            border-top: 5px solid rgba(138, 43, 226, 0.8);
+            z-index: 5;
+        }
+
+        .category-zone {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1em;
+            color: white;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+            border-right: 4px solid rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+            font-family: 'Press Start 2P', cursive;
+            letter-spacing: 1px;
+        }
+
+        .category-zone::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: inherit;
+            opacity: 0.9;
+        }
+
+        .category-zone:last-child {
+            border-right: none;
+        }
+
+        .category-zone.nouns {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            box-shadow: inset 0 0 30px rgba(255, 65, 108, 0.6);
+        }
+
+        .category-zone.verbs {
+            background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
+            box-shadow: inset 0 0 30px rgba(0, 210, 255, 0.6);
+        }
+
+        .category-zone.adjectives {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            box-shadow: inset 0 0 30px rgba(17, 153, 142, 0.6);
+        }
+
+        .category-icon {
+            font-size: 2.5em;
+            margin-bottom: 8px;
+            animation: iconBounce 2s ease-in-out infinite;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+        }
+
+        @keyframes iconBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .category-zone-label {
+            font-size: 0.7em;
+            z-index: 1;
+        }
+
+        .block {
+            position: absolute;
+            width: 180px;
+            padding: 14px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.95em;
+            box-shadow: 
+                0 8px 16px rgba(0,0,0,0.4),
+                inset 0 2px 4px rgba(255,255,255,0.2);
+            word-wrap: break-word;
+            text-align: center;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            min-height: 60px;
+            z-index: 10;
+            background: linear-gradient(135deg, #8e2de2 0%, #4a00e0 100%);
+            border: 3px solid rgba(255,255,255,0.3);
+            transition: transform 0.1s ease;
+        }
+
+        .block::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+            border-radius: 10px;
+        }
+
+        .block.falling {
+            border: 4px solid #fff;
+            box-shadow: 
+                0 0 30px rgba(138, 43, 226, 0.8),
+                0 0 60px rgba(142, 45, 226, 0.6),
+                0 8px 16px rgba(0,0,0,0.4),
+                inset 0 2px 4px rgba(255,255,255,0.3);
+            animation: blockPulse 1s ease-in-out infinite;
+            z-index: 20;
+        }
+
+        @keyframes blockPulse {
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 
+                    0 0 30px rgba(138, 43, 226, 0.8),
+                    0 0 60px rgba(142, 45, 226, 0.6),
+                    0 8px 16px rgba(0,0,0,0.4);
+            }
+            50% { 
+                transform: scale(1.05);
+                box-shadow: 
+                    0 0 40px rgba(138, 43, 226, 1),
+                    0 0 80px rgba(142, 45, 226, 0.8),
+                    0 12px 24px rgba(0,0,0,0.5);
+            }
+        }
+
+        .block.settled {
+            opacity: 0.6;
+            z-index: 5;
+            filter: brightness(0.7);
+        }
+
+        .block.correct-landing {
+            animation: correctExplosion 0.6s ease forwards;
+        }
+
+        @keyframes correctExplosion {
+            0% { 
+                transform: scale(1) rotate(0deg); 
+                opacity: 1; 
+            }
+            50% { 
+                transform: scale(1.3) rotate(180deg); 
+                opacity: 1;
+                box-shadow: 0 0 50px rgba(56, 239, 125, 1);
+            }
+            100% { 
+                transform: scale(0) rotate(360deg); 
+                opacity: 0; 
+            }
+        }
+
+        .block.wrong-landing {
+            animation: wrongSlide 0.9s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+
+        @keyframes wrongSlide {
+            0% { transform: translateX(0) translateY(0); }
+            20% { transform: translateY(-30px) rotate(-10deg); }
+            40% { transform: translateY(-30px) rotate(10deg); }
+            60% { 
+                transform: translateX(var(--slide-distance)) translateY(-30px);
+                box-shadow: 0 0 40px rgba(255, 65, 108, 0.8);
+            }
+            100% { 
+                transform: translateX(var(--slide-distance)) translateY(0);
+            }
+        }
+
+        .instructions-panel {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 25px;
+            border-radius: 20px;
+            max-width: 320px;
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+
+        .instructions-panel h3 {
+            color: white;
+            margin-bottom: 18px;
+            font-size: 1.2em;
+            font-weight: 800;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.9em;
+            letter-spacing: 1px;
+        }
+
+        .instructions-panel ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .instructions-panel li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            font-size: 0.85em;
+            color: rgba(255,255,255,0.95);
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        .instructions-panel li:last-child {
+            border-bottom: none;
+        }
+
+        .category-examples {
+            margin-top: 20px;
+            padding: 18px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 12px;
+            border: 2px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .category-examples h4 {
+            font-size: 0.85em;
+            color: white;
+            margin-bottom: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .category-example {
+            margin-bottom: 10px;
+            font-size: 0.75em;
+            line-height: 1.4;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .category-example strong {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 0.9em;
+            font-weight: 800;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(10px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 45px;
+            border-radius: 25px;
+            text-align: center;
+            max-width: 600px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 
+                0 30px 80px rgba(0,0,0,0.6),
+                0 0 50px rgba(102, 126, 234, 0.5);
+            animation: modalSlideIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            color: white;
+        }
+
+        @keyframes modalSlideIn {
+            from { 
+                transform: translateY(-100px) scale(0.8);
+                opacity: 0;
+            }
+            to { 
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-content h2 {
+            font-size: 2.8em;
+            margin-bottom: 20px;
+            color: white;
+            font-family: 'Press Start 2P', cursive;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            letter-spacing: 2px;
+        }
+
+        .modal-content.win h2 {
+            animation: winPulse 1s ease-in-out infinite;
+        }
+
+        @keyframes winPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .score-summary {
+            background: rgba(255,255,255,0.15);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .score-summary h3 {
+            margin-bottom: 18px;
+            color: white;
+            font-weight: 800;
+            font-size: 1.1em;
+        }
+
+        .category-score {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            margin: 10px 0;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            border-left: 5px solid rgba(255,255,255,0.5);
+            font-weight: 600;
+        }
+
+        .button {
+            background: white;
+            color: #764ba2;
+            border: none;
+            padding: 16px 45px;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: 800;
+            cursor: pointer;
+            margin: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .button:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+        }
+
+        .button:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .fill-warning {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            color: white;
+            padding: 25px 50px;
+            border-radius: 20px;
+            font-size: 1.6em;
+            font-weight: 800;
+            z-index: 100;
+            animation: warningPulse 0.8s ease-in-out infinite;
+            display: none;
+            box-shadow: 0 0 50px rgba(255, 65, 108, 0.8);
+            font-family: 'Press Start 2P', cursive;
+            letter-spacing: 2px;
+            border: 4px solid white;
+        }
+
+        .fill-warning.active {
+            display: block;
+        }
+
+        @keyframes warningPulse {
+            0%, 100% { 
+                transform: translate(-50%, -50%) scale(1);
+                box-shadow: 0 0 50px rgba(255, 65, 108, 0.8);
+            }
+            50% { 
+                transform: translate(-50%, -50%) scale(1.15);
+                box-shadow: 0 0 80px rgba(255, 65, 108, 1);
+            }
+        }
+
+        .particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 50;
+            animation: particleFall 2s linear forwards;
+        }
+
+        @keyframes particleFall {
+            to {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .game-area {
+                flex-direction: column;
+                align-items: center;
+            }
+            .tetris-container {
+                width: 100%;
+                max-width: 620px;
+            }
+            .game-header h1 {
+                font-size: 1.5em;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .game-header h1 {
+                font-size: 1.2em;
+            }
+            .stat-value {
+                font-size: 1.5em;
+            }
+            .category-zone-label {
+                font-size: 0.6em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <h1>🎮 GRAMMAR TETRIS</h1>
+            <p>Master Parts of Speech Through Action!</p>
+        </div>
+
+        <div class="stats-container">
+            <div class="stat-box">
+                <div class="stat-label">Correct ✅</div>
+                <div class="stat-value" id="correct-count">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Wrong ❌</div>
+                <div class="stat-value" id="wrong-count">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Target 🎯</div>
+                <div class="stat-value">30</div>
+            </div>
+            <div class="stat-box speed-indicator" id="speed-indicator">
+                <div class="stat-label">Speed ⚡</div>
+                <div class="stat-value" id="speed-level">1</div>
+            </div>
+        </div>
+
+        <div class="game-area">
+            <div class="tetris-container" id="tetris-container">
+                <div class="grid-overlay"></div>
+                <div class="fill-warning" id="fill-warning">⚠️ CRITICAL!</div>
+                
+                <div class="category-zones">
+                    <div class="category-zone nouns" data-category="nouns">
+                        <div class="category-icon">📦</div>
+                        <div class="category-zone-label">NOUNS</div>
+                    </div>
+                    <div class="category-zone verbs" data-category="verbs">
+                        <div class="category-icon">⚡</div>
+                        <div class="category-zone-label">VERBS</div>
+                    </div>
+                    <div class="category-zone adjectives" data-category="adjectives">
+                        <div class="category-icon">✨</div>
+                        <div class="category-zone-label">ADJECTIVES</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="instructions-panel">
+                <h3>📖 HOW TO PLAY</h3>
+                <ul>
+                    <li>⬅️ ➡️ Move the falling word</li>
+                    <li>⬇️ Drop faster</li>
+                    <li>🎯 Land in CORRECT part of speech</li>
+                    <li>✅ Correct = disappears</li>
+                    <li>❌ Wrong = slides to correct zone</li>
+                    <li>🏆 Score 30 correct to win!</li>
+                    <li>💔 Don't fill any zone!</li>
+                    <li>⚡ Speed increases every 5 correct!</li>
+                </ul>
+
+                <div class="category-examples">
+                    <h4>📚 Parts of Speech Guide:</h4>
+                    <div class="category-example">
+                        <strong style="color: #ff6b6b;">📦 NOUNS:</strong>
+                        People, places, things (fire, alarm, worker, ladder)
+                    </div>
+                    <div class="category-example">
+                        <strong style="color: #4ecdc4;">⚡ VERBS:</strong>
+                        Actions - BASE FORM (evacuate, ensure, protect, select)
+                    </div>
+                    <div class="category-example">
+                        <strong style="color: #95e1d3;">✨ ADJECTIVES:</strong>
+                        Describing words (safe, proper, toxic, available)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="win-modal">
+        <div class="modal-content win">
+            <h2>🎉 VICTORY!</h2>
+            <p style="font-size: 1.2em; margin: 10px 0;">You've mastered parts of speech!</p>
+            <div class="score-summary">
+                <h3>📊 Your Performance:</h3>
+                <div id="final-scores"></div>
+            </div>
+            <button class="button" onclick="location.reload()">Play Again</button>
+        </div>
+    </div>
+
+    <div class="modal" id="lose-modal">
+        <div class="modal-content lose">
+            <h2>💔 GAME OVER</h2>
+            <p style="font-size: 1.2em; margin: 10px 0;" id="lose-message">A category zone is full!</p>
+            <div class="score-summary">
+                <h3>📊 Your Progress:</h3>
+                <div id="progress-scores"></div>
+            </div>
+            <button class="button" onclick="location.reload()">Try Again</button>
+        </div>
+    </div>
+
+    <script>
+        // Words categorized by parts of speech - AMBIGUOUS WORDS REMOVED
+        const WORD_CATEGORIES = {
+            nouns: [
+                'fire', 'alarm', 'building', 'lifts', 'door', 'equipment', 
+                'workplace', 'training', 'sessions', 'drills', 'premises', 
+                'year', 'employee', 'managers', 'staff', 'shifts', 'hours',
+                'knowledge', 'manner', 'instructions', 'language', 'accidents',
+                'tool', 'accessories', 'maintenance', 'workers', 'job',
+                'procedures', 'skills', 'ladders', 'places',
+                'ladder', 'injuries', 'fatalities', 'platform',
+                'safety', 'assessment', 'height', 'person', 'hazards', 'prevention',
+                'gases', 'spaces', 'tunnels', 'wells', 'suffocation', 'sewage',
+                'sand', 'types', 'apparatus', 'mask', 'environment', 'risk',
+                'monitoring'
+                // REMOVED: 'work', 'access', 'fall', 'ground' (can be verbs too)
+            ],
+            verbs: [
+                'evacuate', 'escape', 'close', 'extinguish', 'brief',
+                'understand', 'read', 'occur', 'select',
+                'follow', 'ensure', 'conduct', 'eliminate', 'minimise',
+                'provide', 'safeguard', 'expose', 'protect',
+                'breathe', 'recommend', 'allow', 'enter'
+                // REMOVED: 'work', 'use', 'change', 'increase' (can be nouns too)
+            ],
+            adjectives: [
+                'available', 'safe', 'appropriate', 'normal', 'limited',
+                'written', 'wrong', 'proper', 'specific', 'responsible',
+                'serious', 'common', 'competent', 'high', 'toxic',
+                'potential', 'suitable', 'certified', 'public', 'Chinese',
+                'English', 'closed'
+            ]
+        };
+
+        const CATEGORIES = ['nouns', 'verbs', 'adjectives'];
+        const TARGET_SCORE = 30;
+        const ZONE_WIDTH = 206.67;
+        const CONTAINER_WIDTH = 620;
+        const CONTAINER_HEIGHT = 720;
+        const ZONE_HEIGHT = 140;
+        const PLAY_AREA_HEIGHT = CONTAINER_HEIGHT - ZONE_HEIGHT;
+
+        let gameState = {
+            correctCount: 0,
+            wrongCount: 0,
+            blocks: [],
+            fallingBlock: null,
+            gameOver: false,
+            blockIdCounter: 0,
+            fallInterval: null,
+            baseDropSpeed: 1.5, // Base speed
+            dropSpeed: 1.5,
+            speedMultiplier: 1,
+            spawnInterval: null,
+            columnHeights: {
+                nouns: 0,
+                verbs: 0,
+                adjectives: 0
+            }
+        };
+
+        function getRandomWord() {
+            const category = CATEGORIES[Math.floor(Math.random() * CATEGORIES.length)];
+            const words = WORD_CATEGORIES[category];
+            const word = words[Math.floor(Math.random() * words.length)];
+            return { word, category };
+        }
+
+        function speakWord(word) {
+            if ('speechSynthesis' in window) {
+                speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(word);
+                utterance.rate = 0.85;
+                utterance.pitch = 1.1;
+                utterance.volume = 1;
+                speechSynthesis.speak(utterance);
+            }
+        }
+
+        function updateSpeed() {
+            // Increase speed every 5 correct answers
+            const speedLevel = Math.floor(gameState.correctCount / 5) + 1;
+            gameState.speedMultiplier = 1 + (speedLevel - 1) * 0.3; // 30% increase per level
+            
+            // Update UI
+            document.getElementById('speed-level').textContent = speedLevel;
+            
+            const speedIndicator = document.getElementById('speed-indicator');
+            if (speedLevel >= 3) {
+                speedIndicator.classList.add('fast');
+            } else {
+                speedIndicator.classList.remove('fast');
+            }
+        }
+
+        function getCategoryFromX(x) {
+            const centerX = x + 90;
+            if (centerX < ZONE_WIDTH) return 'nouns';
+            if (centerX < ZONE_WIDTH * 2) return 'verbs';
+            return 'adjectives';
+        }
+
+        function getCategoryIndex(category) {
+            return CATEGORIES.indexOf(category);
+        }
+
+        function getCategoryX(category) {
+            const index = getCategoryIndex(category);
+            return index * ZONE_WIDTH + 13;
+        }
+
+        function createParticles(x, y, count = 20) {
+            for (let i = 0; i < count; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                particle.style.animationDelay = Math.random() * 0.5 + 's';
+                document.getElementById('tetris-container').appendChild(particle);
+                
+                setTimeout(() => particle.remove(), 2000);
+            }
+        }
+
+        function createBlock() {
+            if (gameState.gameOver || gameState.fallingBlock) return;
+
+            const { word, category } = getRandomWord();
+            
+            const block = {
+                id: gameState.blockIdCounter++,
+                word: word,
+                correctCategory: category,
+                x: CONTAINER_WIDTH / 2 - 90,
+                y: 0,
+                element: null,
+                falling: true
+            };
+
+            const blockElement = document.createElement('div');
+            blockElement.className = 'block falling';
+            blockElement.textContent = word;
+            blockElement.style.left = block.x + 'px';
+            blockElement.style.top = block.y + 'px';
+            
+            document.getElementById('tetris-container').appendChild(blockElement);
+            block.element = blockElement;
+            
+            gameState.fallingBlock = block;
+            gameState.blocks.push(block);
+
+            speakWord(word);
+            
+            startFalling(block);
+        }
+
+        function startFalling(block) {
+            if (gameState.fallInterval) {
+                clearInterval(gameState.fallInterval);
+            }
+
+            gameState.fallInterval = setInterval(() => {
+                if (gameState.gameOver || !block.element || !block.falling) {
+                    clearInterval(gameState.fallInterval);
+                    return;
+                }
+
+                // Apply speed multiplier
+                const currentSpeed = gameState.baseDropSpeed * gameState.speedMultiplier;
+                block.y += (2 * currentSpeed);
+                block.element.style.top = block.y + 'px';
+                
+                if (block.y >= PLAY_AREA_HEIGHT - 60) {
+                    landBlock(block);
+                }
+            }, 30);
+        }
+
+        function landBlock(block) {
+            block.falling = false;
+            block.element.classList.remove('falling');
+            gameState.fallingBlock = null;
+
+            const landedCategory = getCategoryFromX(block.x);
+            const isCorrect = landedCategory === block.correctCategory;
+
+            if (isCorrect) {
+                gameState.correctCount++;
+                updateStats();
+                updateSpeed(); // Update speed when correct answer
+                
+                const blockRect = block.element.getBoundingClientRect();
+                createParticles(blockRect.left + blockRect.width / 2, blockRect.top + blockRect.height / 2);
+                
+                block.element.classList.add('correct-landing');
+                
+                setTimeout(() => {
+                    if (block.element && block.element.parentNode) {
+                        block.element.remove();
+                        gameState.blocks = gameState.blocks.filter(b => b.id !== block.id);
+                    }
+                }, 600);
+
+                if (gameState.correctCount >= TARGET_SCORE) {
+                    setTimeout(() => endGame(true), 700);
+                    return;
+                }
+            } else {
+                gameState.wrongCount++;
+                updateStats();
+                
+                const correctX = getCategoryX(block.correctCategory);
+                const slideDistance = correctX - block.x;
+                
+                block.element.style.setProperty('--slide-distance', slideDistance + 'px');
+                block.element.classList.add('wrong-landing');
+                
+                setTimeout(() => {
+                    block.x = correctX;
+                    block.element.style.left = block.x + 'px';
+                    block.element.classList.remove('wrong-landing');
+                    
+                    stackBlock(block);
+                }, 900);
+            }
+
+            if (!isCorrect) {
+                setTimeout(() => {
+                    if (!gameState.gameOver) createBlock();
+                }, 1100);
+            } else {
+                setTimeout(() => {
+                    if (!gameState.gameOver) createBlock();
+                }, 700);
+            }
+        }
+
+        function stackBlock(block) {
+            const category = block.correctCategory;
+            const currentHeight = gameState.columnHeights[category];
+            
+            block.y = PLAY_AREA_HEIGHT - 60 - currentHeight;
+            block.element.style.top = block.y + 'px';
+            block.element.classList.add('settled');
+            
+            gameState.columnHeights[category] += 65;
+            
+            if (gameState.columnHeights[category] > PLAY_AREA_HEIGHT * 0.7) {
+                document.getElementById('fill-warning').classList.add('active');
+                setTimeout(() => {
+                    document.getElementById('fill-warning').classList.remove('active');
+                }, 2000);
+            }
+            
+            if (gameState.columnHeights[category] >= PLAY_AREA_HEIGHT - 65) {
+                endGame(false, `${category.toUpperCase()} zone is full!`);
+            }
+        }
+
+        function moveBlock(direction) {
+            if (!gameState.fallingBlock || !gameState.fallingBlock.falling || gameState.gameOver) return;
+
+            const block = gameState.fallingBlock;
+            const moveAmount = 30;
+
+            if (direction === 'left') {
+                block.x = Math.max(10, block.x - moveAmount);
+            } else if (direction === 'right') {
+                block.x = Math.min(CONTAINER_WIDTH - 190, block.x + moveAmount);
+            }
+
+            block.element.style.left = block.x + 'px';
+        }
+
+        function updateStats() {
+            document.getElementById('correct-count').textContent = gameState.correctCount;
+            document.getElementById('wrong-count').textContent = gameState.wrongCount;
+        }
+
+        function endGame(won, message = '') {
+            gameState.gameOver = true;
+            if (gameState.fallInterval) {
+                clearInterval(gameState.fallInterval);
+            }
+            if (gameState.spawnInterval) {
+                clearInterval(gameState.spawnInterval);
+            }
+            
+            const accuracy = gameState.correctCount + gameState.wrongCount > 0 
+                ? Math.round((gameState.correctCount / (gameState.correctCount + gameState.wrongCount)) * 100)
+                : 0;
+
+            const maxSpeed = Math.floor(gameState.correctCount / 5) + 1;
+
+            const scoresHTML = `
+                <div class="category-score">
+                    <span>✅ Correct</span>
+                    <strong>${gameState.correctCount}</strong>
+                </div>
+                <div class="category-score">
+                    <span>❌ Wrong</span>
+                    <strong>${gameState.wrongCount}</strong>
+                </div>
+                <div class="category-score">
+                    <span>🎯 Accuracy</span>
+                    <strong>${accuracy}%</strong>
+                </div>
+                <div class="category-score">
+                    <span>⚡ Max Speed</span>
+                    <strong>Level ${maxSpeed}</strong>
+                </div>
+            `;
+            
+            if (won) {
+                document.getElementById('final-scores').innerHTML = scoresHTML;
+                document.getElementById('win-modal').classList.add('active');
+            } else {
+                document.getElementById('lose-message').textContent = message || 'A zone is full!';
+                document.getElementById('progress-scores').innerHTML = scoresHTML;
+                document.getElementById('lose-modal').classList.add('active');
+            }
+        }
+
+        let keyPressed = {};
+
+        document.addEventListener('keydown', (e) => {
+            if (gameState.gameOver) return;
+            
+            if (keyPressed[e.key]) return;
+            keyPressed[e.key] = true;
+
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                moveBlock('left');
+            } else if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                moveBlock('right');
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                gameState.baseDropSpeed = 7;
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            keyPressed[e.key] = false;
+            
+            if (e.key === 'ArrowDown') {
+                gameState.baseDropSpeed = 1.5;
+            }
+        });
+
+        updateStats();
+        updateSpeed();
+        createBlock();
+    </script>
+</body>
+</html>

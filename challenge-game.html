@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Challenge Game - Word Family Challenge 🎮</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: slideDown 0.5s ease-out;
+        }
+
+        h1 {
+            color: #fff;
+            font-size: 3em;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+        }
+
+        .back-btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .game-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .timer {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 50px;
+            display: inline-block;
+            color: #fff;
+            font-size: 1.5em;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .timer {
+                font-size: 1.2em;
+                padding: 10px 20px;
+            }
+        }
+
+        .hearts {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 50px;
+            display: inline-block;
+            color: #fff;
+            font-size: 1.5em;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .hearts {
+                font-size: 1.2em;
+                padding: 10px 20px;
+            }
+        }
+
+        .hearts.shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        .heart {
+            display: inline-block;
+            margin: 0 3px;
+            transition: all 0.3s ease;
+        }
+
+        .heart.lost {
+            opacity: 0.3;
+            filter: grayscale(100%);
+        }
+
+        .game-area {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 30px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @media (max-width: 1024px) {
+            .game-area {
+                grid-template-columns: 200px 1fr;
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .game-area {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .deck-area {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .deck-title {
+            color: #fff;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .deck-title {
+                font-size: 1.3em;
+            }
+        }
+
+        .deck {
+            position: relative;
+            height: 180px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            perspective: 1000px;
+        }
+
+        .deck-stack {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            color: #fff;
+            transition: transform 0.3s ease;
+        }
+
+        .deck-stack:hover {
+            transform: translateY(-5px) scale(1.05);
+        }
+
+        .deck-count {
+            color: #fff;
+            text-align: center;
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+
+        .current-card-area {
+            min-height: 180px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 15px;
+            border: 3px dashed rgba(255,255,255,0.4);
+        }
+
+        .current-card-title {
+            color: #fff;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .families-area {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .families-area {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 15px;
+            }
+        }
+
+        .family-column {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 15px;
+            min-height: 400px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            border: 3px dashed rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        @media (max-width: 768px) {
+            .family-column {
+                min-height: 300px;
+                padding: 10px;
+            }
+        }
+
+        .family-column.drag-over {
+            background: rgba(255,255,255,0.3);
+            border-color: #ffd700;
+            transform: scale(1.05);
+        }
+
+        .family-column.has-cards {
+            border-color: rgba(255,215,0,0.6);
+        }
+
+        .empty-placeholder {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: rgba(255,255,255,0.6);
+            font-size: 1.2em;
+            text-align: center;
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            .empty-placeholder {
+                font-size: 1em;
+            }
+        }
+
+        .card {
+            background: linear-gradient(135deg, #fff 0%, #f0f0f0 100%);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            cursor: move;
+            position: relative;
+            transition: all 0.3s ease;
+            border: 3px solid #f5576c;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .card {
+                padding: 15px;
+            }
+        }
+
+        .family-column .card {
+            position: relative;
+            margin-bottom: 0;
+            margin-top: -140px;
+        }
+
+        @media (max-width: 768px) {
+            .family-column .card {
+                margin-top: -100px;
+            }
+        }
+
+        .family-column .card:first-child {
+            margin-top: 0;
+        }
+
+        .card:hover {
+            transform: translateY(-5px) rotate(2deg);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            z-index: 10;
+        }
+
+        .card.dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+        }
+
+        .card.bounce {
+            animation: bounce 0.5s ease-out;
+        }
+
+        .card.highlight-root .card-word {
+            animation: pulse 1s ease-in-out 3;
+        }
+
+        .card-word {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #f5576c;
+            margin-bottom: 10px;
+            text-align: center;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            line-height: 1.2;
+        }
+
+        /* Adjust font size for longer words */
+        .card-word.long-word {
+            font-size: 1.4em;
+        }
+
+        .card-word.very-long-word {
+            font-size: 1.2em;
+        }
+
+        @media (max-width: 768px) {
+            .card-word {
+                font-size: 1.4em;
+            }
+            
+            .card-word.long-word {
+                font-size: 1.2em;
+            }
+            
+            .card-word.very-long-word {
+                font-size: 1em;
+            }
+        }
+
+        .card-pos {
+            display: inline-block;
+            background: #f093fb;
+            color: #fff;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .card-pos {
+                font-size: 0.8em;
+                padding: 4px 12px;
+            }
+        }
+
+        .card-meaning {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 10px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        @media (max-width: 768px) {
+            .card-meaning {
+                font-size: 0.85em;
+            }
+        }
+
+        .speaker-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .speaker-btn {
+                font-size: 0.9em;
+                padding: 8px 15px;
+            }
+        }
+
+        .speaker-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease-out;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 60px 40px;
+            border-radius: 30px;
+            text-align: center;
+            max-width: 900px;
+            width: 95%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 30px 90px rgba(0,0,0,0.7);
+            animation: popIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+        }
+
+        .modal-content.win-modal {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .modal-content.lose-modal {
+            background: linear-gradient(135deg, #434343 0%, #000000 100%);
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                padding: 40px 20px;
+                max-height: 95vh;
+            }
+        }
+
+        .modal-content h2 {
+            color: #fff;
+            font-size: 4em;
+            margin-bottom: 30px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+            animation: titleBounce 0.8s ease-out;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content h2 {
+                font-size: 2.5em;
+            }
+        }
+
+        .trophy-icon {
+            font-size: 8em;
+            animation: trophySpin 1s ease-out;
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .trophy-icon {
+                font-size: 5em;
+            }
+        }
+
+        .completion-time {
+            background: rgba(255,255,255,0.25);
+            padding: 25px;
+            border-radius: 20px;
+            color: #fff;
+            font-size: 2.5em;
+            margin-bottom: 35px;
+            font-weight: bold;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            animation: slideUp 0.6s ease-out 0.3s backwards;
+        }
+
+        @media (max-width: 768px) {
+            .completion-time {
+                font-size: 1.8em;
+                padding: 20px;
+            }
+        }
+
+        .words-learned {
+            background: rgba(255,255,255,0.2);
+            padding: 35px;
+            border-radius: 25px;
+            margin-bottom: 35px;
+            max-height: 450px;
+            overflow-y: auto;
+            box-shadow: inset 0 4px 15px rgba(0,0,0,0.2);
+            animation: slideUp 0.6s ease-out 0.5s backwards;
+        }
+
+        @media (max-width: 768px) {
+            .words-learned {
+                padding: 25px 15px;
+                max-height: 350px;
+            }
+        }
+
+        .words-learned h3 {
+            color: #fff;
+            font-size: 2.2em;
+            margin-bottom: 25px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        @media (max-width: 768px) {
+            .words-learned h3 {
+                font-size: 1.6em;
+            }
+        }
+
+        .word-family-group {
+            background: rgba(255,255,255,0.25);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            text-align: left;
+            transition: transform 0.3s ease;
+        }
+
+        .word-family-group:hover {
+            transform: scale(1.02);
+        }
+
+        .word-family-group h4 {
+            color: #ffd700;
+            font-size: 1.6em;
+            margin-bottom: 15px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        @media (max-width: 768px) {
+            .word-family-group h4 {
+                font-size: 1.3em;
+            }
+        }
+
+        .word-family-group ul {
+            list-style: none;
+            color: #fff;
+        }
+
+        .word-family-group li {
+            padding: 8px 0;
+            font-size: 1.2em;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .word-family-group li:last-child {
+            border-bottom: none;
+        }
+
+        @media (max-width: 768px) {
+            .word-family-group li {
+                font-size: 1em;
+            }
+        }
+
+        .game-over-stats {
+            background: rgba(255,255,255,0.25);
+            padding: 25px;
+            border-radius: 20px;
+            color: #fff;
+            font-size: 1.6em;
+            margin-bottom: 35px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            animation: slideUp 0.6s ease-out 0.3s backwards;
+        }
+
+        @media (max-width: 768px) {
+            .game-over-stats {
+                font-size: 1.2em;
+                padding: 20px;
+            }
+        }
+
+        .game-over-stats div {
+            margin: 15px 0;
+        }
+
+        .restart-btn {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            border: none;
+            color: #333;
+            padding: 20px 50px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.6em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            animation: slideUp 0.6s ease-out 0.7s backwards;
+        }
+
+        @media (max-width: 768px) {
+            .restart-btn {
+                font-size: 1.3em;
+                padding: 15px 35px;
+            }
+        }
+
+        .restart-btn:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.5);
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #ffd700;
+            position: absolute;
+            animation: confettiFall 3s linear infinite;
+        }
+
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-20px); }
+            75% { transform: translateX(20px); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+            20%, 40%, 60%, 80% { transform: translateX(10px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { 
+                transform: scale(1);
+                color: #f5576c;
+            }
+            50% { 
+                transform: scale(1.2);
+                color: #667eea;
+            }
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes titleBounce {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes trophySpin {
+            0% {
+                transform: rotateY(0deg) scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: rotateY(180deg) scale(1.2);
+            }
+            100% {
+                transform: rotateY(360deg) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .instruction {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: 15px;
+            color: #fff;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .instruction {
+                font-size: 0.9em;
+                padding: 12px;
+            }
+        }
+
+        .module-badge {
+            background: rgba(255,215,0,0.3);
+            color: #ffd700;
+            padding: 8px 20px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 15px;
+            font-weight: bold;
+            border: 2px solid #ffd700;
+        }
+
+        .sparkle {
+            position: fixed;
+            pointer-events: none;
+            animation: sparkleFade 1.5s ease-out forwards;
+        }
+
+        @keyframes sparkleFade {
+            0% {
+                opacity: 1;
+                transform: scale(0) rotate(0deg);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.5) rotate(180deg);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0) rotate(360deg);
+            }
+        }
+
+        .sad-icon {
+            font-size: 6em;
+            animation: sadPulse 2s ease-in-out infinite;
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        @keyframes sadPulse {
+            0%, 100% { 
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            50% { 
+                transform: scale(1.1);
+                opacity: 1;
+            }
+        }
+
+        .encourage-message {
+            background: rgba(255,255,255,0.2);
+            padding: 20px;
+            border-radius: 15px;
+            color: #fff;
+            font-size: 1.4em;
+            margin-bottom: 25px;
+            animation: slideUp 0.6s ease-out 0.4s backwards;
+        }
+
+        @media (max-width: 768px) {
+            .encourage-message {
+                font-size: 1.1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="index.html" class="back-btn">← Back to Menu</a>
+            <h1>🏆 Challenge Game 🏆</h1>
+            <div class="module-badge">VEN2205 - Workplace Safety</div>
+            <div class="game-stats">
+                <div class="timer">⏱️ Time: <span id="timer">00:00</span></div>
+                <div class="hearts" id="heartsDisplay">
+                    <span class="heart">❤️</span>
+                    <span class="heart">❤️</span>
+                    <span class="heart">❤️</span>
+                    <span class="heart">❤️</span>
+                    <span class="heart">❤️</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="instruction">
+            🎓 Master workplace safety vocabulary! Click deck → Drag cards → Group by word family. 5 hearts only! 💪
+        </div>
+
+        <div class="game-area">
+            <div class="deck-area">
+                <div class="deck-title">📚 Card Deck</div>
+                <div class="deck" id="deck" onclick="drawCard()">
+                    <div class="deck-stack">🎴</div>
+                </div>
+                <div class="deck-count">Cards: <span id="deckCount">0</span></div>
+                
+                <div class="current-card-title">Current Card:</div>
+                <div class="current-card-area" id="currentCardArea"></div>
+            </div>
+
+            <div class="families-area" id="familiesArea"></div>
+        </div>
+    </div>
+
+    <div class="modal" id="completionModal">
+        <div class="modal-content win-modal">
+            <span class="trophy-icon">🏆</span>
+            <h2>🎉 Phenomenal! 🎉</h2>
+            <div class="completion-time">
+                ⏱️ Your Time: <span id="finalTime"></span>
+            </div>
+            <div class="words-learned" id="wordsLearned"></div>
+            <button class="restart-btn" onclick="location.reload()">Play Again! 🔄</button>
+            <br><br>
+            <a href="index.html" class="restart-btn" style="display: inline-block; text-decoration: none; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); margin-top: 15px;">
+                Back to Menu 🏠
+            </a>
+        </div>
+    </div>
+
+    <div class="modal" id="gameOverModal">
+        <div class="modal-content lose-modal">
+            <span class="sad-icon">💔</span>
+            <h2>Game Over</h2>
+            <div class="encourage-message">
+                Don't give up! Practice makes perfect. Try again! 💪
+            </div>
+            <div class="game-over-stats" id="gameOverStats"></div>
+            <div class="words-learned" id="gameOverWords"></div>
+            <button class="restart-btn" onclick="location.reload()">Try Again! 🔄</button>
+            <br><br>
+            <a href="index.html" class="restart-btn" style="display: inline-block; text-decoration: none; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); margin-top: 15px;">
+                Back to Menu 🏠
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // VEN2205 Word families data (10 families, 40 words)
+        const wordFamilies = {
+            'safe': [
+                { word: 'safe', pos: 'adjective', meaning: 'protected from danger', root: 'safe' },
+                { word: 'safety', pos: 'noun', meaning: 'condition of being safe', root: 'safe' },
+                { word: 'unsafe', pos: 'adjective', meaning: 'not safe; dangerous', root: 'safe' },
+                { word: 'safeguard', pos: 'verb/noun', meaning: 'protect from harm', root: 'safe' },
+                { word: 'safely', pos: 'adverb', meaning: 'in a safe manner', root: 'safe' }
+            ],
+            'train': [
+                { word: 'train', pos: 'verb', meaning: 'teach skills or knowledge', root: 'train' },
+                { word: 'training', pos: 'noun', meaning: 'process of learning skills', root: 'train' },
+                { word: 'trained', pos: 'adjective', meaning: 'having received training', root: 'train' },
+                { word: 'trainee', pos: 'noun', meaning: 'person being trained', root: 'train' },
+                { word: 'trainer', pos: 'noun', meaning: 'person who trains others', root: 'train' }
+            ],
+            'work': [
+                { word: 'work', pos: 'noun/verb', meaning: 'activity involving effort', root: 'work' },
+                { word: 'worker', pos: 'noun', meaning: 'person who works', root: 'work' },
+                { word: 'workers', pos: 'noun', meaning: 'multiple people who work', root: 'work' },
+                { word: 'workplace', pos: 'noun', meaning: 'place where work is done', root: 'work' },
+                { word: 'working', pos: 'adjective/verb', meaning: 'engaged in work', root: 'work' }
+            ],
+            'employ': [
+                { word: 'employ', pos: 'verb', meaning: 'give work to someone', root: 'employ' },
+                { word: 'employee', pos: 'noun', meaning: 'person employed by company', root: 'employ' },
+                { word: 'employer', pos: 'noun', meaning: 'person or company that employs', root: 'employ' },
+                { word: 'employment', pos: 'noun', meaning: 'state of having a job', root: 'employ' },
+                { word: 'unemployed', pos: 'adjective', meaning: 'without a job', root: 'employ' }
+            ],
+            'instruct': [
+                { word: 'instruct', pos: 'verb', meaning: 'teach or give directions', root: 'instruct' },
+                { word: 'instruction', pos: 'noun', meaning: 'directions or teaching', root: 'instruct' },
+                { word: 'instructions', pos: 'noun', meaning: 'detailed directions', root: 'instruct' },
+                { word: 'instructor', pos: 'noun', meaning: 'person who instructs', root: 'instruct' }
+            ],
+            'maintain': [
+                { word: 'maintain', pos: 'verb', meaning: 'keep in good condition', root: 'maintain' },
+                { word: 'maintenance', pos: 'noun', meaning: 'process of maintaining', root: 'maintain' },
+                { word: 'maintainer', pos: 'noun', meaning: 'person who maintains', root: 'maintain' }
+            ],
+            'prevent': [
+                { word: 'prevent', pos: 'verb', meaning: 'stop from happening', root: 'prevent' },
+                { word: 'prevention', pos: 'noun', meaning: 'act of preventing', root: 'prevent' },
+                { word: 'preventable', pos: 'adjective', meaning: 'able to be prevented', root: 'prevent' }
+            ],
+            'appropriate': [
+                { word: 'appropriate', pos: 'adjective', meaning: 'suitable or proper', root: 'appropriate' },
+                { word: 'appropriately', pos: 'adverb', meaning: 'in a suitable manner', root: 'appropriate' },
+                { word: 'inappropriately', pos: 'adverb', meaning: 'in an unsuitable manner', root: 'appropriate' }
+            ],
+            'certify': [
+                { word: 'certify', pos: 'verb', meaning: 'officially confirm', root: 'certify' },
+                { word: 'certified', pos: 'adjective', meaning: 'officially confirmed', root: 'certify' },
+                { word: 'certificate', pos: 'noun', meaning: 'official document', root: 'certify' },
+                { word: 'certification', pos: 'noun', meaning: 'process of certifying', root: 'certify' }
+            ],
+            'hazard': [
+                { word: 'hazard', pos: 'noun', meaning: 'danger or risk', root: 'hazard' },
+                { word: 'hazards', pos: 'noun', meaning: 'multiple dangers', root: 'hazard' },
+                { word: 'hazardous', pos: 'adjective', meaning: 'dangerous; risky', root: 'hazard' }
+            ]
+        };
+
+        // Game state
+        let allCards = [];
+        let availableCards = [];
+        let currentCardIndex = 0;
+        let currentCard = null;
+        let familyAssignments = {};
+        let placedCards = {};
+        let startTime = null;
+        let timerInterval = null;
+        let draggedCard = null;
+        let hearts = 5;
+
+        // Initialize game
+        function initGame() {
+            allCards = [];
+            Object.values(wordFamilies).forEach(family => {
+                allCards.push(...family);
+            });
+            
+            allCards = shuffleArray(allCards);
+            availableCards = [...allCards];
+            
+            document.getElementById('deckCount').textContent = availableCards.length;
+            
+            const familiesArea = document.getElementById('familiesArea');
+            familiesArea.innerHTML = '';
+            
+            for (let i = 0; i < 10; i++) {
+                const column = document.createElement('div');
+                column.className = 'family-column';
+                column.dataset.columnIndex = i;
+                column.innerHTML = '<div class="empty-placeholder">Drop cards here</div>';
+                column.addEventListener('dragover', handleDragOver);
+                column.addEventListener('drop', handleDrop);
+                column.addEventListener('dragleave', handleDragLeave);
+                familiesArea.appendChild(column);
+            }
+            
+            Object.keys(wordFamilies).forEach(family => {
+                placedCards[family] = [];
+            });
+            
+            startTime = Date.now();
+            timerInterval = setInterval(updateTimer, 1000);
+            
+            drawCard();
+        }
+
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function drawCard() {
+            if (availableCards.length === 0) return;
+            
+            const currentCardArea = document.getElementById('currentCardArea');
+            currentCardArea.innerHTML = '';
+            
+            currentCard = availableCards[currentCardIndex];
+            
+            const cardElement = createCardElement(currentCard);
+            currentCardArea.appendChild(cardElement);
+            
+            currentCardIndex = (currentCardIndex + 1) % availableCards.length;
+        }
+
+        function createCardElement(cardData) {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.draggable = true;
+            card.dataset.word = cardData.word;
+            card.dataset.family = findFamily(cardData.word);
+            
+            // Determine word length class
+            let wordLengthClass = '';
+            if (cardData.word.length > 12) {
+                wordLengthClass = 'very-long-word';
+            } else if (cardData.word.length > 9) {
+                wordLengthClass = 'long-word';
+            }
+            
+            card.innerHTML = `
+                <div class="card-word ${wordLengthClass}">${cardData.word}</div>
+                <div class="card-pos">${cardData.pos}</div>
+                <div class="card-meaning">${cardData.meaning}</div>
+                <button class="speaker-btn" onclick="speakWord('${cardData.word}'); event.stopPropagation();">
+                    🔊 Listen
+                </button>
+            `;
+            
+            card.addEventListener('dragstart', handleDragStart);
+            card.addEventListener('dragend', handleDragEnd);
+            
+            return card;
+        }
+
+        function findFamily(word) {
+            for (const [family, words] of Object.entries(wordFamilies)) {
+                if (words.some(w => w.word === word)) {
+                    return family;
+                }
+            }
+            return null;
+        }
+
+        function handleDragStart(e) {
+            draggedCard = e.target;
+            e.target.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            e.currentTarget.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const column = e.currentTarget;
+            column.classList.remove('drag-over');
+            
+            if (!draggedCard) return;
+            
+            const cardFamily = draggedCard.dataset.family;
+            const columnIndex = column.dataset.columnIndex;
+            const columnFamily = familyAssignments[columnIndex];
+            
+            let isValidPlacement = false;
+            
+            if (!columnFamily) {
+                const existingColumn = Object.entries(familyAssignments).find(([idx, fam]) => fam === cardFamily);
+                if (existingColumn) {
+                    isValidPlacement = false;
+                } else {
+                    isValidPlacement = true;
+                    familyAssignments[columnIndex] = cardFamily;
+                }
+            } else if (columnFamily === cardFamily) {
+                isValidPlacement = true;
+            }
+            
+            if (isValidPlacement) {
+                column.classList.add('has-cards');
+                const placeholder = column.querySelector('.empty-placeholder');
+                if (placeholder) placeholder.remove();
+                
+                column.appendChild(draggedCard);
+                placedCards[cardFamily].push(draggedCard.dataset.word);
+                
+                const cardWord = draggedCard.dataset.word;
+                availableCards = availableCards.filter(c => c.word !== cardWord);
+                
+                document.getElementById('deckCount').textContent = availableCards.length;
+                
+                if (currentCardIndex >= availableCards.length && availableCards.length > 0) {
+                    currentCardIndex = 0;
+                }
+                
+                currentCard = null;
+                document.getElementById('currentCardArea').innerHTML = '';
+                
+                if (availableCards.length === 0) {
+                    checkCompletion();
+                } else {
+                    drawCard();
+                }
+            } else {
+                loseHeart();
+                draggedCard.classList.add('bounce');
+                draggedCard.classList.add('highlight-root');
+                setTimeout(() => {
+                    draggedCard.classList.remove('bounce');
+                    draggedCard.classList.remove('highlight-root');
+                }, 1500);
+            }
+            
+            draggedCard = null;
+        }
+
+        function loseHeart() {
+            if (hearts <= 0) return;
+            
+            hearts--;
+            const heartsDisplay = document.getElementById('heartsDisplay');
+            const heartElements = heartsDisplay.querySelectorAll('.heart');
+            heartElements[hearts].classList.add('lost');
+            
+            heartsDisplay.classList.add('shake');
+            setTimeout(() => {
+                heartsDisplay.classList.remove('shake');
+            }, 500);
+            
+            if (hearts === 0) {
+                gameOver();
+            }
+        }
+
+        function gameOver() {
+            clearInterval(timerInterval);
+            
+            const modal = document.getElementById('gameOverModal');
+            const statsDiv = document.getElementById('gameOverStats');
+            const wordsDiv = document.getElementById('gameOverWords');
+            
+            const totalCards = allCards.length;
+            const correctCards = totalCards - availableCards.length;
+            
+            statsDiv.innerHTML = `
+                <div>💔 You ran out of hearts!</div>
+                <div>✅ Correct Cards: ${correctCards} / ${totalCards}</div>
+            `;
+            
+            wordsDiv.innerHTML = '<h3>🌟 Words You Placed Correctly 🌟</h3>';
+            
+            let hasWords = false;
+            Object.entries(placedCards).forEach(([family, words]) => {
+                if (words.length > 0) {
+                    hasWords = true;
+                    const familyWords = wordFamilies[family].filter(w => words.includes(w.word));
+                    const group = document.createElement('div');
+                    group.className = 'word-family-group';
+                    group.innerHTML = `
+                        <h4>${family.toUpperCase()} family:</h4>
+                        <ul>
+                            ${familyWords.map(w => `<li>✓ ${w.word} (${w.pos})</li>`).join('')}
+                        </ul>
+                    `;
+                    wordsDiv.appendChild(group);
+                }
+            });
+            
+            if (!hasWords) {
+                wordsDiv.innerHTML += '<p style="color: #fff; margin-top: 20px;">No words placed correctly yet. Try again!</p>';
+            }
+            
+            modal.style.display = 'flex';
+        }
+
+        function speakWord(word) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(word);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.8;
+                speechSynthesis.speak(utterance);
+            }
+        }
+
+        function updateTimer() {
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+            const seconds = (elapsed % 60).toString().padStart(2, '0');
+            document.getElementById('timer').textContent = `${minutes}:${seconds}`;
+        }
+
+        function checkCompletion() {
+            if (availableCards.length === 0) {
+                clearInterval(timerInterval);
+                showCompletionModal();
+            }
+        }
+
+        function showCompletionModal() {
+            const modal = document.getElementById('completionModal');
+            const finalTime = document.getElementById('timer').textContent;
+            document.getElementById('finalTime').textContent = finalTime;
+            
+            // Create confetti
+            createConfetti();
+            
+            // Create sparkles
+            createSparkles();
+            
+            const wordsLearnedDiv = document.getElementById('wordsLearned');
+            wordsLearnedDiv.innerHTML = '<h3>🌟 VEN2205 Vocabulary Mastered! 🌟</h3>';
+            
+            Object.entries(wordFamilies).forEach(([family, words]) => {
+                const group = document.createElement('div');
+                group.className = 'word-family-group';
+                group.innerHTML = `
+                    <h4>${family.toUpperCase()} family:</h4>
+                    <ul>
+                        ${words.map(w => `<li>⭐ ${w.word} (${w.pos}) - ${w.meaning}</li>`).join('')}
+                    </ul>
+                `;
+                wordsLearnedDiv.appendChild(group);
+            });
+            
+            modal.style.display = 'flex';
+        }
+
+        function createConfetti() {
+            const colors = ['#ffd700', '#ff6b6b', '#4ecdc4', '#45b7d1', '#f093fb', '#f5576c'];
+            for (let i = 0; i < 150; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDelay = Math.random() * 3 + 's';
+                    confetti.style.width = (Math.random() * 10 + 5) + 'px';
+                    confetti.style.height = confetti.style.width;
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 20);
+            }
+        }
+
+        function createSparkles() {
+            const modal = document.getElementById('completionModal');
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    const sparkle = document.createElement('div');
+                    sparkle.className = 'sparkle';
+                    sparkle.textContent = '✨';
+                    sparkle.style.left = Math.random() * 100 + '%';
+                    sparkle.style.top = Math.random() * 100 + '%';
+                    sparkle.style.fontSize = (Math.random() * 30 + 20) + 'px';
+                    modal.appendChild(sparkle);
+                    
+                    setTimeout(() => sparkle.remove(), 1500);
+                }, i * 80);
+            }
+        }
+
+        window.onload = initGame;
+    </script>
+</body>
+</html>

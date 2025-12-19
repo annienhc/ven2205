@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trial Game - Word Family Challenge 🎮</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: slideDown 0.5s ease-out;
+        }
+
+        h1 {
+            color: #fff;
+            font-size: 3em;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+        }
+
+        .back-btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .game-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .timer {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 50px;
+            display: inline-block;
+            color: #fff;
+            font-size: 1.5em;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .timer {
+                font-size: 1.2em;
+                padding: 10px 20px;
+            }
+        }
+
+        .hearts {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 50px;
+            display: inline-block;
+            color: #fff;
+            font-size: 1.5em;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .hearts {
+                font-size: 1.2em;
+                padding: 10px 20px;
+            }
+        }
+
+        .hearts.shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        .heart {
+            display: inline-block;
+            margin: 0 3px;
+            transition: all 0.3s ease;
+        }
+
+        .heart.lost {
+            opacity: 0.3;
+            filter: grayscale(100%);
+        }
+
+        .game-area {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 30px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @media (max-width: 1024px) {
+            .game-area {
+                grid-template-columns: 200px 1fr;
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .game-area {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .deck-area {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .deck-title {
+            color: #fff;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .deck-title {
+                font-size: 1.3em;
+            }
+        }
+
+        .deck {
+            position: relative;
+            height: 180px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            perspective: 1000px;
+        }
+
+        .deck-stack {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            color: #fff;
+            transition: transform 0.3s ease;
+        }
+
+        .deck-stack:hover {
+            transform: translateY(-5px) scale(1.05);
+        }
+
+        .deck-count {
+            color: #fff;
+            text-align: center;
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+
+        .current-card-area {
+            min-height: 180px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 15px;
+            border: 3px dashed rgba(255,255,255,0.4);
+        }
+
+        .current-card-title {
+            color: #fff;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .families-area {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .families-area {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 15px;
+            }
+        }
+
+        .family-column {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 15px;
+            min-height: 400px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            border: 3px dashed rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        @media (max-width: 768px) {
+            .family-column {
+                min-height: 300px;
+                padding: 10px;
+            }
+        }
+
+        .family-column.drag-over {
+            background: rgba(255,255,255,0.3);
+            border-color: #ffd700;
+            transform: scale(1.05);
+        }
+
+        .family-column.has-cards {
+            border-color: rgba(255,215,0,0.6);
+        }
+
+        .empty-placeholder {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: rgba(255,255,255,0.6);
+            font-size: 1.2em;
+            text-align: center;
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            .empty-placeholder {
+                font-size: 1em;
+            }
+        }
+
+        .card {
+            background: linear-gradient(135deg, #fff 0%, #f0f0f0 100%);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            cursor: move;
+            position: relative;
+            transition: all 0.3s ease;
+            border: 3px solid #667eea;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .card {
+                padding: 15px;
+            }
+        }
+
+        .family-column .card {
+            position: relative;
+            margin-bottom: 0;
+            margin-top: -140px;
+        }
+
+        @media (max-width: 768px) {
+            .family-column .card {
+                margin-top: -100px;
+            }
+        }
+
+        .family-column .card:first-child {
+            margin-top: 0;
+        }
+
+        .card:hover {
+            transform: translateY(-5px) rotate(2deg);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            z-index: 10;
+        }
+
+        .card.dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+        }
+
+        .card.bounce {
+            animation: bounce 0.5s ease-out;
+        }
+
+        .card.highlight-root .card-word {
+            animation: pulse 1s ease-in-out 3;
+        }
+
+        .card-word {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+            text-align: center;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            line-height: 1.2;
+        }
+
+        /* Adjust font size for longer words */
+        .card-word.long-word {
+            font-size: 1.4em;
+        }
+
+        .card-word.very-long-word {
+            font-size: 1.2em;
+        }
+
+        @media (max-width: 768px) {
+            .card-word {
+                font-size: 1.4em;
+            }
+            
+            .card-word.long-word {
+                font-size: 1.2em;
+            }
+            
+            .card-word.very-long-word {
+                font-size: 1em;
+            }
+        }
+
+        .card-pos {
+            display: inline-block;
+            background: #764ba2;
+            color: #fff;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .card-pos {
+                font-size: 0.8em;
+                padding: 4px 12px;
+            }
+        }
+
+        .card-meaning {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 10px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        @media (max-width: 768px) {
+            .card-meaning {
+                font-size: 0.85em;
+            }
+        }
+
+        .speaker-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .speaker-btn {
+                font-size: 0.9em;
+                padding: 8px 15px;
+            }
+        }
+
+        .speaker-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease-out;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 50px;
+            border-radius: 30px;
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            animation: popIn 0.5s ease-out;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                padding: 30px 20px;
+                max-height: 90vh;
+            }
+        }
+
+        .modal-content h2 {
+            color: #fff;
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        @media (max-width: 768px) {
+            .modal-content h2 {
+                font-size: 2em;
+            }
+        }
+
+        .completion-time {
+            background: rgba(255,255,255,0.2);
+            padding: 20px;
+            border-radius: 20px;
+            color: #fff;
+            font-size: 2em;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .completion-time {
+                font-size: 1.5em;
+                padding: 15px;
+            }
+        }
+
+        .words-learned {
+            background: rgba(255,255,255,0.15);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        @media (max-width: 768px) {
+            .words-learned {
+                padding: 20px;
+                max-height: 300px;
+            }
+        }
+
+        .words-learned h3 {
+            color: #fff;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .words-learned h3 {
+                font-size: 1.4em;
+            }
+        }
+
+        .word-family-group {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .word-family-group h4 {
+            color: #ffd700;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .word-family-group h4 {
+                font-size: 1.1em;
+            }
+        }
+
+        .word-family-group ul {
+            list-style: none;
+            color: #fff;
+        }
+
+        .word-family-group li {
+            padding: 5px 0;
+            font-size: 1.1em;
+        }
+
+        @media (max-width: 768px) {
+            .word-family-group li {
+                font-size: 1em;
+            }
+        }
+
+        .game-over-stats {
+            background: rgba(255,255,255,0.2);
+            padding: 20px;
+            border-radius: 20px;
+            color: #fff;
+            font-size: 1.3em;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .game-over-stats {
+                font-size: 1.1em;
+                padding: 15px;
+            }
+        }
+
+        .restart-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border: none;
+            color: #fff;
+            padding: 15px 40px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1.3em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        @media (max-width: 768px) {
+            .restart-btn {
+                font-size: 1.1em;
+                padding: 12px 30px;
+            }
+        }
+
+        .restart-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-20px); }
+            75% { transform: translateX(20px); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+            20%, 40%, 60%, 80% { transform: translateX(10px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { 
+                transform: scale(1);
+                color: #667eea;
+            }
+            50% { 
+                transform: scale(1.2);
+                color: #f5576c;
+            }
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .instruction {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: 15px;
+            color: #fff;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .instruction {
+                font-size: 0.9em;
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="index.html" class="back-btn">← Back to Menu</a>
+            <h1>🎮 Trial Game 🎮</h1>
+            <div class="game-stats">
+                <div class="timer">⏱️ Time: <span id="timer">00:00</span></div>
+                <div class="hearts" id="heartsDisplay">
+                    <span class="heart">❤️</span>
+                    <span class="heart">❤️</span>
+                    <span class="heart">❤️</span>
+                    <span class="heart">❤️</span>
+                    <span class="heart">❤️</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="instruction">
+            📝 Click the deck to see cards! Drag cards to group them by word family. Same root word = same family! 🔊 Click to hear pronunciation. Be careful - you only have 5 hearts! ❤️
+        </div>
+
+        <div class="game-area">
+            <div class="deck-area">
+                <div class="deck-title">📚 Card Deck</div>
+                <div class="deck" id="deck" onclick="drawCard()">
+                    <div class="deck-stack">🎴</div>
+                </div>
+                <div class="deck-count">Cards: <span id="deckCount">0</span></div>
+                
+                <div class="current-card-title">Current Card:</div>
+                <div class="current-card-area" id="currentCardArea"></div>
+            </div>
+
+            <div class="families-area" id="familiesArea"></div>
+        </div>
+    </div>
+
+    <div class="modal" id="completionModal">
+        <div class="modal-content">
+            <h2>🎉 Congratulations! 🎉</h2>
+            <div class="completion-time">
+                Your Time: <span id="finalTime"></span>
+            </div>
+            <div class="words-learned" id="wordsLearned"></div>
+            <button class="restart-btn" onclick="location.reload()">Play Again! 🔄</button>
+        </div>
+    </div>
+
+    <div class="modal" id="gameOverModal">
+        <div class="modal-content">
+            <h2>💔 Game Over 💔</h2>
+            <div class="game-over-stats" id="gameOverStats"></div>
+            <div class="words-learned" id="gameOverWords"></div>
+            <button class="restart-btn" onclick="location.reload()">Try Again! 🔄</button>
+        </div>
+    </div>
+
+    <script>
+        // Word families data (10 families, 3-5 words each)
+        const wordFamilies = {
+            'happy': [
+                { word: 'happy', pos: 'adjective', meaning: 'feeling pleasure', root: 'happ' },
+                { word: 'happiness', pos: 'noun', meaning: 'state of being happy', root: 'happ' },
+                { word: 'happily', pos: 'adverb', meaning: 'in a happy manner', root: 'happ' },
+                { word: 'unhappy', pos: 'adjective', meaning: 'not happy', root: 'happ' }
+            ],
+            'care': [
+                { word: 'care', pos: 'noun/verb', meaning: 'concern or attention', root: 'care' },
+                { word: 'careful', pos: 'adjective', meaning: 'taking care', root: 'care' },
+                { word: 'carefully', pos: 'adverb', meaning: 'in a careful way', root: 'care' },
+                { word: 'careless', pos: 'adjective', meaning: 'not careful', root: 'care' },
+                { word: 'caregiver', pos: 'noun', meaning: 'person who gives care', root: 'care' }
+            ],
+            'success': [
+                { word: 'success', pos: 'noun', meaning: 'achievement of goals', root: 'success' },
+                { word: 'successful', pos: 'adjective', meaning: 'having success', root: 'success' },
+                { word: 'successfully', pos: 'adverb', meaning: 'in a successful way', root: 'success' },
+                { word: 'unsuccessful', pos: 'adjective', meaning: 'not successful', root: 'success' }
+            ],
+            'help': [
+                { word: 'help', pos: 'noun/verb', meaning: 'assist or aid', root: 'help' },
+                { word: 'helpful', pos: 'adjective', meaning: 'giving help', root: 'help' },
+                { word: 'helpless', pos: 'adjective', meaning: 'unable to help oneself', root: 'help' },
+                { word: 'helper', pos: 'noun', meaning: 'person who helps', root: 'help' }
+            ],
+            'kind': [
+                { word: 'kind', pos: 'adjective', meaning: 'friendly and caring', root: 'kind' },
+                { word: 'kindness', pos: 'noun', meaning: 'quality of being kind', root: 'kind' },
+                { word: 'kindly', pos: 'adverb', meaning: 'in a kind way', root: 'kind' },
+                { word: 'unkind', pos: 'adjective', meaning: 'not kind', root: 'kind' }
+            ],
+            'friend': [
+                { word: 'friend', pos: 'noun', meaning: 'person you know well', root: 'friend' },
+                { word: 'friendly', pos: 'adjective', meaning: 'kind and pleasant', root: 'friend' },
+                { word: 'friendship', pos: 'noun', meaning: 'state of being friends', root: 'friend' },
+                { word: 'unfriendly', pos: 'adjective', meaning: 'not friendly', root: 'friend' }
+            ],
+            'quick': [
+                { word: 'quick', pos: 'adjective', meaning: 'fast', root: 'quick' },
+                { word: 'quickly', pos: 'adverb', meaning: 'in a fast way', root: 'quick' },
+                { word: 'quickness', pos: 'noun', meaning: 'speed', root: 'quick' }
+            ],
+            'comfort': [
+                { word: 'comfort', pos: 'noun/verb', meaning: 'ease and relaxation', root: 'comfort' },
+                { word: 'comfortable', pos: 'adjective', meaning: 'providing comfort', root: 'comfort' },
+                { word: 'comfortably', pos: 'adverb', meaning: 'in a comfortable way', root: 'comfort' },
+                { word: 'uncomfortable', pos: 'adjective', meaning: 'not comfortable', root: 'comfort' },
+                { word: 'discomfort', pos: 'noun', meaning: 'lack of comfort', root: 'comfort' }
+            ],
+            'enjoy': [
+                { word: 'enjoy', pos: 'verb', meaning: 'take pleasure in', root: 'enjoy' },
+                { word: 'enjoyable', pos: 'adjective', meaning: 'giving pleasure', root: 'enjoy' },
+                { word: 'enjoyment', pos: 'noun', meaning: 'state of enjoying', root: 'enjoy' },
+                { word: 'unenjoyable', pos: 'adjective', meaning: 'not enjoyable', root: 'enjoy' }
+            ],
+            'teach': [
+                { word: 'teach', pos: 'verb', meaning: 'give instruction', root: 'teach' },
+                { word: 'teacher', pos: 'noun', meaning: 'person who teaches', root: 'teach' },
+                { word: 'teaching', pos: 'noun', meaning: 'act of teaching', root: 'teach' },
+                { word: 'unteachable', pos: 'adjective', meaning: 'unable to be taught', root: 'teach' }
+            ]
+        };
+
+        // Game state
+        let allCards = [];
+        let availableCards = [];
+        let currentCardIndex = 0;
+        let currentCard = null;
+        let familyAssignments = {}; // Track which family is assigned to which column
+        let placedCards = {}; // Track placed cards by family
+        let startTime = null;
+        let timerInterval = null;
+        let draggedCard = null;
+        let hearts = 5;
+
+        // Initialize game
+        function initGame() {
+            // Create deck from all words
+            allCards = [];
+            Object.values(wordFamilies).forEach(family => {
+                allCards.push(...family);
+            });
+            
+            // Shuffle deck
+            allCards = shuffleArray(allCards);
+            availableCards = [...allCards];
+            
+            // Update deck count
+            document.getElementById('deckCount').textContent = availableCards.length;
+            
+            // Create family columns (empty initially)
+            const familiesArea = document.getElementById('familiesArea');
+            familiesArea.innerHTML = '';
+            
+            // Create 10 empty columns
+            for (let i = 0; i < 10; i++) {
+                const column = document.createElement('div');
+                column.className = 'family-column';
+                column.dataset.columnIndex = i;
+                column.innerHTML = '<div class="empty-placeholder">Drop cards here</div>';
+                column.addEventListener('dragover', handleDragOver);
+                column.addEventListener('drop', handleDrop);
+                column.addEventListener('dragleave', handleDragLeave);
+                familiesArea.appendChild(column);
+            }
+            
+            // Initialize placed cards tracker
+            Object.keys(wordFamilies).forEach(family => {
+                placedCards[family] = [];
+            });
+            
+            // Start timer
+            startTime = Date.now();
+            timerInterval = setInterval(updateTimer, 1000);
+            
+            // Draw first card
+            drawCard();
+        }
+
+        // Shuffle array
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        // Draw card from deck
+        function drawCard() {
+            if (availableCards.length === 0) return;
+            
+            // Remove current card if exists
+            const currentCardArea = document.getElementById('currentCardArea');
+            currentCardArea.innerHTML = '';
+            
+            // Get current card from available cards
+            currentCard = availableCards[currentCardIndex];
+            
+            // Create card element
+            const cardElement = createCardElement(currentCard);
+            currentCardArea.appendChild(cardElement);
+            
+            // Move to next card index (cycle back to 0 if at end)
+            currentCardIndex = (currentCardIndex + 1) % availableCards.length;
+        }
+
+        // Create card element
+        function createCardElement(cardData) {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.draggable = true;
+            card.dataset.word = cardData.word;
+            card.dataset.family = findFamily(cardData.word);
+            
+            // Determine word length class
+            let wordLengthClass = '';
+            if (cardData.word.length > 12) {
+                wordLengthClass = 'very-long-word';
+            } else if (cardData.word.length > 9) {
+                wordLengthClass = 'long-word';
+            }
+            
+            card.innerHTML = `
+                <div class="card-word ${wordLengthClass}">${cardData.word}</div>
+                <div class="card-pos">${cardData.pos}</div>
+                <div class="card-meaning">${cardData.meaning}</div>
+                <button class="speaker-btn" onclick="speakWord('${cardData.word}'); event.stopPropagation();">
+                    🔊 Listen
+                </button>
+            `;
+            
+            card.addEventListener('dragstart', handleDragStart);
+            card.addEventListener('dragend', handleDragEnd);
+            
+            return card;
+        }
+
+        // Find which family a word belongs to
+        function findFamily(word) {
+            for (const [family, words] of Object.entries(wordFamilies)) {
+                if (words.some(w => w.word === word)) {
+                    return family;
+                }
+            }
+            return null;
+        }
+
+        // Drag and drop handlers
+        function handleDragStart(e) {
+            draggedCard = e.target;
+            e.target.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            e.currentTarget.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const column = e.currentTarget;
+            column.classList.remove('drag-over');
+            
+            if (!draggedCard) return;
+            
+            const cardFamily = draggedCard.dataset.family;
+            const columnIndex = column.dataset.columnIndex;
+            const columnFamily = familyAssignments[columnIndex];
+            
+            let isValidPlacement = false;
+            
+            // Check if column is empty
+            if (!columnFamily) {
+                // Check if this family already has a column assigned
+                const existingColumn = Object.entries(familyAssignments).find(([idx, fam]) => fam === cardFamily);
+                if (existingColumn) {
+                    // Family already has a column - invalid placement
+                    isValidPlacement = false;
+                } else {
+                    // New family, empty column - valid placement
+                    isValidPlacement = true;
+                    familyAssignments[columnIndex] = cardFamily;
+                }
+            } else if (columnFamily === cardFamily) {
+                // Same family - valid placement
+                isValidPlacement = true;
+            }
+            
+            if (isValidPlacement) {
+                // Correct placement
+                column.classList.add('has-cards');
+                const placeholder = column.querySelector('.empty-placeholder');
+                if (placeholder) placeholder.remove();
+                
+                column.appendChild(draggedCard);
+                placedCards[cardFamily].push(draggedCard.dataset.word);
+                
+                // Remove card from available cards
+                const cardWord = draggedCard.dataset.word;
+                availableCards = availableCards.filter(c => c.word !== cardWord);
+                
+                // Update deck count
+                document.getElementById('deckCount').textContent = availableCards.length;
+                
+                // Adjust current index if needed
+                if (currentCardIndex >= availableCards.length && availableCards.length > 0) {
+                    currentCardIndex = 0;
+                }
+                
+                currentCard = null;
+                
+                // Clear current card area
+                document.getElementById('currentCardArea').innerHTML = '';
+                
+                // Check if game is complete
+                if (availableCards.length === 0) {
+                    checkCompletion();
+                } else {
+                    // Auto-draw next card
+                    drawCard();
+                }
+            } else {
+                // Wrong placement - lose a heart
+                loseHeart();
+                draggedCard.classList.add('bounce');
+                draggedCard.classList.add('highlight-root');
+                setTimeout(() => {
+                    draggedCard.classList.remove('bounce');
+                    draggedCard.classList.remove('highlight-root');
+                }, 1500);
+            }
+            
+            draggedCard = null;
+        }
+
+        // Lose a heart
+        function loseHeart() {
+            if (hearts <= 0) return;
+            
+            hearts--;
+            const heartsDisplay = document.getElementById('heartsDisplay');
+            const heartElements = heartsDisplay.querySelectorAll('.heart');
+            heartElements[hearts].classList.add('lost');
+            
+            // Shake animation
+            heartsDisplay.classList.add('shake');
+            setTimeout(() => {
+                heartsDisplay.classList.remove('shake');
+            }, 500);
+            
+            // Check for game over
+            if (hearts === 0) {
+                gameOver();
+            }
+        }
+
+        // Game over
+        function gameOver() {
+            clearInterval(timerInterval);
+            
+            const modal = document.getElementById('gameOverModal');
+            const statsDiv = document.getElementById('gameOverStats');
+            const wordsDiv = document.getElementById('gameOverWords');
+            
+            // Calculate stats
+            const totalCards = allCards.length;
+            const correctCards = totalCards - availableCards.length;
+            
+            statsDiv.innerHTML = `
+                <div>💔 You ran out of hearts!</div>
+                <div>✅ Correct Cards: ${correctCards} / ${totalCards}</div>
+            `;
+            
+            // Show correctly placed words
+            wordsDiv.innerHTML = '<h3>🌟 Words You Placed Correctly 🌟</h3>';
+            
+            let hasWords = false;
+            Object.entries(placedCards).forEach(([family, words]) => {
+                if (words.length > 0) {
+                    hasWords = true;
+                    const familyWords = wordFamilies[family].filter(w => words.includes(w.word));
+                    const group = document.createElement('div');
+                    group.className = 'word-family-group';
+                    group.innerHTML = `
+                        <h4>${family.toUpperCase()} family:</h4>
+                        <ul>
+                            ${familyWords.map(w => `<li>✓ ${w.word} (${w.pos})</li>`).join('')}
+                        </ul>
+                    `;
+                    wordsDiv.appendChild(group);
+                }
+            });
+            
+            if (!hasWords) {
+                wordsDiv.innerHTML += '<p style="color: #fff; margin-top: 20px;">No words placed correctly yet. Try again!</p>';
+            }
+            
+            modal.style.display = 'flex';
+        }
+
+        // Text-to-speech
+        function speakWord(word) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(word);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.8;
+                speechSynthesis.speak(utterance);
+            }
+        }
+
+        // Update timer
+        function updateTimer() {
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+            const seconds = (elapsed % 60).toString().padStart(2, '0');
+            document.getElementById('timer').textContent = `${minutes}:${seconds}`;
+        }
+
+        // Check if game is complete
+        function checkCompletion() {
+            if (availableCards.length === 0) {
+                clearInterval(timerInterval);
+                showCompletionModal();
+            }
+        }
+
+        // Show completion modal
+        function showCompletionModal() {
+            const modal = document.getElementById('completionModal');
+            const finalTime = document.getElementById('timer').textContent;
+            document.getElementById('finalTime').textContent = finalTime;
+            
+            // Show words learned
+            const wordsLearnedDiv = document.getElementById('wordsLearned');
+            wordsLearnedDiv.innerHTML = '<h3>🌟 Words You Learned 🌟</h3>';
+            
+            Object.entries(wordFamilies).forEach(([family, words]) => {
+                const group = document.createElement('div');
+                group.className = 'word-family-group';
+                group.innerHTML = `
+                    <h4>${family.toUpperCase()} family:</h4>
+                    <ul>
+                        ${words.map(w => `<li>• ${w.word} (${w.pos})</li>`).join('')}
+                    </ul>
+                `;
+                wordsLearnedDiv.appendChild(group);
+            });
+            
+            modal.style.display = 'flex';
+        }
+
+        // Initialize game on page load
+        window.onload = initGame;
+    </script>
+</body>
+</html>

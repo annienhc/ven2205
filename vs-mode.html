@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VS Mode - Word Family Card Game 🏆</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .game-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .game-header {
+            background: rgba(0,0,0,0.3);
+            padding: 15px 30px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .game-header h1 {
+            font-size: 2em;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .turn-indicator {
+            font-size: 1.2em;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 25px;
+            display: inline-block;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .turn-indicator.player1 {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            box-shadow: 0 4px 15px rgba(240, 147, 251, 0.5);
+        }
+
+        .turn-indicator.player2 {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.5);
+        }
+
+        .timer-display {
+            font-size: 1.5em;
+            margin-top: 8px;
+            font-weight: 700;
+        }
+
+        .timer-display.warning {
+            color: #ff6b6b;
+            animation: pulse 0.5s ease-in-out infinite;
+        }
+
+        /* Split Screen */
+        .split-container {
+            flex: 1;
+            display: flex;
+            gap: 2px;
+            background: #000;
+            overflow: hidden;
+        }
+
+        .player-area {
+            flex: 1;
+            background: linear-gradient(180deg, #2a2a40 0%, #1a1a2e 100%);
+            padding: 20px;
+            position: relative;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+        }
+
+        .player-area.active {
+            box-shadow: inset 0 0 30px rgba(255,255,255,0.1);
+        }
+
+        .player-area.player1-active {
+            border: 3px solid #f5576c;
+        }
+
+        .player-area.player2-active {
+            border: 3px solid #00f2fe;
+        }
+
+        .player-area.inactive {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        /* Player Header */
+        .player-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 15px;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .player-header h2 {
+            color: white;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .player1-area .player-header h2 {
+            color: #f5576c;
+            text-shadow: 0 0 10px rgba(245, 87, 108, 0.5);
+        }
+
+        .player2-area .player-header h2 {
+            color: #00f2fe;
+            text-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
+        }
+
+        .score-display {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #ffd700;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+            margin-top: 5px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: rgba(255,255,255,0.7);
+        }
+
+        /* Card Deck */
+        .deck-area {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .deck {
+            width: 180px;
+            height: 120px;
+            margin: 0 auto;
+            position: relative;
+            cursor: not-allowed;
+        }
+
+        .deck-card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            transition: transform 0.3s ease;
+        }
+
+        .deck-card:nth-child(1) { transform: translate(0, 0); }
+        .deck-card:nth-child(2) { transform: translate(-3px, -3px); }
+        .deck-card:nth-child(3) { transform: translate(-6px, -6px); }
+
+        .cards-remaining {
+            margin-top: 15px;
+            font-size: 1.1em;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* Current Card */
+        .current-card-area {
+            margin: 20px 0;
+            min-height: 180px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .vocab-card {
+            width: 200px;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            padding-top: 40px; /* Extra padding at top for badges */
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .vocab-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.6);
+        }
+
+        .vocab-card .word {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .vocab-card .meaning {
+            font-size: 0.9em;
+            color: #666;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        .vocab-card .speaker {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: transform 0.2s;
+            z-index: 10;
+        }
+
+        .vocab-card .speaker:hover {
+            transform: scale(1.2);
+        }
+
+        .speed-bonus {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #ffd700;
+            color: #333;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.75em;
+            font-weight: 700;
+            animation: sparkle 1s ease-in-out infinite;
+            z-index: 10;
+            box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
+        }
+
+        /* Drop Zones */
+        .drop-zones {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .drop-zone {
+            background: rgba(255,255,255,0.05);
+            border: 3px dashed rgba(255,255,255,0.2);
+            border-radius: 15px;
+            padding: 15px;
+            min-height: 120px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .drop-zone:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.4);
+        }
+
+        .drop-zone.highlight {
+            background: rgba(255,215,0,0.1);
+            border-color: #ffd700;
+            box-shadow: 0 0 20px rgba(255,215,0,0.3);
+        }
+
+        .zone-header {
+            font-weight: 600;
+            color: white;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            text-align: center;
+        }
+
+        .zone-cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .placed-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        /* Buttons */
+        .zone-button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .zone-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .zone-button:active {
+            transform: translateY(0);
+        }
+
+        .zone-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Feedback Messages */
+        .feedback-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: white;
+            padding: 30px 50px;
+            border-radius: 20px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.5);
+            z-index: 1000;
+            font-size: 1.5em;
+            font-weight: 700;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .feedback-message.show {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .feedback-message.correct {
+            color: #4caf50;
+            border: 4px solid #4caf50;
+        }
+
+        .feedback-message.incorrect {
+            color: #f44336;
+            border: 4px solid #f44336;
+        }
+
+        /* Game Over Modal */
+        .game-over-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .game-over-modal.show {
+            display: flex;
+        }
+
+        .game-over-content {
+            background: white;
+            padding: 50px;
+            border-radius: 25px;
+            text-align: center;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        .game-over-content h2 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .winner-announcement {
+            font-size: 2em;
+            font-weight: 700;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        .winner-announcement.player1 {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .winner-announcement.player2 {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .final-scores {
+            margin: 20px 0;
+            font-size: 1.2em;
+        }
+
+        .final-scores div {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 10px;
+        }
+
+        .restart-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .restart-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+        }
+
+        .home-button {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .home-button:hover {
+            box-shadow: 0 8px 25px rgba(245, 87, 108, 0.5);
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        @keyframes sparkle {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- Header -->
+        <div class="game-header">
+            <h1>🏆 VS MODE 🏆</h1>
+            <div class="turn-indicator player1" id="turnIndicator">
+                Player 1's Turn
+            </div>
+            <div class="timer-display" id="timerDisplay">⏱️ 30s</div>
+        </div>
+
+        <!-- Split Screen -->
+        <div class="split-container">
+            <!-- Player 1 Area -->
+            <div class="player-area player1-area active player1-active" id="player1Area">
+                <div class="player-header">
+                    <h2>👤 PLAYER 1</h2>
+                    <div class="score-display" id="player1Score">0</div>
+                    <div class="stats">
+                        <span>✅ Correct: <strong id="player1Correct">0</strong></span>
+                        <span>❌ Wrong: <strong id="player1Wrong">0</strong></span>
+                    </div>
+                </div>
+
+                <div class="deck-area">
+                    <div class="deck">
+                        <div class="deck-card">🎴</div>
+                        <div class="deck-card">🎴</div>
+                        <div class="deck-card">🎴</div>
+                    </div>
+                    <div class="cards-remaining" id="cardsRemaining">40 cards remaining</div>
+                </div>
+
+                <div class="current-card-area" id="player1CardArea">
+                    <!-- Card appears here -->
+                </div>
+
+                <div class="drop-zones" id="player1Zones">
+                    <!-- Drop zones will be generated -->
+                </div>
+            </div>
+
+            <!-- Player 2 Area -->
+            <div class="player-area player2-area inactive" id="player2Area">
+                <div class="player-header">
+                    <h2>👤 PLAYER 2</h2>
+                    <div class="score-display" id="player2Score">0</div>
+                    <div class="stats">
+                        <span>✅ Correct: <strong id="player2Correct">0</strong></span>
+                        <span>❌ Wrong: <strong id="player2Wrong">0</strong></span>
+                    </div>
+                </div>
+
+                <div class="deck-area">
+                    <div class="deck">
+                        <div class="deck-card">🎴</div>
+                        <div class="deck-card">🎴</div>
+                        <div class="deck-card">🎴</div>
+                    </div>
+                    <div class="cards-remaining">40 cards remaining</div>
+                </div>
+
+                <div class="current-card-area" id="player2CardArea">
+                    <!-- Card appears here -->
+                </div>
+
+                <div class="drop-zones" id="player2Zones">
+                    <!-- Drop zones will be generated -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Message -->
+    <div class="feedback-message" id="feedbackMessage"></div>
+
+    <!-- Game Over Modal -->
+    <div class="game-over-modal" id="gameOverModal">
+        <div class="game-over-content">
+            <h2>🎉 GAME OVER 🎉</h2>
+            <div class="winner-announcement" id="winnerAnnouncement"></div>
+            <div class="final-scores" id="finalScores"></div>
+            <button class="restart-button" onclick="location.reload()">🔄 Play Again</button>
+            <button class="restart-button home-button" onclick="location.href='index.html'">🏠 Home</button>
+        </div>
+    </div>
+
+    <script>
+        // Mixed vocabulary (20 from trial + 20 from challenge)
+        const vocabulary = [
+            // Trial words (basic vocabulary)
+            { word: "operate", meaning: "to control or make something work", family: "operate" },
+            { word: "operator", meaning: "a person who operates equipment", family: "operate" },
+            { word: "operation", meaning: "the process of operating something", family: "operate" },
+            { word: "operational", meaning: "ready to be used; working", family: "operate" },
+            
+            { word: "communicate", meaning: "to share information with others", family: "communicate" },
+            { word: "communication", meaning: "the act of sharing information", family: "communicate" },
+            { word: "communicator", meaning: "a person who communicates well", family: "communicate" },
+            { word: "communicative", meaning: "willing to talk and share information", family: "communicate" },
+            
+            { word: "create", meaning: "to make something new", family: "create" },
+            { word: "creation", meaning: "something that has been made", family: "create" },
+            { word: "creative", meaning: "having good imagination and original ideas", family: "create" },
+            { word: "creator", meaning: "a person who creates things", family: "create" },
+            
+            { word: "educate", meaning: "to teach someone", family: "educate" },
+            { word: "education", meaning: "the process of learning", family: "educate" },
+            { word: "educator", meaning: "a person who teaches", family: "educate" },
+            { word: "educational", meaning: "related to learning and teaching", family: "educate" },
+            
+            { word: "protect", meaning: "to keep safe from harm", family: "protect" },
+            { word: "protection", meaning: "the act of keeping something safe", family: "protect" },
+            { word: "protective", meaning: "giving protection; keeping safe", family: "protect" },
+            { word: "protector", meaning: "someone who protects", family: "protect" },
+            
+            // Challenge words (workplace safety)
+            { word: "hazard", meaning: "a danger or risk", family: "hazard" },
+            { word: "hazardous", meaning: "dangerous or risky", family: "hazard" },
+            
+            { word: "prevent", meaning: "to stop something from happening", family: "prevent" },
+            { word: "prevention", meaning: "the act of stopping something bad", family: "prevent" },
+            { word: "preventive", meaning: "intended to prevent something", family: "prevent" },
+            { word: "preventable", meaning: "able to be prevented", family: "prevent" },
+            
+            { word: "safe", meaning: "not in danger; protected", family: "safe" },
+            { word: "safety", meaning: "the condition of being safe", family: "safe" },
+            { word: "safely", meaning: "in a safe way", family: "safe" },
+            { word: "safeguard", meaning: "to protect from harm", family: "safe" },
+            
+            { word: "equip", meaning: "to provide with necessary items", family: "equip" },
+            { word: "equipment", meaning: "the tools needed for a task", family: "equip" },
+            { word: "equipped", meaning: "having the necessary tools", family: "equip" },
+            
+            { word: "inspect", meaning: "to look at something carefully", family: "inspect" },
+            { word: "inspection", meaning: "a careful examination", family: "inspect" },
+            { word: "inspector", meaning: "a person who inspects", family: "inspect" },
+            
+            { word: "comply", meaning: "to obey rules or standards", family: "comply" },
+            { word: "compliance", meaning: "the act of obeying rules", family: "comply" },
+            { word: "compliant", meaning: "willing to obey rules", family: "comply" },
+            { word: "non-compliant", meaning: "not following the rules", family: "comply" }
+        ];
+
+        // Game state
+        let currentPlayer = 1;
+        let player1Score = 0;
+        let player2Score = 0;
+        let player1Correct = 0;
+        let player2Correct = 0;
+        let player1Wrong = 0;
+        let player2Wrong = 0;
+        let cardDeck = [...vocabulary];
+        let currentCard = null;
+        let turnStartTime = null;
+        let turnTimer = null;
+        let timeRemaining = 30;
+        let wordFamilies = {};
+        
+        // Get unique families
+        const uniqueFamilies = [...new Set(vocabulary.map(v => v.family))];
+        uniqueFamilies.forEach(family => {
+            wordFamilies[family] = [];
+        });
+
+        // Shuffle deck
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        cardDeck = shuffle(cardDeck);
+
+        // Initialize drop zones
+        function initializeDropZones() {
+            const player1Zones = document.getElementById('player1Zones');
+            const player2Zones = document.getElementById('player2Zones');
+            
+            uniqueFamilies.forEach(family => {
+                // Player 1 zones
+                const zone1 = createDropZone(family, 1);
+                player1Zones.appendChild(zone1);
+                
+                // Player 2 zones
+                const zone2 = createDropZone(family, 2);
+                player2Zones.appendChild(zone2);
+            });
+        }
+
+        function createDropZone(family, player) {
+            const zone = document.createElement('div');
+            zone.className = 'drop-zone';
+            zone.id = `zone-${family}-p${player}`;
+            
+            zone.innerHTML = `
+                <div class="zone-header">${family.toUpperCase()}</div>
+                <div class="zone-cards" id="cards-${family}-p${player}"></div>
+                <button class="zone-button" onclick="placeCard('${family}', ${player})">
+                    Place Here
+                </button>
+            `;
+            
+            return zone;
+        }
+
+        // Draw card for current player
+        function drawCard() {
+            if (cardDeck.length === 0) {
+                endGame();
+                return;
+            }
+
+            currentCard = cardDeck.shift();
+            turnStartTime = Date.now();
+            timeRemaining = 30;
+            
+            updateCardsRemaining();
+            displayCurrentCard();
+            startTurnTimer();
+        }
+
+        function displayCurrentCard() {
+            const cardArea = document.getElementById(`player${currentPlayer}CardArea`);
+            const timeElapsed = Date.now() - turnStartTime;
+            const hasSpeedBonus = timeElapsed < 3000;
+            
+            cardArea.innerHTML = `
+                <div class="vocab-card slide-in">
+                    ${hasSpeedBonus ? '<div class="speed-bonus">⚡ Speed!</div>' : ''}
+                    <div class="speaker" onclick="speakWord('${currentCard.word}')">🔊</div>
+                    <div class="word">${currentCard.word}</div>
+                    <div class="meaning">${currentCard.meaning}</div>
+                </div>
+            `;
+        }
+
+        function speakWord(word) {
+            const utterance = new SpeechSynthesisUtterance(word);
+            utterance.rate = 0.8;
+            speechSynthesis.speak(utterance);
+        }
+
+        function startTurnTimer() {
+            clearInterval(turnTimer);
+            
+            turnTimer = setInterval(() => {
+                timeRemaining--;
+                updateTimerDisplay();
+                
+                if (timeRemaining <= 0) {
+                    clearInterval(turnTimer);
+                    showFeedback('⏰ Time\'s Up! Turn Skipped', 'incorrect');
+                    setTimeout(() => {
+                        switchPlayer();
+                    }, 1500);
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const timerDisplay = document.getElementById('timerDisplay');
+            timerDisplay.textContent = `⏱️ ${timeRemaining}s`;
+            
+            if (timeRemaining <= 10) {
+                timerDisplay.classList.add('warning');
+            } else {
+                timerDisplay.classList.remove('warning');
+            }
+        }
+
+        function placeCard(family, player) {
+            if (player !== currentPlayer || !currentCard) return;
+            
+            clearInterval(turnTimer);
+            
+            const isCorrect = currentCard.family === family;
+            const timeElapsed = (Date.now() - turnStartTime) / 1000;
+            const hasSpeedBonus = timeElapsed < 3;
+            
+            if (isCorrect) {
+                let points = 10;
+                if (hasSpeedBonus) {
+                    points += 5;
+                }
+                
+                if (player === 1) {
+                    player1Score += points;
+                    player1Correct++;
+                    updateScore(1);
+                } else {
+                    player2Score += points;
+                    player2Correct++;
+                    updateScore(2);
+                }
+                
+                // Add card to zone
+                const cardsContainer = document.getElementById(`cards-${family}-p${player}`);
+                const cardElement = document.createElement('div');
+                cardElement.className = 'placed-card';
+                cardElement.textContent = currentCard.word;
+                cardsContainer.appendChild(cardElement);
+                
+                const message = hasSpeedBonus ? 
+                    `✅ Correct! +${points} pts (Speed Bonus!)` : 
+                    `✅ Correct! +10 pts`;
+                showFeedback(message, 'correct');
+                
+            } else {
+                if (player === 1) {
+                    player1Score -= 5;
+                    player1Wrong++;
+                    updateScore(1);
+                } else {
+                    player2Score -= 5;
+                    player2Wrong++;
+                    updateScore(2);
+                }
+                
+                showFeedback('❌ Wrong! -5 pts, Turn Skipped', 'incorrect');
+            }
+            
+            setTimeout(() => {
+                switchPlayer();
+            }, 1500);
+        }
+
+        function switchPlayer() {
+            currentPlayer = currentPlayer === 1 ? 2 : 1;
+            
+            // Update UI
+            const player1Area = document.getElementById('player1Area');
+            const player2Area = document.getElementById('player2Area');
+            const turnIndicator = document.getElementById('turnIndicator');
+            
+            if (currentPlayer === 1) {
+                player1Area.classList.remove('inactive');
+                player1Area.classList.add('active', 'player1-active');
+                player2Area.classList.add('inactive');
+                player2Area.classList.remove('active', 'player2-active');
+                turnIndicator.className = 'turn-indicator player1';
+                turnIndicator.textContent = 'Player 1\'s Turn';
+            } else {
+                player2Area.classList.remove('inactive');
+                player2Area.classList.add('active', 'player2-active');
+                player1Area.classList.add('inactive');
+                player1Area.classList.remove('active', 'player1-active');
+                turnIndicator.className = 'turn-indicator player2';
+                turnIndicator.textContent = 'Player 2\'s Turn';
+            }
+            
+            // Clear current card display for both players
+            document.getElementById('player1CardArea').innerHTML = '';
+            document.getElementById('player2CardArea').innerHTML = '';
+            
+            drawCard();
+        }
+
+        function updateScore(player) {
+            if (player === 1) {
+                document.getElementById('player1Score').textContent = player1Score;
+                document.getElementById('player1Correct').textContent = player1Correct;
+                document.getElementById('player1Wrong').textContent = player1Wrong;
+            } else {
+                document.getElementById('player2Score').textContent = player2Score;
+                document.getElementById('player2Correct').textContent = player2Correct;
+                document.getElementById('player2Wrong').textContent = player2Wrong;
+            }
+        }
+
+        function updateCardsRemaining() {
+            const remaining = cardDeck.length;
+            document.getElementById('cardsRemaining').textContent = `${remaining} cards remaining`;
+        }
+
+        function showFeedback(message, type) {
+            const feedback = document.getElementById('feedbackMessage');
+            feedback.textContent = message;
+            feedback.className = `feedback-message ${type} show`;
+            
+            setTimeout(() => {
+                feedback.classList.remove('show');
+            }, 1500);
+        }
+
+        function endGame() {
+            clearInterval(turnTimer);
+            
+            const modal = document.getElementById('gameOverModal');
+            const winnerAnnouncement = document.getElementById('winnerAnnouncement');
+            const finalScores = document.getElementById('finalScores');
+            
+            let winner;
+            if (player1Score > player2Score) {
+                winner = 'Player 1';
+                winnerAnnouncement.className = 'winner-announcement player1';
+            } else if (player2Score > player1Score) {
+                winner = 'Player 2';
+                winnerAnnouncement.className = 'winner-announcement player2';
+            } else {
+                winner = 'It\'s a Tie';
+                winnerAnnouncement.className = 'winner-announcement';
+            }
+            
+            winnerAnnouncement.textContent = winner === 'It\'s a Tie' ? '🤝 IT\'S A TIE! 🤝' : `🏆 ${winner} WINS! 🏆`;
+            
+            finalScores.innerHTML = `
+                <div><strong>Player 1:</strong> ${player1Score} points (✅ ${player1Correct} | ❌ ${player1Wrong})</div>
+                <div><strong>Player 2:</strong> ${player2Score} points (✅ ${player2Correct} | ❌ ${player2Wrong})</div>
+            `;
+            
+            modal.classList.add('show');
+        }
+
+        // Initialize game
+        initializeDropZones();
+        drawCard();
+    </script>
+</body>
+</html>

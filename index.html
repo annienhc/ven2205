@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Family Card Game 🎮</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated background pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Header Section */
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .logo-section {
+            margin-bottom: 20px;
+        }
+
+        .game-icon {
+            font-size: 5em;
+            margin-bottom: 10px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        h1 {
+            color: #fff;
+            font-size: 3.5em;
+            text-shadow: 3px 3px 10px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.3em;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        /* Game Cards Grid */
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .game-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+        }
+
+        .game-card.trial::before {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .game-card.challenge::before {
+            background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .game-card.vs::before {
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 2.8em;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .game-card.challenge .card-icon {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            box-shadow: 0 5px 20px rgba(240, 147, 251, 0.4);
+        }
+
+        .game-card.vs .card-icon {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            box-shadow: 0 5px 20px rgba(79, 172, 254, 0.4);
+        }
+
+        .card-title {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .card-badge {
+            display: inline-block;
+            background: rgba(255, 215, 0, 0.2);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            border: 2px solid;
+            margin-bottom: 5px;
+        }
+
+        .game-card.trial .card-badge {
+            color: #667eea;
+            border-color: #667eea;
+        }
+
+        .game-card.challenge .card-badge {
+            color: #f5576c;
+            border-color: #f5576c;
+        }
+
+        .game-card.vs .card-badge {
+            color: #00f2fe;
+            border-color: #00f2fe;
+        }
+
+        .card-description {
+            color: #666;
+            font-size: 1em;
+            line-height: 1.7;
+            margin-bottom: 20px;
+            text-align: center;
+            min-height: 60px;
+        }
+
+        .play-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border: none;
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .game-card.challenge .play-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+        }
+
+        .game-card.vs .play-btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+        }
+
+        .play-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+        }
+
+        .game-card.challenge .play-btn:hover {
+            box-shadow: 0 8px 25px rgba(245, 87, 108, 0.5);
+        }
+
+        .game-card.vs .play-btn:hover {
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.5);
+        }
+
+        .play-btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* Instructions Section */
+        .instructions-section {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            animation: fadeInUp 1.2s ease-out;
+        }
+
+        .instructions-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .instructions-header h2 {
+            color: #333;
+            font-size: 2em;
+            font-weight: 700;
+        }
+
+        .toggle-icon {
+            font-size: 1.5em;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-icon.open {
+            transform: rotate(180deg);
+        }
+
+        .instructions-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .instructions-content.open {
+            max-height: 2000px;
+        }
+
+        .instruction-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .instruction-card {
+            background: linear-gradient(135deg, #f6f9fc 0%, #e9f2f9 100%);
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .instruction-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
+        }
+
+        .instruction-card h3 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .instruction-card p {
+            color: #555;
+            line-height: 1.8;
+            font-size: 0.95em;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin-top: 15px;
+        }
+
+        .feature-list li {
+            color: #555;
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .feature-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9em;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5em;
+            }
+
+            .subtitle {
+                font-size: 1em;
+            }
+
+            .game-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .instructions-section {
+                padding: 25px 20px;
+            }
+
+            .instructions-header h2 {
+                font-size: 1.5em;
+            }
+
+            .instruction-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px 15px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .game-icon {
+                font-size: 3em;
+            }
+
+            .card-title {
+                font-size: 1.4em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-section">
+                <div class="game-icon">🎴</div>
+                <h1>Word Family Card Game</h1>
+                <p class="subtitle">Master Vocabulary Through Interactive Learning</p>
+            </div>
+        </header>
+
+        <div class="game-grid">
+            <!-- Trial Game Card -->
+            <div class="game-card trial">
+                <div class="card-header">
+                    <div class="card-icon">🎯</div>
+                    <h2 class="card-title">Trial Game</h2>
+                    <span class="card-badge">Practice Mode</span>
+                </div>
+                <p class="card-description">
+                    Learn basic word families with 40 essential vocabulary words. Perfect for beginners!
+                </p>
+                <a href="trial-game.html" class="play-btn">
+                    🎮 Play Solo
+                </a>
+            </div>
+
+            <!-- Challenge Game Card -->
+            <div class="game-card challenge">
+                <div class="card-header">
+                    <div class="card-icon">🏆</div>
+                    <h2 class="card-title">Challenge Game</h2>
+                    <span class="card-badge">VEN2205 - Workplace Safety</span>
+                </div>
+                <p class="card-description">
+                    Master workplace safety vocabulary with 40 professional terms. Test your skills!
+                </p>
+                <a href="challenge-game.html" class="play-btn">
+                    🎮 Play Solo
+                </a>
+            </div>
+
+            <!-- VS Mode Card -->
+            <div class="game-card vs">
+                <div class="card-header">
+                    <div class="card-icon">⚔️</div>
+                    <h2 class="card-title">VS Mode</h2>
+                    <span class="card-badge">2 Players - Competitive</span>
+                </div>
+                <p class="card-description">
+                    Challenge a friend in split-screen battle! Take turns, earn points, and compete for victory!
+                </p>
+                <a href="vs-mode.html" class="play-btn">
+                    👥 Play VS Mode
+                </a>
+            </div>
+        </div>
+
+        <!-- Instructions Section (Collapsible) -->
+        <div class="instructions-section">
+            <div class="instructions-header" onclick="toggleInstructions()">
+                <h2>📖 How to Play</h2>
+                <span class="toggle-icon" id="toggleIcon">▼</span>
+            </div>
+            
+            <div class="instructions-content" id="instructionsContent">
+                <div class="instruction-grid">
+                    <div class="instruction-card">
+                        <h3>🎮 Solo Mode Objective</h3>
+                        <p>Group vocabulary cards into their correct word families. Each family shares a common root word and related meanings. Complete all cards before running out of lives!</p>
+                    </div>
+
+                    <div class="instruction-card">
+                        <h3>⚔️ VS Mode Objective</h3>
+                        <p>Compete against a friend in split-screen! Take turns placing cards correctly. Earn points for accuracy and speed. Player with the most points when all cards are placed wins!</p>
+                    </div>
+
+                    <div class="instruction-card">
+                        <h3>🎯 Solo Mode Controls</h3>
+                        <ul class="feature-list">
+                            <li>Click the deck to draw a card</li>
+                            <li>Drag the card to the correct family zone</li>
+                            <li>Group all words with the same root together</li>
+                            <li>You have 5 hearts - don't waste them!</li>
+                        </ul>
+                    </div>
+
+                    <div class="instruction-card">
+                        <h3>👥 VS Mode Rules</h3>
+                        <ul class="feature-list">
+                            <li>Players take turns placing cards</li>
+                            <li>30 seconds per turn or you lose your turn</li>
+                            <li>Correct placement: +10 points</li>
+                            <li>Place within 3 seconds: +5 bonus points!</li>
+                            <li>Wrong placement: -5 points, skip turn</li>
+                        </ul>
+                    </div>
+
+                    <div class="instruction-card">
+                        <h3>❤️ Lives System (Solo)</h3>
+                        <p>You have 5 hearts in solo mode. Each incorrect placement loses one heart. Place cards carefully! Run out of hearts and the game ends.</p>
+                    </div>
+
+                    <div class="instruction-card">
+                        <h3>⏱️ Timer & Scoring</h3>
+                        <p>Solo mode: Race against the clock for better scores. VS mode: 30-second turn limit with speed bonuses for quick placements!</p>
+                    </div>
+
+                    <div class="instruction-card">
+                        <h3>✨ Features</h3>
+                        <ul class="feature-list">
+                            <li>Audio pronunciation support</li>
+                            <li>Visual feedback & animations</li>
+                            <li>Progress tracking</li>
+                            <li>Responsive design</li>
+                            <li>Competitive multiplayer mode</li>
+                        </ul>
+                    </div>
+
+                    <div class="instruction-card">
+                        <h3>🎓 Learning Tips</h3>
+                        <ul class="feature-list">
+                            <li>Read word meanings carefully</li>
+                            <li>Look for common word roots</li>
+                            <li>Use the audio feature to learn pronunciation</li>
+                            <li>Practice makes perfect!</li>
+                            <li>Challenge friends to improve faster!</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>🎓 Educational Word Family Game | Designed for Interactive Vocabulary Learning</p>
+            <p style="margin-top: 10px; font-size: 0.85em;">© 2025 | Built with ❤️ for Language Learners</p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleInstructions() {
+            const content = document.getElementById('instructionsContent');
+            const icon = document.getElementById('toggleIcon');
+            
+            content.classList.toggle('open');
+            icon.classList.toggle('open');
+        }
+
+        // Add entrance animations on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.game-card, .instructions-section').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.6s ease-out';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
