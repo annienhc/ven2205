@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Text 3 - Occupational Safety and Health Guide</title>
-    <!-- Fixed CDN with integrity check -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" 
-            integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" 
-            crossorigin="anonymous" 
-            referrerpolicy="no-referrer"></script>
+    <!-- Use jsPDF library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -31,14 +28,92 @@
             100% { background-position: 0% 50%; }
         }
         
-        .container {
-            max-width: 1200px;
+        /* MAIN LAYOUT WITH SIDEBAR */
+        .main-wrapper {
+            max-width: 1800px;
             margin: 0 auto;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+        
+        .container {
+            flex: 1;
             background: rgba(255, 255, 255, 0.98);
             border-radius: 20px;
             box-shadow: 0 30px 90px rgba(0,0,0,0.4);
             overflow: hidden;
             animation: slideIn 0.8s ease-out;
+        }
+        
+        /* CHATBOT SIDEBAR */
+        .chatbot-sidebar {
+            width: 420px;
+            min-width: 420px;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            box-shadow: 0 30px 90px rgba(0,0,0,0.4);
+            overflow: hidden;
+            animation: slideInRight 0.8s ease-out;
+            position: sticky;
+            top: 20px;
+            height: calc(100vh - 40px);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chatbot-header {
+            background: linear-gradient(135deg, #1e3c72, #2a5298, #3b6ec9);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chatbot-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: sparkle 10s linear infinite;
+        }
+        
+        .chatbot-header h3 {
+            font-size: 18px;
+            margin: 0;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .chatbot-content {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chatbot-content iframe {
+            border: none;
+            width: 100%;
+            height: 100%;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
         
         @keyframes slideIn {
@@ -382,44 +457,54 @@
             text-decoration: none;
         }
         
-        .tooltip {
+        /* CENTERED TOOLTIP MODAL STYLE */
+        .tooltip-overlay {
             position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .tooltip-overlay.show {
+            display: flex;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        .tooltip {
             background: linear-gradient(135deg, #2d3748, #1a202c);
             color: white;
-            padding: 16px 20px;
-            border-radius: 12px;
-            font-size: 15px;
-            z-index: 10000;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            display: none;
-            max-width: 320px;
-            border: 2px solid rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            pointer-events: none;
-        }
-        
-        .tooltip::before {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 8px solid transparent;
-            border-right: 8px solid transparent;
-            border-top: 8px solid #1a202c;
-        }
-        
-        .tooltip.show {
-            display: block;
+            padding: 35px 45px;
+            border-radius: 20px;
+            font-size: 18px;
+            max-width: 500px;
+            width: 90%;
+            border: 3px solid rgba(255,255,255,0.2);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+            text-align: center;
+            position: relative;
             animation: tooltipBounce 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
         
         @keyframes tooltipBounce {
             0% {
                 opacity: 0;
-                transform: scale(0.8) translateY(10px);
+                transform: scale(0.7) translateY(30px);
             }
             70% {
                 transform: scale(1.05) translateY(0);
@@ -428,6 +513,69 @@
                 opacity: 1;
                 transform: scale(1) translateY(0);
             }
+        }
+        
+        .tooltip .word-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #f472b6;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .tooltip .word-chinese {
+            font-size: 28px;
+            color: #fbbf24;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        
+        .tooltip .word-pos {
+            font-size: 16px;
+            color: #cbd5e0;
+            font-style: italic;
+            margin-bottom: 25px;
+        }
+        
+        .tooltip .close-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            margin-top: 10px;
+        }
+        
+        .tooltip .close-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        .tooltip .close-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .tooltip .speak-btn {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+        }
+        
+        .tooltip .speak-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.05);
         }
         
         .vocab-list {
@@ -1051,7 +1199,38 @@
             }
         }
         
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 1400px) {
+            .chatbot-sidebar {
+                width: 380px;
+                min-width: 380px;
+            }
+        }
+        
+        @media (max-width: 1200px) {
+            .main-wrapper {
+                flex-direction: column;
+            }
+            
+            .chatbot-sidebar {
+                width: 100%;
+                min-width: auto;
+                position: relative;
+                top: 0;
+                height: 600px;
+                order: -1;
+            }
+        }
+        
         @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .main-wrapper {
+                gap: 10px;
+            }
+            
             .header {
                 padding: 25px 20px;
             }
@@ -1092,378 +1271,415 @@
                 width: 100%;
                 margin: 10px 0;
             }
+            
+            .tooltip {
+                width: 95%;
+                padding: 30px 25px;
+            }
+            
+            .tooltip .word-title {
+                font-size: 28px;
+            }
+            
+            .tooltip .word-chinese {
+                font-size: 22px;
+            }
+            
+            .chatbot-sidebar {
+                height: 500px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="particles" id="particles"></div>
     
-    <div class="container">
-        <div class="header">
-            <a href="./" class="back-btn">← Back to Home</a>
-            <h1>📚 Text 3: Occupational Safety and Health Guide</h1>
-            <p>General Guide on Occupational Safety and Health</p>
-        </div>
-        
-        <div class="tabs">
-            <div class="tab-indicator" id="tabIndicator"></div>
-            <button class="tab-btn active" onclick="openTab(event, 'reading')" data-tab="0">📖 Reading</button>
-            <button class="tab-btn" onclick="openTab(event, 'vocabulary')" data-tab="1">📚 Vocabulary</button>
-            <button class="tab-btn" onclick="openTab(event, 'language')" data-tab="2">🎯 Language Focus</button>
-            <button class="tab-btn" onclick="openTab(event, 'quiz')" data-tab="3">✏️ e-Quiz Practice</button>
-        </div>
-        
-        <!-- Tab 1: Reading -->
-        <div id="reading" class="tab-content active">
-            <div class="audio-control">
-                <div style="flex: 1; position: relative; z-index: 1;">
-                    <h3 style="margin-bottom: 5px;">🔊 Listen to the Text</h3>
-                    <p style="opacity: 0.95; font-size: 14px;">Click the button to hear the complete text</p>
-                </div>
-                <button class="audio-btn" onclick="readFullText()">
-                    <span>▶️</span> Play Audio
-                </button>
+    <div class="main-wrapper">
+        <!-- MAIN CONTENT -->
+        <div class="container">
+            <div class="header">
+                <a href="./index.html" class="back-btn">← Back to Home</a>
+                <h1>📚 Text 3: Occupational Safety and Health Guide</h1>
+                <p>General Guide on Occupational Safety and Health</p>
             </div>
             
-            <div class="reading-text">
-                <h3>General Guide on Occupational Safety and Health</h3>
-                
-                <div class="excerpt-box">
-                    <div class="excerpt-title">🔧 Excerpt (a) - Tool Safety</div>
-                    <p>Many workplace <span class="clickable-word" data-word="accidents" data-chinese="意外" data-pos="noun (名詞)">accidents</span> occurred because of selecting a wrong <span class="clickable-word" data-word="tool" data-chinese="工具" data-pos="noun (名詞)">tool</span>, <span class="clickable-word" data-word="misuse" data-chinese="誤用" data-pos="noun (名詞)">misuse</span> of <span class="clickable-word" data-word="tools" data-chinese="工具" data-pos="noun (名詞)">tools</span> and <span class="clickable-word" data-word="accessories" data-chinese="配件" data-pos="noun (名詞)">accessories</span> or lack of <span class="clickable-word" data-word="proper" data-chinese="適當的" data-pos="adjective (形容詞)">proper</span> <span class="clickable-word" data-word="maintenance" data-chinese="維護" data-pos="noun (名詞)">maintenance</span> of <span class="clickable-word" data-word="tools" data-chinese="工具" data-pos="noun (名詞)">tools</span>. Therefore, <span class="clickable-word" data-word="workers" data-chinese="工人" data-pos="noun (名詞)">workers</span> should select a <span class="clickable-word" data-word="tool" data-chinese="工具" data-pos="noun (名詞)">tool</span> <span class="clickable-word" data-word="suitable" data-chinese="合適的" data-pos="adjective (形容詞)">suitable</span> for the <span class="clickable-word" data-word="specific" data-chinese="特定的" data-pos="adjective (形容詞)">specific</span> job and follow the <span class="clickable-word" data-word="safe instructions" data-chinese="安全指示" data-pos="noun (名詞)">safe instructions</span> to use and maintain it. <span class="clickable-word" data-word="Employers" data-chinese="雇主" data-pos="noun (名詞)">Employers</span> or <span class="clickable-word" data-word="responsible persons" data-chinese="負責人" data-pos="noun (名詞)">responsible persons</span> should make sure that <span class="clickable-word" data-word="workers" data-chinese="工人" data-pos="noun (名詞)">workers</span> have received <span class="clickable-word" data-word="training" data-chinese="訓練" data-pos="noun (名詞)">training</span> in the <span class="clickable-word" data-word="safe operating procedures" data-chinese="安全操作程序" data-pos="noun (名詞)">safe operating procedures</span> and <span class="clickable-word" data-word="skills" data-chinese="技能" data-pos="noun (名詞)">skills</span> for the <span class="clickable-word" data-word="tools" data-chinese="工具" data-pos="noun (名詞)">tools</span> concerned.</p>
-                </div>
-                
-                <div class="excerpt-box">
-                    <div class="excerpt-title">🪜 Excerpt (b) - Ladder and Height Safety</div>
-                    <p><span class="clickable-word" data-word="Ladders" data-chinese="梯子" data-pos="noun (名詞)">Ladders</span> should be used for <span class="clickable-word" data-word="access" data-chinese="進入" data-pos="noun (名詞)">access</span> to and <span class="clickable-word" data-word="egress" data-chinese="出口" data-pos="noun (名詞)">egress</span> from high places only. It is unsafe for <span class="clickable-word" data-word="workers" data-chinese="工人" data-pos="noun (名詞)">workers</span> to work on a <span class="clickable-word" data-word="ladder" data-chinese="梯子" data-pos="noun (名詞)">ladder</span> as they may fall from it during work. Many serious <span class="clickable-word" data-word="injuries" data-chinese="傷害" data-pos="noun (名詞)">injuries</span> or even <span class="clickable-word" data-word="fatalities" data-chinese="死亡事故" data-pos="noun (名詞)">fatalities</span> are due to using <span class="clickable-word" data-word="ladders" data-chinese="梯子" data-pos="noun (名詞)">ladders</span> <span class="clickable-word" data-word="inappropriately" data-chinese="不合適的" data-pos="adverb (副詞)">inappropriately</span>. A working <span class="clickable-word" data-word="platform" data-chinese="平台" data-pos="noun (名詞)">platform</span> should be used instead for common work above the ground. To ensure safety, a <span class="clickable-word" data-word="risk assessment" data-chinese="風險評估" data-pos="noun (名詞)">risk assessment</span> should be conducted before working at <span class="clickable-word" data-word="height" data-chinese="高處" data-pos="noun (名詞)">height</span> by a <span class="clickable-word" data-word="competent person" data-chinese="合資格人士" data-pos="noun (名詞)">competent person</span> to <span class="clickable-word" data-word="eliminate" data-chinese="消除" data-pos="verb (動詞)">eliminate</span> or <span class="clickable-word" data-word="minimise" data-chinese="減少到最低" data-pos="verb (動詞)">minimise</span> the <span class="clickable-word" data-word="fall hazards" data-chinese="墜落危險" data-pos="noun (名詞)">fall hazards</span>. <span class="clickable-word" data-word="Fall prevention equipment" data-chinese="防墜設備" data-pos="noun (名詞)">Fall prevention equipment</span> should also be provided as far as <span class="clickable-word" data-word="practicable" data-chinese="可行的" data-pos="adjective (形容詞)">practicable</span> to <span class="clickable-word" data-word="safeguard" data-chinese="保護" data-pos="verb (動詞)">safeguard</span> <span class="clickable-word" data-word="workers" data-chinese="工人" data-pos="noun (名詞)">workers</span> working at <span class="clickable-word" data-word="height" data-chinese="高處" data-pos="noun (名詞)">height</span>.</p>
-                </div>
-                
-                <div class="excerpt-box">
-                    <div class="excerpt-title">⚠️ Excerpt (c) - Confined Space Safety</div>
-                    <p><span class="clickable-word" data-word="Workers" data-chinese="工人" data-pos="noun (名詞)">Workers</span> are exposed to <span class="clickable-word" data-word="toxic gases" data-chinese="有毒氣體" data-pos="noun (名詞)">toxic gases</span> when working in <span class="clickable-word" data-word="confined spaces" data-chinese="密閉空間" data-pos="noun (名詞)">confined spaces</span> such as <span class="clickable-word" data-word="tunnels" data-chinese="隧道" data-pos="noun (名詞)">tunnels</span> and wells. Other potential <span class="clickable-word" data-word="hazards" data-chinese="危害" data-pos="noun (名詞)">hazards</span> in <span class="clickable-word" data-word="confined spaces" data-chinese="密閉空間" data-pos="noun (名詞)">confined spaces</span> include <span class="clickable-word" data-word="suffocation" data-chinese="窒息" data-pos="noun (名詞)">suffocation</span>, fire, rush of sewage and caving in of sand. To protect themselves, <span class="clickable-word" data-word="workers" data-chinese="工人" data-pos="noun (名詞)">workers</span> shall use <span class="clickable-word" data-word="suitable" data-chinese="合適的" data-pos="adjective (形容詞)">suitable</span> types of <span class="clickable-word" data-word="breathing apparatus" data-chinese="呼吸器" data-pos="noun (名詞)">breathing apparatus</span> or gas mask during work. As the work environment may change continuously, which increases the risk of the work, a <span class="clickable-word" data-word="competent person" data-chinese="合資格人士" data-pos="noun (名詞)">competent person</span> shall recommend the use of <span class="clickable-word" data-word="appropriate" data-chinese="合適的" data-pos="adjective (形容詞)">appropriate</span> air <span class="clickable-word" data-word="monitoring equipment" data-chinese="監測設備" data-pos="noun (名詞)">monitoring equipment</span>. Also, only <span class="clickable-word" data-word="certified" data-chinese="經認證的" data-pos="adjective (形容詞)">certified</span> <span class="clickable-word" data-word="workers" data-chinese="工人" data-pos="noun (名詞)">workers</span> shall be allowed to enter the <span class="clickable-word" data-word="confined spaces" data-chinese="密閉空間" data-pos="noun (名詞)">confined spaces</span> or work inside there.</p>
-                </div>
-                
-                <p style="margin-top: 30px; font-style: italic; color: #4a5568; text-align: center;">
-                    Adapted from 'Occupational Safety and Health Management in Renovation and Maintenance Works for the Property Management Industry' published by the Labour Department
-                </p>
+            <div class="tabs">
+                <div class="tab-indicator" id="tabIndicator"></div>
+                <button class="tab-btn active" onclick="openTab(event, 'reading')" data-tab="0">📖 Reading</button>
+                <button class="tab-btn" onclick="openTab(event, 'vocabulary')" data-tab="1">📚 Vocabulary</button>
+                <button class="tab-btn" onclick="openTab(event, 'language')" data-tab="2">🎯 Language Focus</button>
+                <button class="tab-btn" onclick="openTab(event, 'quiz')" data-tab="3">✏️ e-Quiz Practice</button>
             </div>
-        </div>
-        
-        <!-- Tab 2: Vocabulary -->
-        <div id="vocabulary" class="tab-content">
-            <h2 style="color: #1e3c72; margin-bottom: 30px; text-align: center; font-size: 32px;">📚 Vocabulary Building</h2>
             
-            <div class="vocab-list">
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">access</div><button class="vocab-speak-btn" onclick="speakWord('access')">🔊</button></div><div class="vocab-chinese">進入</div><div class="vocab-pos">noun (名詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">accessories</div><button class="vocab-speak-btn" onclick="speakWord('accessories')">🔊</button></div><div class="vocab-chinese">配件</div><div class="vocab-pos">noun (名詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">apparatus</div><button class="vocab-speak-btn" onclick="speakWord('apparatus')">🔊</button></div><div class="vocab-chinese">設備</div><div class="vocab-pos">noun (名詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">appropriate</div><button class="vocab-speak-btn" onclick="speakWord('appropriate')">🔊</button></div><div class="vocab-chinese">合適的</div><div class="vocab-pos">adjective (形容詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">breathing apparatus</div><button class="vocab-speak-btn" onclick="speakWord('breathing apparatus')">🔊</button></div><div class="vocab-chinese">呼吸器</div><div class="vocab-pos">noun (名詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">certified</div><button class="vocab-speak-btn" onclick="speakWord('certified')">🔊</button></div><div class="vocab-chinese">經認證的</div><div class="vocab-pos">adjective (形容詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">competent person</div><button class="vocab-speak-btn" onclick="speakWord('competent person')">🔊</button></div><div class="vocab-chinese">合資格人士</div><div class="vocab-pos">noun (名詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">confined space</div><button class="vocab-speak-btn" onclick="speakWord('confined space')">🔊</button></div><div class="vocab-chinese">密閉空間</div><div class="vocab-pos">noun (名詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">egress</div><button class="vocab-speak-btn" onclick="speakWord('egress')">🔊</button></div><div class="vocab-chinese">出口</div><div class="vocab-pos">noun (名詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">eliminate</div><button class="vocab-speak-btn" onclick="speakWord('eliminate')">🔊</button></div><div class="vocab-chinese">消除</div><div class="vocab-pos">verb (動詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">employer</div><button class="vocab-speak-btn" onclick="speakWord('employer')">🔊</button></div><div class="vocab-chinese">雇主</div><div class="vocab-pos">noun (名詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">equipment</div><button class="vocab-speak-btn" onclick="speakWord('equipment')">🔊</button></div><div class="vocab-chinese">設備</div><div class="vocab-pos">noun (名詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">fall hazard</div><button class="vocab-speak-btn" onclick="speakWord('fall hazard')">🔊</button></div><div class="vocab-chinese">墜落危險</div><div class="vocab-pos">noun (名詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">fall prevention equipment</div><button class="vocab-speak-btn" onclick="speakWord('fall prevention equipment')">🔊</button></div><div class="vocab-chinese">防墜設備</div><div class="vocab-pos">noun (名詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">fatality</div><button class="vocab-speak-btn" onclick="speakWord('fatality')">🔊</button></div><div class="vocab-chinese">死亡事故</div><div class="vocab-pos">noun (名詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">hazard</div><button class="vocab-speak-btn" onclick="speakWord('hazard')">🔊</button></div><div class="vocab-chinese">危害</div><div class="vocab-pos">noun (名詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">height</div><button class="vocab-speak-btn" onclick="speakWord('height')">🔊</button></div><div class="vocab-chinese">高處</div><div class="vocab-pos">noun (名詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">inappropriate</div><button class="vocab-speak-btn" onclick="speakWord('inappropriate')">🔊</button></div><div class="vocab-chinese">不合適的</div><div class="vocab-pos">adjective (形容詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">injury</div><button class="vocab-speak-btn" onclick="speakWord('injury')">🔊</button></div><div class="vocab-chinese">傷害</div><div class="vocab-pos">noun (名詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">ladder</div><button class="vocab-speak-btn" onclick="speakWord('ladder')">🔊</button></div><div class="vocab-chinese">梯子</div><div class="vocab-pos">noun (名詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">maintenance</div><button class="vocab-speak-btn" onclick="speakWord('maintenance')">🔊</button></div><div class="vocab-chinese">維護</div><div class="vocab-pos">noun (名詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">minimise</div><button class="vocab-speak-btn" onclick="speakWord('minimise')">🔊</button></div><div class="vocab-chinese">減少到最低</div><div class="vocab-pos">verb (動詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">misuse</div><button class="vocab-speak-btn" onclick="speakWord('misuse')">🔊</button></div><div class="vocab-chinese">誤用</div><div class="vocab-pos">noun (名詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">monitoring equipment</div><button class="vocab-speak-btn" onclick="speakWord('monitoring equipment')">🔊</button></div><div class="vocab-chinese">監測設備</div><div class="vocab-pos">noun (名詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">operate</div><button class="vocab-speak-btn" onclick="speakWord('operate')">🔊</button></div><div class="vocab-chinese">操作</div><div class="vocab-pos">verb (動詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">platform</div><button class="vocab-speak-btn" onclick="speakWord('platform')">🔊</button></div><div class="vocab-chinese">平台</div><div class="vocab-pos">noun (名詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">practicable</div><button class="vocab-speak-btn" onclick="speakWord('practicable')">🔊</button></div><div class="vocab-chinese">可行的</div><div class="vocab-pos">adjective (形容詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">procedure</div><button class="vocab-speak-btn" onclick="speakWord('procedure')">🔊</button></div><div class="vocab-chinese">程序</div><div class="vocab-pos">noun (名詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">proper</div><button class="vocab-speak-btn" onclick="speakWord('proper')">🔊</button></div><div class="vocab-chinese">適當的</div><div class="vocab-pos">adjective (形容詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">responsible person</div><button class="vocab-speak-btn" onclick="speakWord('responsible person')">🔊</button></div><div class="vocab-chinese">負責人</div><div class="vocab-pos">noun (名詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">risk assessment</div><button class="vocab-speak-btn" onclick="speakWord('risk assessment')">🔊</button></div><div class="vocab-chinese">風險評估</div><div class="vocab-pos">noun (名詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">safe instruction</div><button class="vocab-speak-btn" onclick="speakWord('safe instruction')">🔊</button></div><div class="vocab-chinese">安全指示</div><div class="vocab-pos">noun (名詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">safe operating procedure</div><button class="vocab-speak-btn" onclick="speakWord('safe operating procedure')">🔊</button></div><div class="vocab-chinese">安全操作程序</div><div class="vocab-pos">noun (名詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">safeguard</div><button class="vocab-speak-btn" onclick="speakWord('safeguard')">🔊</button></div><div class="vocab-chinese">保護</div><div class="vocab-pos">verb (動詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">skills</div><button class="vocab-speak-btn" onclick="speakWord('skills')">🔊</button></div><div class="vocab-chinese">技能</div><div class="vocab-pos">noun (名詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">specific</div><button class="vocab-speak-btn" onclick="speakWord('specific')">🔊</button></div><div class="vocab-chinese">特定的</div><div class="vocab-pos">adjective (形容詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">suffocation</div><button class="vocab-speak-btn" onclick="speakWord('suffocation')">🔊</button></div><div class="vocab-chinese">窒息</div><div class="vocab-pos">noun (名詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">suitable</div><button class="vocab-speak-btn" onclick="speakWord('suitable')">🔊</button></div><div class="vocab-chinese">合適的</div><div class="vocab-pos">adjective (形容詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">tool</div><button class="vocab-speak-btn" onclick="speakWord('tool')">🔊</button></div><div class="vocab-chinese">工具</div><div class="vocab-pos">noun (名詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">toxic gas</div><button class="vocab-speak-btn" onclick="speakWord('toxic gas')">🔊</button></div><div class="vocab-chinese">有毒氣體</div><div class="vocab-pos">noun (名詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">training</div><button class="vocab-speak-btn" onclick="speakWord('training')">🔊</button></div><div class="vocab-chinese">訓練</div><div class="vocab-pos">noun (名詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">tunnel</div><button class="vocab-speak-btn" onclick="speakWord('tunnel')">🔊</button></div><div class="vocab-chinese">隧道</div><div class="vocab-pos">noun (名詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">worker</div><button class="vocab-speak-btn" onclick="speakWord('worker')">🔊</button></div><div class="vocab-chinese">工人</div><div class="vocab-pos">noun (名詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">workplace</div><button class="vocab-speak-btn" onclick="speakWord('workplace')">🔊</button></div><div class="vocab-chinese">工作場所</div><div class="vocab-pos">noun (名詞)</div></div>
-                
-                <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">written</div><button class="vocab-speak-btn" onclick="speakWord('written')">🔊</button></div><div class="vocab-chinese">書面的</div><div class="vocab-pos">adjective (形容詞)</div></div>
-            </div>
-        </div>
-        
-        <!-- Tab 3: Language Focus -->
-        <div id="language" class="tab-content">
-            <h2 style="color: #1e3c72; margin-bottom: 35px; text-align: center; font-size: 32px;">🎯 Language Focus</h2>
-            
-            <div class="language-focus">
-                <h3>1. 'Because of' & 'because'</h3>
-                
-                <h4>Usage</h4>
-                <p>We can use 'because of' or 'because' to state the reason for something.</p>
-                
-                <h4>Form & Example</h4>
-                
-                <div class="example-box">
-                    <p><strong>'Because of' is followed by a noun or noun phrase (NP)</strong></p>
-                    <p style="margin-top: 10px;">E.g. Workers may suffer from illness <strong>because of</strong> heat or cold stress.</p>
+            <!-- Tab 1: Reading -->
+            <div id="reading" class="tab-content active">
+                <div class="audio-control">
+                    <div style="flex: 1; position: relative; z-index: 1;">
+                        <h3 style="margin-bottom: 5px;">🔊 Listen to the Text</h3>
+                        <p style="opacity: 0.95; font-size: 14px;">Click the button to hear the complete text</p>
+                    </div>
+                    <button class="audio-btn" onclick="readFullText()">
+                        <span>▶️</span> Play Audio
+                    </button>
                 </div>
                 
-                <div class="example-box">
-                    <p><strong>'Because' is followed by a clause (SVO structure)</strong></p>
-                    <p style="margin-top: 10px;">E.g. Workers usually get hurt <strong>because</strong> they use a machine inappropriately.</p>
+                <div class="reading-text">
+                    <h3>General Guide on Occupational Safety and Health</h3>
+                    
+                    <div class="excerpt-box">
+                        <div class="excerpt-title">🔧 Excerpt (a) - Tool Safety</div>
+                        <p>Many workplace <span class="clickable-word" data-word="accidents" data-chinese="意外" data-pos="noun (名詞)">accidents</span> occurred because of selecting a wrong <span class="clickable-word" data-word="tool" data-chinese="工具" data-pos="noun (名詞)">tool</span>, <span class="clickable-word" data-word="misuse" data-chinese="誤用" data-pos="noun (名詞)">misuse</span> of <span class="clickable-word" data-word="tools" data-chinese="工具" data-pos="noun (名詞)">tools</span> and <span class="clickable-word" data-word="accessories" data-chinese="配件" data-pos="noun (名詞)">accessories</span> or lack of <span class="clickable-word" data-word="proper" data-chinese="適當的" data-pos="adjective (形容詞)">proper</span> <span class="clickable-word" data-word="maintenance" data-chinese="維護" data-pos="noun (名詞)">maintenance</span> of <span class="clickable-word" data-word="tools" data-chinese="工具" data-pos="noun (名詞)">tools</span>. Therefore, <span class="clickable-word" data-word="workers" data-chinese="工人" data-pos="noun (名詞)">workers</span> should select a <span class="clickable-word" data-word="tool" data-chinese="工具" data-pos="noun (名詞)">tool</span> <span class="clickable-word" data-word="suitable" data-chinese="合適的" data-pos="adjective (形容詞)">suitable</span> for the <span class="clickable-word" data-word="specific" data-chinese="特定的" data-pos="adjective (形容詞)">specific</span> job and follow the <span class="clickable-word" data-word="safe instructions" data-chinese="安全指示" data-pos="noun (名詞)">safe instructions</span> to use and maintain it. <span class="clickable-word" data-word="Employers" data-chinese="雇主" data-pos="noun (名詞)">Employers</span> or <span class="clickable-word" data-word="responsible persons" data-chinese="負責人" data-pos="noun (名詞)">responsible persons</span> should make sure that <span class="clickable-word" data-word="workers" data-chinese="工人" data-pos="noun (名詞)">workers</span> have received <span class="clickable-word" data-word="training" data-chinese="訓練" data-pos="noun (名詞)">training</span> in the <span class="clickable-word" data-word="safe operating procedures" data-chinese="安全操作程序" data-pos="noun (名詞)">safe operating procedures</span> and <span class="clickable-word" data-word="skills" data-chinese="技能" data-pos="noun (名詞)">skills</span> for the <span class="clickable-word" data-word="tools" data-chinese="工具" data-pos="noun (名詞)">tools</span> concerned.</p>
+                    </div>
+                    
+                    <div class="excerpt-box">
+                        <div class="excerpt-title">🪜 Excerpt (b) - Ladder and Height Safety</div>
+                        <p><span class="clickable-word" data-word="Ladders" data-chinese="梯子" data-pos="noun (名詞)">Ladders</span> should be used for <span class="clickable-word" data-word="access" data-chinese="進入" data-pos="noun (名詞)">access</span> to and <span class="clickable-word" data-word="egress" data-chinese="出口" data-pos="noun (名詞)">egress</span> from high places only. It is unsafe for <span class="clickable-word" data-word="workers" data-chinese="工人" data-pos="noun (名詞)">workers</span> to work on a <span class="clickable-word" data-word="ladder" data-chinese="梯子" data-pos="noun (名詞)">ladder</span> as they may fall from it during work. Many serious <span class="clickable-word" data-word="injuries" data-chinese="傷害" data-pos="noun (名詞)">injuries</span> or even <span class="clickable-word" data-word="fatalities" data-chinese="死亡事故" data-pos="noun (名詞)">fatalities</span> are due to using <span class="clickable-word" data-word="ladders" data-chinese="梯子" data-pos="noun (名詞)">ladders</span> <span class="clickable-word" data-word="inappropriately" data-chinese="不合適的" data-pos="adverb (副詞)">inappropriately</span>. A working <span class="clickable-word" data-word="platform" data-chinese="平台" data-pos="noun (名詞)">platform</span> should be used instead for common work above the ground. To ensure safety, a <span class="clickable-word" data-word="risk assessment" data-chinese="風險評估" data-pos="noun (名詞)">risk assessment</span> should be conducted before working at <span class="clickable-word" data-word="height" data-chinese="高處" data-pos="noun (名詞)">height</span> by a <span class="clickable-word" data-word="competent person" data-chinese="合資格人士" data-pos="noun (名詞)">competent person</span> to <span class="clickable-word" data-word="eliminate" data-chinese="消除" data-pos="verb (動詞)">eliminate</span> or <span class="clickable-word" data-word="minimise" data-chinese="減少到最低" data-pos="verb (動詞)">minimise</span> the <span class="clickable-word" data-word="fall hazards" data-chinese="墜落危險" data-pos="noun (名詞)">fall hazards</span>. <span class="clickable-word" data-word="Fall prevention equipment" data-chinese="防墜設備" data-pos="noun (名詞)">Fall prevention equipment</span> should also be provided as far as <span class="clickable-word" data-word="practicable" data-chinese="可行的" data-pos="adjective (形容詞)">practicable</span> to <span class="clickable-word" data-word="safeguard" data-chinese="保護" data-pos="verb (動詞)">safeguard</span> <span class="clickable-word" data-word="workers" data-chinese="工人" data-pos="noun (名詞)">workers</span> working at <span class="clickable-word" data-word="height" data-chinese="高處" data-pos="noun (名詞)">height</span>.</p>
+                    </div>
+                    
+                    <div class="excerpt-box">
+                        <div class="excerpt-title">⚠️ Excerpt (c) - Confined Space Safety</div>
+                        <p><span class="clickable-word" data-word="Workers" data-chinese="工人" data-pos="noun (名詞)">Workers</span> are exposed to <span class="clickable-word" data-word="toxic gases" data-chinese="有毒氣體" data-pos="noun (名詞)">toxic gases</span> when working in <span class="clickable-word" data-word="confined spaces" data-chinese="密閉空間" data-pos="noun (名詞)">confined spaces</span> such as <span class="clickable-word" data-word="tunnels" data-chinese="隧道" data-pos="noun (名詞)">tunnels</span> and wells. Other potential <span class="clickable-word" data-word="hazards" data-chinese="危害" data-pos="noun (名詞)">hazards</span> in <span class="clickable-word" data-word="confined spaces" data-chinese="密閉空間" data-pos="noun (名詞)">confined spaces</span> include <span class="clickable-word" data-word="suffocation" data-chinese="窒息" data-pos="noun (名詞)">suffocation</span>, fire, rush of sewage and caving in of sand. To protect themselves, <span class="clickable-word" data-word="workers" data-chinese="工人" data-pos="noun (名詞)">workers</span> shall use <span class="clickable-word" data-word="suitable" data-chinese="合適的" data-pos="adjective (形容詞)">suitable</span> types of <span class="clickable-word" data-word="breathing apparatus" data-chinese="呼吸器" data-pos="noun (名詞)">breathing apparatus</span> or gas mask during work. As the work environment may change continuously, which increases the risk of the work, a <span class="clickable-word" data-word="competent person" data-chinese="合資格人士" data-pos="noun (名詞)">competent person</span> shall recommend the use of <span class="clickable-word" data-word="appropriate" data-chinese="合適的" data-pos="adjective (形容詞)">appropriate</span> air <span class="clickable-word" data-word="monitoring equipment" data-chinese="監測設備" data-pos="noun (名詞)">monitoring equipment</span>. Also, only <span class="clickable-word" data-word="certified" data-chinese="經認證的" data-pos="adjective (形容詞)">certified</span> <span class="clickable-word" data-word="workers" data-chinese="工人" data-pos="noun (名詞)">workers</span> shall be allowed to enter the <span class="clickable-word" data-word="confined spaces" data-chinese="密閉空間" data-pos="noun (名詞)">confined spaces</span> or work inside there.</p>
+                    </div>
+                    
+                    <p style="margin-top: 30px; font-style: italic; color: #4a5568; text-align: center;">
+                        Adapted from 'Occupational Safety and Health Management in Renovation and Maintenance Works for the Property Management Industry' published by the Labour Department
+                    </p>
                 </div>
             </div>
             
-            <div class="language-focus">
-                <h3>2. 'Due to' & 'owing to'</h3>
+            <!-- Tab 2: Vocabulary -->
+            <div id="vocabulary" class="tab-content">
+                <h2 style="color: #1e3c72; margin-bottom: 30px; text-align: center; font-size: 32px;">📚 Vocabulary Building</h2>
                 
-                <h4>Usage</h4>
-                <p>We can also use 'due to' and 'owing to' to introduce the reason for something. They are commonly used in formal documents such as guides and COP.</p>
-                
-                <h4>Form & Example</h4>
-                
-                <div class="example-box">
-                    <p><strong>Both of them are followed by a noun or noun phrase (NP)</strong></p>
-                    <p style="margin-top: 10px;">E.g. A number of fall accidents are <strong>due to</strong> the lack of suitable fall protection.</p>
-                    <p style="margin-top: 10px;">E.g. <strong>Owing to</strong> the nature of work, some workers have to carry out work on live conductors.</p>
+                <div class="vocab-list">
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">access</div><button class="vocab-speak-btn" onclick="speakWord('access')">🔊</button></div><div class="vocab-chinese">進入</div><div class="vocab-pos">noun (名詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">accessories</div><button class="vocab-speak-btn" onclick="speakWord('accessories')">🔊</button></div><div class="vocab-chinese">配件</div><div class="vocab-pos">noun (名詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">apparatus</div><button class="vocab-speak-btn" onclick="speakWord('apparatus')">🔊</button></div><div class="vocab-chinese">設備</div><div class="vocab-pos">noun (名詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">appropriate</div><button class="vocab-speak-btn" onclick="speakWord('appropriate')">🔊</button></div><div class="vocab-chinese">合適的</div><div class="vocab-pos">adjective (形容詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">breathing apparatus</div><button class="vocab-speak-btn" onclick="speakWord('breathing apparatus')">🔊</button></div><div class="vocab-chinese">呼吸器</div><div class="vocab-pos">noun (名詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">certified</div><button class="vocab-speak-btn" onclick="speakWord('certified')">🔊</button></div><div class="vocab-chinese">經認證的</div><div class="vocab-pos">adjective (形容詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">competent person</div><button class="vocab-speak-btn" onclick="speakWord('competent person')">🔊</button></div><div class="vocab-chinese">合資格人士</div><div class="vocab-pos">noun (名詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">confined space</div><button class="vocab-speak-btn" onclick="speakWord('confined space')">🔊</button></div><div class="vocab-chinese">密閉空間</div><div class="vocab-pos">noun (名詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">egress</div><button class="vocab-speak-btn" onclick="speakWord('egress')">🔊</button></div><div class="vocab-chinese">出口</div><div class="vocab-pos">noun (名詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">eliminate</div><button class="vocab-speak-btn" onclick="speakWord('eliminate')">🔊</button></div><div class="vocab-chinese">消除</div><div class="vocab-pos">verb (動詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">employer</div><button class="vocab-speak-btn" onclick="speakWord('employer')">🔊</button></div><div class="vocab-chinese">雇主</div><div class="vocab-pos">noun (名詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">equipment</div><button class="vocab-speak-btn" onclick="speakWord('equipment')">🔊</button></div><div class="vocab-chinese">設備</div><div class="vocab-pos">noun (名詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">fall hazard</div><button class="vocab-speak-btn" onclick="speakWord('fall hazard')">🔊</button></div><div class="vocab-chinese">墜落危險</div><div class="vocab-pos">noun (名詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">fall prevention equipment</div><button class="vocab-speak-btn" onclick="speakWord('fall prevention equipment')">🔊</button></div><div class="vocab-chinese">防墜設備</div><div class="vocab-pos">noun (名詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">fatality</div><button class="vocab-speak-btn" onclick="speakWord('fatality')">🔊</button></div><div class="vocab-chinese">死亡事故</div><div class="vocab-pos">noun (名詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">hazard</div><button class="vocab-speak-btn" onclick="speakWord('hazard')">🔊</button></div><div class="vocab-chinese">危害</div><div class="vocab-pos">noun (名詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">height</div><button class="vocab-speak-btn" onclick="speakWord('height')">🔊</button></div><div class="vocab-chinese">高處</div><div class="vocab-pos">noun (名詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">inappropriate</div><button class="vocab-speak-btn" onclick="speakWord('inappropriate')">🔊</button></div><div class="vocab-chinese">不合適的</div><div class="vocab-pos">adjective (形容詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">injury</div><button class="vocab-speak-btn" onclick="speakWord('injury')">🔊</button></div><div class="vocab-chinese">傷害</div><div class="vocab-pos">noun (名詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">ladder</div><button class="vocab-speak-btn" onclick="speakWord('ladder')">🔊</button></div><div class="vocab-chinese">梯子</div><div class="vocab-pos">noun (名詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">maintenance</div><button class="vocab-speak-btn" onclick="speakWord('maintenance')">🔊</button></div><div class="vocab-chinese">維護</div><div class="vocab-pos">noun (名詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">minimise</div><button class="vocab-speak-btn" onclick="speakWord('minimise')">🔊</button></div><div class="vocab-chinese">減少到最低</div><div class="vocab-pos">verb (動詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">misuse</div><button class="vocab-speak-btn" onclick="speakWord('misuse')">🔊</button></div><div class="vocab-chinese">誤用</div><div class="vocab-pos">noun (名詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">monitoring equipment</div><button class="vocab-speak-btn" onclick="speakWord('monitoring equipment')">🔊</button></div><div class="vocab-chinese">監測設備</div><div class="vocab-pos">noun (名詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">operate</div><button class="vocab-speak-btn" onclick="speakWord('operate')">🔊</button></div><div class="vocab-chinese">操作</div><div class="vocab-pos">verb (動詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">platform</div><button class="vocab-speak-btn" onclick="speakWord('platform')">🔊</button></div><div class="vocab-chinese">平台</div><div class="vocab-pos">noun (名詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">practicable</div><button class="vocab-speak-btn" onclick="speakWord('practicable')">🔊</button></div><div class="vocab-chinese">可行的</div><div class="vocab-pos">adjective (形容詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">procedure</div><button class="vocab-speak-btn" onclick="speakWord('procedure')">🔊</button></div><div class="vocab-chinese">程序</div><div class="vocab-pos">noun (名詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">proper</div><button class="vocab-speak-btn" onclick="speakWord('proper')">🔊</button></div><div class="vocab-chinese">適當的</div><div class="vocab-pos">adjective (形容詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">responsible person</div><button class="vocab-speak-btn" onclick="speakWord('responsible person')">🔊</button></div><div class="vocab-chinese">負責人</div><div class="vocab-pos">noun (名詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">risk assessment</div><button class="vocab-speak-btn" onclick="speakWord('risk assessment')">🔊</button></div><div class="vocab-chinese">風險評估</div><div class="vocab-pos">noun (名詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">safe instruction</div><button class="vocab-speak-btn" onclick="speakWord('safe instruction')">🔊</button></div><div class="vocab-chinese">安全指示</div><div class="vocab-pos">noun (名詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">safe operating procedure</div><button class="vocab-speak-btn" onclick="speakWord('safe operating procedure')">🔊</button></div><div class="vocab-chinese">安全操作程序</div><div class="vocab-pos">noun (名詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">safeguard</div><button class="vocab-speak-btn" onclick="speakWord('safeguard')">🔊</button></div><div class="vocab-chinese">保護</div><div class="vocab-pos">verb (動詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">skills</div><button class="vocab-speak-btn" onclick="speakWord('skills')">🔊</button></div><div class="vocab-chinese">技能</div><div class="vocab-pos">noun (名詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">specific</div><button class="vocab-speak-btn" onclick="speakWord('specific')">🔊</button></div><div class="vocab-chinese">特定的</div><div class="vocab-pos">adjective (形容詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">suffocation</div><button class="vocab-speak-btn" onclick="speakWord('suffocation')">🔊</button></div><div class="vocab-chinese">窒息</div><div class="vocab-pos">noun (名詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">suitable</div><button class="vocab-speak-btn" onclick="speakWord('suitable')">🔊</button></div><div class="vocab-chinese">合適的</div><div class="vocab-pos">adjective (形容詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">tool</div><button class="vocab-speak-btn" onclick="speakWord('tool')">🔊</button></div><div class="vocab-chinese">工具</div><div class="vocab-pos">noun (名詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">toxic gas</div><button class="vocab-speak-btn" onclick="speakWord('toxic gas')">🔊</button></div><div class="vocab-chinese">有毒氣體</div><div class="vocab-pos">noun (名詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">training</div><button class="vocab-speak-btn" onclick="speakWord('training')">🔊</button></div><div class="vocab-chinese">訓練</div><div class="vocab-pos">noun (名詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">tunnel</div><button class="vocab-speak-btn" onclick="speakWord('tunnel')">🔊</button></div><div class="vocab-chinese">隧道</div><div class="vocab-pos">noun (名詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">worker</div><button class="vocab-speak-btn" onclick="speakWord('worker')">🔊</button></div><div class="vocab-chinese">工人</div><div class="vocab-pos">noun (名詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">workplace</div><button class="vocab-speak-btn" onclick="speakWord('workplace')">🔊</button></div><div class="vocab-chinese">工作場所</div><div class="vocab-pos">noun (名詞)</div></div>
+                    
+                    <div class="vocab-card"><div class="vocab-header"><div class="vocab-word">written</div><button class="vocab-speak-btn" onclick="speakWord('written')">🔊</button></div><div class="vocab-chinese">書面的</div><div class="vocab-pos">adjective (形容詞)</div></div>
                 </div>
+            </div>
+            
+            <!-- Tab 3: Language Focus -->
+            <div id="language" class="tab-content">
+                <h2 style="color: #1e3c72; margin-bottom: 35px; text-align: center; font-size: 32px;">🎯 Language Focus</h2>
+                
+                <div class="language-focus">
+                    <h3>1. 'Because of' & 'because'</h3>
+                    
+                    <h4>Usage</h4>
+                    <p>We can use 'because of' or 'because' to state the reason for something.</p>
+                    
+                    <h4>Form & Example</h4>
+                    
+                    <div class="example-box">
+                        <p><strong>'Because of' is followed by a noun or noun phrase (NP)</strong></p>
+                        <p style="margin-top: 10px;">E.g. Workers may suffer from illness <strong>because of</strong> heat or cold stress.</p>
+                    </div>
+                    
+                    <div class="example-box">
+                        <p><strong>'Because' is followed by a clause (SVO structure)</strong></p>
+                        <p style="margin-top: 10px;">E.g. Workers usually get hurt <strong>because</strong> they use a machine inappropriately.</p>
+                    </div>
+                </div>
+                
+                <div class="language-focus">
+                    <h3>2. 'Due to' & 'owing to'</h3>
+                    
+                    <h4>Usage</h4>
+                    <p>We can also use 'due to' and 'owing to' to introduce the reason for something. They are commonly used in formal documents such as guides and COP.</p>
+                    
+                    <h4>Form & Example</h4>
+                    
+                    <div class="example-box">
+                        <p><strong>Both of them are followed by a noun or noun phrase (NP)</strong></p>
+                        <p style="margin-top: 10px;">E.g. A number of fall accidents are <strong>due to</strong> the lack of suitable fall protection.</p>
+                        <p style="margin-top: 10px;">E.g. <strong>Owing to</strong> the nature of work, some workers have to carry out work on live conductors.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tab 4: e-Quiz Practice -->
+            <div id="quiz" class="tab-content">
+                <h2 style="color: #1e3c72; margin-bottom: 35px; text-align: center; font-size: 32px;">✏️ e-Quiz Practice</h2>
+                
+                <form id="quizForm" class="quiz-form">
+                    <!-- Student Information Section -->
+                    <div class="form-section">
+                        <h3>👤 Student Information</h3>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label for="studentName">Student Name <span class="required">*</span></label>
+                                <input type="text" id="studentName" name="studentName" placeholder="Enter your full name" required>
+                                <span class="error-message" id="nameError">Please enter your name</span>
+                            </div>
+                            <div class="form-field">
+                                <label for="studentID">Student ID</label>
+                                <input type="text" id="studentID" name="studentID" placeholder="Enter your student ID (optional)">
+                            </div>
+                            <div class="form-field">
+                                <label for="studentClass">Class</label>
+                                <input type="text" id="studentClass" name="studentClass" placeholder="Enter your class (optional)">
+                            </div>
+                            <div class="form-field">
+                                <label for="completionDate">Completion Date</label>
+                                <input type="date" id="completionDate" name="completionDate">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- True/False Questions -->
+                    <div class="question-section" data-question="1" data-answer="True">
+                        <div class="question-text">
+                            <strong>Question 1:</strong> According to Excerpt (a), a lot of workplace accidents are due to using hand tools and accessories inappropriately.
+                        </div>
+                        <div class="options-group">
+                            <label class="option-label"><input type="radio" name="q1" value="True" required> True</label>
+                            <label class="option-label"><input type="radio" name="q1" value="False"> False</label>
+                            <label class="option-label"><input type="radio" name="q1" value="Not mentioned"> Not mentioned</label>
+                        </div>
+                        <div class="feedback"></div>
+                    </div>
+                    
+                    <div class="question-section" data-question="2" data-answer="True">
+                        <div class="question-text">
+                            <strong>Question 2:</strong> According to Excerpt (a), many workplace accidents are caused either by selecting a wrong tool or lack of maintenance of tools.
+                        </div>
+                        <div class="options-group">
+                            <label class="option-label"><input type="radio" name="q2" value="True" required> True</label>
+                            <label class="option-label"><input type="radio" name="q2" value="False"> False</label>
+                            <label class="option-label"><input type="radio" name="q2" value="Not mentioned"> Not mentioned</label>
+                        </div>
+                        <div class="feedback"></div>
+                    </div>
+                    
+                    <div class="question-section" data-question="3" data-answer="Not mentioned">
+                        <div class="question-text">
+                            <strong>Question 3:</strong> Employers or responsible persons should know how to operate the tools safely.
+                        </div>
+                        <div class="options-group">
+                            <label class="option-label"><input type="radio" name="q3" value="True" required> True</label>
+                            <label class="option-label"><input type="radio" name="q3" value="False"> False</label>
+                            <label class="option-label"><input type="radio" name="q3" value="Not mentioned"> Not mentioned</label>
+                        </div>
+                        <div class="feedback"></div>
+                    </div>
+                    
+                    <div class="question-section" data-question="4" data-answer="Not mentioned">
+                        <div class="question-text">
+                            <strong>Question 4:</strong> Workers should wear suitable protective equipment before using any tools.
+                        </div>
+                        <div class="options-group">
+                            <label class="option-label"><input type="radio" name="q4" value="True" required> True</label>
+                            <label class="option-label"><input type="radio" name="q4" value="False"> False</label>
+                            <label class="option-label"><input type="radio" name="q4" value="Not mentioned"> Not mentioned</label>
+                        </div>
+                        <div class="feedback"></div>
+                    </div>
+                    
+                    <div class="question-section" data-question="5" data-answer="False">
+                        <div class="question-text">
+                            <strong>Question 5:</strong> In confined spaces, workers shall not use breathing apparatuses or gas masks.
+                        </div>
+                        <div class="options-group">
+                            <label class="option-label"><input type="radio" name="q5" value="True" required> True</label>
+                            <label class="option-label"><input type="radio" name="q5" value="False"> False</label>
+                            <label class="option-label"><input type="radio" name="q5" value="Not mentioned"> Not mentioned</label>
+                        </div>
+                        <div class="feedback"></div>
+                    </div>
+                    
+                    <div class="question-section" data-question="6" data-answer="False">
+                        <div class="question-text">
+                            <strong>Question 6:</strong> Poisoning is the only problem for work in limited spaces.
+                        </div>
+                        <div class="options-group">
+                            <label class="option-label"><input type="radio" name="q6" value="True" required> True</label>
+                            <label class="option-label"><input type="radio" name="q6" value="False"> False</label>
+                            <label class="option-label"><input type="radio" name="q6" value="Not mentioned"> Not mentioned</label>
+                        </div>
+                        <div class="feedback"></div>
+                    </div>
+                    
+                    <div class="question-section" data-question="7" data-answer="True">
+                        <div class="question-text">
+                            <strong>Question 7:</strong> Workers working in tunnels may die because of suffocation.
+                        </div>
+                        <div class="options-group">
+                            <label class="option-label"><input type="radio" name="q7" value="True" required> True</label>
+                            <label class="option-label"><input type="radio" name="q7" value="False"> False</label>
+                            <label class="option-label"><input type="radio" name="q7" value="Not mentioned"> Not mentioned</label>
+                        </div>
+                        <div class="feedback"></div>
+                    </div>
+                    
+                    <div class="question-section" data-question="8" data-answer="True">
+                        <div class="question-text">
+                            <strong>Question 8:</strong> To work above the ground, workers should use a working platform instead of a ladder.
+                        </div>
+                        <div class="options-group">
+                            <label class="option-label"><input type="radio" name="q8" value="True" required> True</label>
+                            <label class="option-label"><input type="radio" name="q8" value="False"> False</label>
+                            <label class="option-label"><input type="radio" name="q8" value="Not mentioned"> Not mentioned</label>
+                        </div>
+                        <div class="feedback"></div>
+                    </div>
+                    
+                    <!-- Fill in the Blanks - Excerpt (b) -->
+                    <div class="fill-blank-section">
+                        <h4>📝 Summary of Excerpt (b) - Fill in the blanks</h4>
+                        
+                        <div class="word-bank">
+                            <strong>Word Bank:</strong>
+                            <div class="word-bank-items">
+                                <span class="word-bank-item">inappropriately</span>
+                                <span class="word-bank-item">minimise</span>
+                                <span class="word-bank-item">safeguard</span>
+                            </div>
+                        </div>
+                        
+                        <div class="fill-blank-text">
+                            <p>Many people use ladders <input type="text" class="blank-input" id="blank-b-a" placeholder="(a)"> for work above the ground, which causes injuries or even deaths. Before working at height, conducting a risk assessment can help remove or <input type="text" class="blank-input" id="blank-b-b" placeholder="(b)"> the potential hazards. Wearing personal protective equipment can also <input type="text" class="blank-input" id="blank-b-c" placeholder="(c)"> workers engaged in work above the ground.</p>
+                        </div>
+                        
+                        <div class="feedback" id="feedback-b"></div>
+                    </div>
+                    
+                    <!-- Fill in the Blanks - Excerpt (c) -->
+                    <div class="fill-blank-section">
+                        <h4>📝 Summary of Excerpt (c) - Fill in the blanks</h4>
+                        
+                        <div class="word-bank">
+                            <strong>Word Bank:</strong>
+                            <div class="word-bank-items">
+                                <span class="word-bank-item">competent</span>
+                                <span class="word-bank-item">protect</span>
+                                <span class="word-bank-item">certified</span>
+                            </div>
+                        </div>
+                        
+                        <div class="fill-blank-text">
+                            <p>To work in a confined space, a <input type="text" class="blank-input" id="blank-c-a" placeholder="(a)"> person shall recommend suitable equipment to monitor the air condition inside there. Workers must <input type="text" class="blank-input" id="blank-c-b" placeholder="(b)"> themselves by putting on suitable breathing apparatuses or gas masks. No people except the <input type="text" class="blank-input" id="blank-c-c" placeholder="(c)"> workers should be allowed to enter the confined spaces.</p>
+                        </div>
+                        
+                        <div class="feedback" id="feedback-c"></div>
+                    </div>
+                    
+                    <!-- Form Buttons -->
+                    <div class="form-buttons">
+                        <button type="submit" class="form-btn submit-btn">✓ Check Answers</button>
+                        <button type="button" class="form-btn download-btn" onclick="downloadPDF()">💾 Download as PDF</button>
+                        <button type="button" class="form-btn reset-btn" onclick="resetForm()">🔄 Reset Quiz</button>
+                    </div>
+                    
+                    <div class="score-display" id="scoreDisplay" style="display: none;"></div>
+                </form>
             </div>
         </div>
         
-        <!-- Tab 4: e-Quiz Practice -->
-        <div id="quiz" class="tab-content">
-            <h2 style="color: #1e3c72; margin-bottom: 35px; text-align: center; font-size: 32px;">✏️ e-Quiz Practice</h2>
-            
-            <form id="quizForm" class="quiz-form">
-                <!-- Student Information Section -->
-                <div class="form-section">
-                    <h3>👤 Student Information</h3>
-                    <div class="form-grid">
-                        <div class="form-field">
-                            <label for="studentName">Student Name <span class="required">*</span></label>
-                            <input type="text" id="studentName" name="studentName" placeholder="Enter your full name" required>
-                            <span class="error-message" id="nameError">Please enter your name</span>
-                        </div>
-                        <div class="form-field">
-                            <label for="studentID">Student ID</label>
-                            <input type="text" id="studentID" name="studentID" placeholder="Enter your student ID (optional)">
-                        </div>
-                        <div class="form-field">
-                            <label for="studentClass">Class</label>
-                            <input type="text" id="studentClass" name="studentClass" placeholder="Enter your class (optional)">
-                        </div>
-                        <div class="form-field">
-                            <label for="completionDate">Completion Date</label>
-                            <input type="date" id="completionDate" name="completionDate">
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- True/False Questions -->
-                <div class="question-section" data-question="1" data-answer="True">
-                    <div class="question-text">
-                        <strong>Question 1:</strong> According to Excerpt (a), a lot of workplace accidents are due to using hand tools and accessories inappropriately.
-                    </div>
-                    <div class="options-group">
-                        <label class="option-label"><input type="radio" name="q1" value="True" required> True</label>
-                        <label class="option-label"><input type="radio" name="q1" value="False"> False</label>
-                        <label class="option-label"><input type="radio" name="q1" value="Not mentioned"> Not mentioned</label>
-                    </div>
-                    <div class="feedback"></div>
-                </div>
-                
-                <div class="question-section" data-question="2" data-answer="True">
-                    <div class="question-text">
-                        <strong>Question 2:</strong> According to Excerpt (a), many workplace accidents are caused either by selecting a wrong tool or lack of maintenance of tools.
-                    </div>
-                    <div class="options-group">
-                        <label class="option-label"><input type="radio" name="q2" value="True" required> True</label>
-                        <label class="option-label"><input type="radio" name="q2" value="False"> False</label>
-                        <label class="option-label"><input type="radio" name="q2" value="Not mentioned"> Not mentioned</label>
-                    </div>
-                    <div class="feedback"></div>
-                </div>
-                
-                <div class="question-section" data-question="3" data-answer="Not mentioned">
-                    <div class="question-text">
-                        <strong>Question 3:</strong> Employers or responsible persons should know how to operate the tools safely.
-                    </div>
-                    <div class="options-group">
-                        <label class="option-label"><input type="radio" name="q3" value="True" required> True</label>
-                        <label class="option-label"><input type="radio" name="q3" value="False"> False</label>
-                        <label class="option-label"><input type="radio" name="q3" value="Not mentioned"> Not mentioned</label>
-                    </div>
-                    <div class="feedback"></div>
-                </div>
-                
-                <div class="question-section" data-question="4" data-answer="Not mentioned">
-                    <div class="question-text">
-                        <strong>Question 4:</strong> Workers should wear suitable protective equipment before using any tools.
-                    </div>
-                    <div class="options-group">
-                        <label class="option-label"><input type="radio" name="q4" value="True" required> True</label>
-                        <label class="option-label"><input type="radio" name="q4" value="False"> False</label>
-                        <label class="option-label"><input type="radio" name="q4" value="Not mentioned"> Not mentioned</label>
-                    </div>
-                    <div class="feedback"></div>
-                </div>
-                
-                <div class="question-section" data-question="5" data-answer="False">
-                    <div class="question-text">
-                        <strong>Question 5:</strong> In confined spaces, workers shall not use breathing apparatuses or gas masks.
-                    </div>
-                    <div class="options-group">
-                        <label class="option-label"><input type="radio" name="q5" value="True" required> True</label>
-                        <label class="option-label"><input type="radio" name="q5" value="False"> False</label>
-                        <label class="option-label"><input type="radio" name="q5" value="Not mentioned"> Not mentioned</label>
-                    </div>
-                    <div class="feedback"></div>
-                </div>
-                
-                <div class="question-section" data-question="6" data-answer="False">
-                    <div class="question-text">
-                        <strong>Question 6:</strong> Poisoning is the only problem for work in limited spaces.
-                    </div>
-                    <div class="options-group">
-                        <label class="option-label"><input type="radio" name="q6" value="True" required> True</label>
-                        <label class="option-label"><input type="radio" name="q6" value="False"> False</label>
-                        <label class="option-label"><input type="radio" name="q6" value="Not mentioned"> Not mentioned</label>
-                    </div>
-                    <div class="feedback"></div>
-                </div>
-                
-                <div class="question-section" data-question="7" data-answer="True">
-                    <div class="question-text">
-                        <strong>Question 7:</strong> Workers working in tunnels may die because of suffocation.
-                    </div>
-                    <div class="options-group">
-                        <label class="option-label"><input type="radio" name="q7" value="True" required> True</label>
-                        <label class="option-label"><input type="radio" name="q7" value="False"> False</label>
-                        <label class="option-label"><input type="radio" name="q7" value="Not mentioned"> Not mentioned</label>
-                    </div>
-                    <div class="feedback"></div>
-                </div>
-                
-                <div class="question-section" data-question="8" data-answer="True">
-                    <div class="question-text">
-                        <strong>Question 8:</strong> To work above the ground, workers should use a working platform instead of a ladder.
-                    </div>
-                    <div class="options-group">
-                        <label class="option-label"><input type="radio" name="q8" value="True" required> True</label>
-                        <label class="option-label"><input type="radio" name="q8" value="False"> False</label>
-                        <label class="option-label"><input type="radio" name="q8" value="Not mentioned"> Not mentioned</label>
-                    </div>
-                    <div class="feedback"></div>
-                </div>
-                
-                <!-- Fill in the Blanks - Excerpt (b) -->
-                <div class="fill-blank-section">
-                    <h4>📝 Summary of Excerpt (b) - Fill in the blanks</h4>
-                    
-                    <div class="word-bank">
-                        <strong>Word Bank:</strong>
-                        <div class="word-bank-items">
-                            <span class="word-bank-item">inappropriately</span>
-                            <span class="word-bank-item">minimise</span>
-                            <span class="word-bank-item">safeguard</span>
-                        </div>
-                    </div>
-                    
-                    <div class="fill-blank-text">
-                        <p>Many people use ladders <input type="text" class="blank-input" id="blank-b-a" placeholder="(a)"> for work above the ground, which causes injuries or even deaths. Before working at height, conducting a risk assessment can help remove or <input type="text" class="blank-input" id="blank-b-b" placeholder="(b)"> the potential hazards. Wearing personal protective equipment can also <input type="text" class="blank-input" id="blank-b-c" placeholder="(c)"> workers engaged in work above the ground.</p>
-                    </div>
-                    
-                    <div class="feedback" id="feedback-b"></div>
-                </div>
-                
-                <!-- Fill in the Blanks - Excerpt (c) -->
-                <div class="fill-blank-section">
-                    <h4>📝 Summary of Excerpt (c) - Fill in the blanks</h4>
-                    
-                    <div class="word-bank">
-                        <strong>Word Bank:</strong>
-                        <div class="word-bank-items">
-                            <span class="word-bank-item">competent</span>
-                            <span class="word-bank-item">protect</span>
-                            <span class="word-bank-item">certified</span>
-                        </div>
-                    </div>
-                    
-                    <div class="fill-blank-text">
-                        <p>To work in a confined space, a <input type="text" class="blank-input" id="blank-c-a" placeholder="(a)"> person shall recommend suitable equipment to monitor the air condition inside there. Workers must <input type="text" class="blank-input" id="blank-c-b" placeholder="(b)"> themselves by putting on suitable breathing apparatuses or gas masks. No people except the <input type="text" class="blank-input" id="blank-c-c" placeholder="(c)"> workers should be allowed to enter the confined spaces.</p>
-                    </div>
-                    
-                    <div class="feedback" id="feedback-c"></div>
-                </div>
-                
-                <!-- Form Buttons -->
-                <div class="form-buttons">
-                    <button type="submit" class="form-btn submit-btn">✓ Check Answers</button>
-                    <button type="button" class="form-btn download-btn" onclick="downloadPDF()">💾 Download as PDF</button>
-                    <button type="button" class="form-btn reset-btn" onclick="resetForm()">🔄 Reset Quiz</button>
-                </div>
-                
-                <div class="score-display" id="scoreDisplay" style="display: none;"></div>
-            </form>
+        <!-- CHATBOT SIDEBAR -->
+        <div class="chatbot-sidebar">
+            <div class="chatbot-header">
+                <h3>🤖 AI Learning Assistant</h3>
+            </div>
+            <div class="chatbot-content">
+                <iframe src="https://app.edcafe.ai/chatbots/6944edcd7cc108f4e8aeecd8" 
+                        title="VEN2205 e-Quiz Text 3" 
+                        allow="microphone"></iframe>
+            </div>
         </div>
     </div>
     
-    <div class="tooltip" id="tooltip"></div>
+    <!-- CENTERED TOOLTIP MODAL -->
+    <div class="tooltip-overlay" id="tooltipOverlay" onclick="closeTooltip()">
+        <div class="tooltip" id="tooltip" onclick="event.stopPropagation()">
+            <!-- Content will be dynamically inserted here -->
+        </div>
+    </div>
     
     <script>
         // Create floating particles
@@ -1555,8 +1771,9 @@
             }
         }
         
-        // IMPROVED Tooltip for clickable words - ALWAYS SHOWS ABOVE THE WORD
+        // CENTERED TOOLTIP FUNCTIONALITY
         const clickableWords = document.querySelectorAll('.clickable-word');
+        const tooltipOverlay = document.getElementById('tooltipOverlay');
         const tooltip = document.getElementById('tooltip');
         
         clickableWords.forEach(word => {
@@ -1567,49 +1784,28 @@
                 const pos = this.dataset.pos;
                 
                 tooltip.innerHTML = `
-                    <strong>${wordText}</strong><br>
-                    ${chinese}<br>
-                    <em>${pos}</em>
+                    <div class="word-title">${wordText}</div>
+                    <div class="word-chinese">${chinese}</div>
+                    <div class="word-pos">${pos}</div>
+                    <div style="margin-top: 20px;">
+                        <button class="speak-btn" onclick="speakWord('${wordText}'); event.stopPropagation();">🔊 Listen</button>
+                        <button class="close-btn" onclick="closeTooltip(); event.stopPropagation();">Close</button>
+                    </div>
                 `;
                 
-                tooltip.classList.add('show');
-                
-                // Force layout calculation
-                tooltip.style.display = 'block';
-                
-                // Get the position of the clicked word
-                const wordRect = this.getBoundingClientRect();
-                const tooltipRect = tooltip.getBoundingClientRect();
-                
-                // ALWAYS position tooltip ABOVE the word
-                let left = wordRect.left + (wordRect.width / 2) - (tooltipRect.width / 2);
-                let top = wordRect.top + window.scrollY - tooltipRect.height - 15; // 15px gap above the word
-                
-                // Adjust if tooltip goes off the right edge of screen
-                if (left + tooltipRect.width > window.innerWidth - 10) {
-                    left = window.innerWidth - tooltipRect.width - 10;
-                }
-                
-                // Adjust if tooltip goes off the left edge of screen
-                if (left < 10) {
-                    left = 10;
-                }
-                
-                // If tooltip would go above viewport, add extra scroll padding
-                if (top < window.scrollY + 10) {
-                    top = window.scrollY + 10;
-                }
-                
-                tooltip.style.left = left + 'px';
-                tooltip.style.top = top + 'px';
-                
+                tooltipOverlay.classList.add('show');
                 speakWord(wordText);
             });
         });
         
-        document.addEventListener('click', function(e) {
-            if (!e.target.classList.contains('clickable-word')) {
-                tooltip.classList.remove('show');
+        function closeTooltip() {
+            tooltipOverlay.classList.remove('show');
+        }
+        
+        // Close on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeTooltip();
             }
         });
         
@@ -1650,9 +1846,8 @@
         // Check answers function
         function checkAnswers() {
             let correctCount = 0;
-            const totalQuestions = 14; // 8 True/False + 6 Fill-in-blanks
+            const totalQuestions = 14;
             
-            // Check True/False questions (1-8)
             for (let i = 1; i <= 8; i++) {
                 const questionSection = document.querySelector(`[data-question="${i}"]`);
                 const selectedOption = document.querySelector(`input[name="q${i}"]:checked`);
@@ -1681,7 +1876,6 @@
                 }
             }
             
-            // Check fill-in-the-blanks for Excerpt (b)
             const blankBAnswers = {
                 a: document.getElementById('blank-b-a').value.trim().toLowerCase(),
                 b: document.getElementById('blank-b-b').value.trim().toLowerCase(),
@@ -1710,7 +1904,6 @@
             }
             feedbackB.innerHTML = feedbackBText;
             
-            // Check fill-in-the-blanks for Excerpt (c)
             const blankCAnswers = {
                 a: document.getElementById('blank-c-a').value.trim().toLowerCase(),
                 b: document.getElementById('blank-c-b').value.trim().toLowerCase(),
@@ -1739,7 +1932,6 @@
             }
             feedbackC.innerHTML = feedbackCText;
             
-            // Display score
             const percentage = Math.round((correctCount / totalQuestions) * 100);
             let emoji = '';
             if (percentage >= 90) emoji = '🎉';
@@ -1790,7 +1982,7 @@
             }
         }
         
-        // Download PDF
+        // Download PDF - MODIFIED TO HIDE CORRECT ANSWERS FOR INCORRECT RESPONSES
         function downloadPDF() {
             const formData = new FormData(quizForm);
             const studentName = formData.get('studentName')?.trim() || '';
@@ -1801,7 +1993,7 @@
                 return;
             }
             
-            if (typeof html2pdf === 'undefined') {
+            if (typeof jspdf === 'undefined') {
                 alert('⚠️ PDF library is loading. Please try again in a moment.');
                 return;
             }
@@ -1814,9 +2006,93 @@
             let totalQuestions = 14;
             let answeredCount = 0;
             
-            let questionsHTML = '';
+            const { jsPDF } = jspdf;
+            const doc = new jsPDF();
             
-            // Process True/False questions
+            let y = 20;
+            
+            doc.setFontSize(18);
+            doc.setTextColor(30, 60, 114);
+            doc.text('Text 3: Occupational Safety and Health Guide', 105, y, { align: 'center' });
+            y += 10;
+            
+            doc.setFontSize(14);
+            doc.text('e-Quiz Practice Results', 105, y, { align: 'center' });
+            y += 15;
+            
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text('Student Information:', 20, y);
+            y += 8;
+            
+            doc.setFontSize(10);
+            doc.text(`Name: ${studentName}`, 20, y);
+            y += 6;
+            doc.text(`Student ID: ${studentID}`, 20, y);
+            y += 6;
+            doc.text(`Class: ${studentClass}`, 20, y);
+            y += 6;
+            doc.text(`Completion Date: ${completionDate}`, 20, y);
+            y += 6;
+            doc.text(`Submission Time: ${new Date().toLocaleString()}`, 20, y);
+            y += 12;
+            
+            // Calculate scores first
+            for (let i = 1; i <= 8; i++) {
+                const questionSection = document.querySelector(`[data-question="${i}"]`);
+                const correctAnswer = questionSection.dataset.answer;
+                const userAnswer = formData.get(`q${i}`)?.trim() || '';
+                
+                if (userAnswer !== '') {
+                    answeredCount++;
+                    if (userAnswer === correctAnswer) {
+                        correctCount++;
+                    }
+                }
+            }
+            
+            const blankBAnswers = {
+                a: document.getElementById('blank-b-a').value.trim().toLowerCase(),
+                b: document.getElementById('blank-b-b').value.trim().toLowerCase(),
+                c: document.getElementById('blank-b-c').value.trim().toLowerCase()
+            };
+            
+            for (let key in blankBAnswers) {
+                if (blankBAnswers[key] !== '') answeredCount++;
+                if (blankBAnswers[key] === fillBlankAnswers.b[key].toLowerCase()) {
+                    correctCount++;
+                }
+            }
+            
+            const blankCAnswers = {
+                a: document.getElementById('blank-c-a').value.trim().toLowerCase(),
+                b: document.getElementById('blank-c-b').value.trim().toLowerCase(),
+                c: document.getElementById('blank-c-c').value.trim().toLowerCase()
+            };
+            
+            for (let key in blankCAnswers) {
+                if (blankCAnswers[key] !== '') answeredCount++;
+                if (blankCAnswers[key] === fillBlankAnswers.c[key].toLowerCase()) {
+                    correctCount++;
+                }
+            }
+            
+            const percentage = Math.round((correctCount / totalQuestions) * 100);
+            
+            doc.setFontSize(14);
+            doc.setTextColor(102, 126, 234);
+            doc.text(`Overall Score: ${correctCount}/${totalQuestions} (${percentage}%)`, 105, y, { align: 'center' });
+            y += 8;
+            doc.setFontSize(10);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`Questions Answered: ${answeredCount}/${totalQuestions}`, 105, y, { align: 'center' });
+            y += 15;
+            
+            doc.setFontSize(12);
+            doc.text('Detailed Results:', 20, y);
+            y += 10;
+            
+            // MODIFIED: Only show correct answer if user got it right
             for (let i = 1; i <= 8; i++) {
                 const questionSection = document.querySelector(`[data-question="${i}"]`);
                 const correctAnswer = questionSection.dataset.answer;
@@ -1824,197 +2100,127 @@
                 const questionText = questionSection.querySelector('.question-text').textContent.trim();
                 
                 let status = '';
-                let bgColor = '#fef3c7';
-                let borderColor = '#d97706';
-                
+                let isCorrect = false;
                 if (userAnswer !== 'Not answered') {
-                    answeredCount++;
-                    if (userAnswer === correctAnswer) {
-                        correctCount++;
-                        status = '✓ Correct';
-                        bgColor = '#c6f6d5';
-                        borderColor = '#38a169';
-                    } else {
-                        status = '✗ Incorrect';
-                        bgColor = '#fed7d7';
-                        borderColor = '#e53e3e';
-                    }
+                    isCorrect = userAnswer === correctAnswer;
+                    status = isCorrect ? 'Correct' : 'Incorrect';
                 } else {
-                    status = '⚠ Not answered';
+                    status = 'Not answered';
                 }
                 
-                questionsHTML += `
-                    <div style="background: ${bgColor}; padding: 15px; margin-bottom: 15px; border-radius: 8px; border-left: 4px solid ${borderColor}; page-break-inside: avoid;">
-                        <p style="margin: 0 0 8px 0; font-weight: bold; color: #1e3c72;">${questionText}</p>
-                        <p style="margin: 5px 0; font-size: 14px;"><strong>Your answer:</strong> <span style="color: #2563eb;">${userAnswer}</span></p>
-                        <p style="margin: 5px 0; font-size: 14px;"><strong>Correct answer:</strong> <span style="color: #059669;">${correctAnswer}</span></p>
-                        <p style="margin: 5px 0 0 0; font-size: 14px;"><strong>Result:</strong> ${status}</p>
-                    </div>
-                `;
+                if (y > 250) {
+                    doc.addPage();
+                    y = 20;
+                }
+                
+                doc.setFontSize(10);
+                doc.setFont(undefined, 'bold');
+                
+                const questionLines = doc.splitTextToSize(questionText, 170);
+                doc.text(questionLines, 20, y);
+                y += questionLines.length * 6;
+                
+                doc.setFont(undefined, 'normal');
+                doc.text(`Your answer: ${userAnswer}`, 20, y);
+                y += 6;
+                
+                // ONLY SHOW CORRECT ANSWER IF USER GOT IT RIGHT
+                if (isCorrect) {
+                    doc.text(`Correct answer: ${correctAnswer}`, 20, y);
+                    y += 6;
+                }
+                
+                if (status === 'Correct') {
+                    doc.setTextColor(0, 128, 0);
+                    doc.text(`Result: ${status}`, 20, y);
+                } else if (status === 'Incorrect') {
+                    doc.setTextColor(255, 0, 0);
+                    doc.text(`Result: ${status} - Try again!`, 20, y);
+                } else {
+                    doc.setTextColor(200, 100, 0);
+                    doc.text(`Result: ${status}`, 20, y);
+                }
+                doc.setTextColor(0, 0, 0);
+                y += 10;
             }
             
-            // Process fill-in-the-blanks for Excerpt (b)
-            const blankBAnswers = {
-                a: document.getElementById('blank-b-a').value.trim(),
-                b: document.getElementById('blank-b-b').value.trim(),
-                c: document.getElementById('blank-b-c').value.trim()
-            };
+            if (y > 240) {
+                doc.addPage();
+                y = 20;
+            }
             
-            let blankBStatus = '';
+            doc.setFont(undefined, 'bold');
+            doc.text('Fill in the blanks - Excerpt (b):', 20, y);
+            y += 8;
+            doc.setFont(undefined, 'normal');
+            
             for (let key in blankBAnswers) {
                 const userAns = blankBAnswers[key] || 'Not answered';
                 const correctAns = fillBlankAnswers.b[key];
+                const isCorrect = userAns.toLowerCase() === correctAns.toLowerCase();
                 
-                if (userAns !== 'Not answered') {
-                    answeredCount++;
-                    if (userAns.toLowerCase() === correctAns.toLowerCase()) {
-                        correctCount++;
-                        blankBStatus += `<p style="margin: 3px 0; color: #059669;">✓ (${key}) ${userAns} - Correct</p>`;
-                    } else {
-                        blankBStatus += `<p style="margin: 3px 0; color: #e53e3e;">✗ (${key}) ${userAns} - Incorrect (Answer: ${correctAns})</p>`;
-                    }
+                doc.text(`(${key}) Your answer: ${userAns}`, 20, y);
+                y += 6;
+                
+                // ONLY SHOW CORRECT ANSWER IF USER GOT IT RIGHT
+                if (isCorrect) {
+                    doc.text(`    Correct answer: ${correctAns}`, 20, y);
+                    y += 6;
+                    doc.setTextColor(0, 128, 0);
+                    doc.text(`    Result: Correct`, 20, y);
                 } else {
-                    blankBStatus += `<p style="margin: 3px 0; color: #d97706;">⚠ (${key}) Not answered (Answer: ${correctAns})</p>`;
+                    doc.setTextColor(255, 0, 0);
+                    doc.text(`    Result: Incorrect - Try again!`, 20, y);
                 }
+                doc.setTextColor(0, 0, 0);
+                y += 8;
             }
             
-            questionsHTML += `
-                <div style="background: #fff7ed; padding: 15px; margin-bottom: 15px; border-radius: 8px; border-left: 4px solid #ea580c; page-break-inside: avoid;">
-                    <p style="margin: 0 0 10px 0; font-weight: bold; color: #1e3c72;">Fill in the blanks - Summary of Excerpt (b)</p>
-                    ${blankBStatus}
-                </div>
-            `;
+            if (y > 220) {
+                doc.addPage();
+                y = 20;
+            }
             
-            // Process fill-in-the-blanks for Excerpt (c)
-            const blankCAnswers = {
-                a: document.getElementById('blank-c-a').value.trim(),
-                b: document.getElementById('blank-c-b').value.trim(),
-                c: document.getElementById('blank-c-c').value.trim()
-            };
+            doc.setFont(undefined, 'bold');
+            doc.text('Fill in the blanks - Excerpt (c):', 20, y);
+            y += 8;
+            doc.setFont(undefined, 'normal');
             
-            let blankCStatus = '';
             for (let key in blankCAnswers) {
                 const userAns = blankCAnswers[key] || 'Not answered';
                 const correctAns = fillBlankAnswers.c[key];
+                const isCorrect = userAns.toLowerCase() === correctAns.toLowerCase();
                 
-                if (userAns !== 'Not answered') {
-                    answeredCount++;
-                    if (userAns.toLowerCase() === correctAns.toLowerCase()) {
-                        correctCount++;
-                        blankCStatus += `<p style="margin: 3px 0; color: #059669;">✓ (${key}) ${userAns} - Correct</p>`;
-                    } else {
-                        blankCStatus += `<p style="margin: 3px 0; color: #e53e3e;">✗ (${key}) ${userAns} - Incorrect (Answer: ${correctAns})</p>`;
-                    }
+                doc.text(`(${key}) Your answer: ${userAns}`, 20, y);
+                y += 6;
+                
+                // ONLY SHOW CORRECT ANSWER IF USER GOT IT RIGHT
+                if (isCorrect) {
+                    doc.text(`    Correct answer: ${correctAns}`, 20, y);
+                    y += 6;
+                    doc.setTextColor(0, 128, 0);
+                    doc.text(`    Result: Correct`, 20, y);
                 } else {
-                    blankCStatus += `<p style="margin: 3px 0; color: #d97706;">⚠ (${key}) Not answered (Answer: ${correctAns})</p>`;
+                    doc.setTextColor(255, 0, 0);
+                    doc.text(`    Result: Incorrect - Try again!`, 20, y);
                 }
+                doc.setTextColor(0, 0, 0);
+                y += 8;
             }
             
-            questionsHTML += `
-                <div style="background: #fff7ed; padding: 15px; margin-bottom: 15px; border-radius: 8px; border-left: 4px solid #ea580c; page-break-inside: avoid;">
-                    <p style="margin: 0 0 10px 0; font-weight: bold; color: #1e3c72;">Fill in the blanks - Summary of Excerpt (c)</p>
-                    ${blankCStatus}
-                </div>
-            `;
+            if (y > 260) {
+                doc.addPage();
+                y = 20;
+            }
+            y = 280;
+            doc.setFontSize(8);
+            doc.setTextColor(150, 150, 150);
+            doc.text(`Generated on ${new Date().toLocaleString()}`, 105, y, { align: 'center' });
             
-            const percentage = Math.round((correctCount / totalQuestions) * 100);
-            
-            const pdfContent = `
-                <div style="font-family: 'Segoe UI', Arial, sans-serif; padding: 30px; max-width: 800px; margin: 0 auto; background: white;">
-                    
-                    <div style="background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; padding: 25px; margin-bottom: 25px; border-radius: 12px; text-align: center;">
-                        <h1 style="margin: 0 0 8px 0; font-size: 26px;">📚 Text 3: Occupational Safety and Health Guide</h1>
-                        <h2 style="margin: 0; font-size: 20px; font-weight: normal;">e-Quiz Practice Results</h2>
-                    </div>
-                    
-                    <div style="background: #e0f2fe; padding: 18px; margin-bottom: 20px; border-radius: 10px; border: 2px solid #2a5298;">
-                        <h3 style="margin: 0 0 12px 0; color: #1e3c72; font-size: 18px;">👤 Student Information</h3>
-                        <table style="width: 100%; font-size: 14px; border-collapse: collapse;">
-                            <tr><td style="padding: 4px 0;"><strong>Student Name:</strong></td><td>${studentName}</td></tr>
-                            <tr><td style="padding: 4px 0;"><strong>Student ID:</strong></td><td>${studentID}</td></tr>
-                            <tr><td style="padding: 4px 0;"><strong>Class:</strong></td><td>${studentClass}</td></tr>
-                            <tr><td style="padding: 4px 0;"><strong>Completion Date:</strong></td><td>${completionDate}</td></tr>
-                            <tr><td style="padding: 4px 0;"><strong>Submission Time:</strong></td><td>${new Date().toLocaleString('en-US', { 
-                                year: 'numeric', 
-                                month: 'long', 
-                                day: 'numeric', 
-                                hour: '2-digit', 
-                                minute: '2-digit' 
-                            })}</td></tr>
-                        </table>
-                    </div>
-                    
-                    <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 20px; margin: 20px 0; border-radius: 12px; text-align: center;">
-                        <h2 style="margin: 0 0 8px 0; font-size: 24px;">📊 Overall Score</h2>
-                        <p style="margin: 0; font-size: 32px; font-weight: bold;">${correctCount} / ${totalQuestions} (${percentage}%)</p>
-                        <p style="margin: 8px 0 0 0; font-size: 16px;">Questions Answered: ${answeredCount} / ${totalQuestions}</p>
-                    </div>
-                    
-                    <div style="margin-top: 30px;">
-                        <h3 style="color: #1e3c72; margin-bottom: 15px; font-size: 20px; border-bottom: 2px solid #2a5298; padding-bottom: 8px;">📝 Detailed Results</h3>
-                        ${questionsHTML}
-                    </div>
-                    
-                    <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e5e7eb; text-align: center; color: #6b7280; font-size: 12px;">
-                        <p style="margin: 0;">Generated on ${new Date().toLocaleString('en-US', { 
-                            year: 'numeric', 
-                            month: 'long', 
-                            day: 'numeric', 
-                            hour: '2-digit', 
-                            minute: '2-digit', 
-                            second: '2-digit'
-                        })}</p>
-                        <p style="margin: 5px 0 0 0;">Text 3 e-Quiz Practice - Occupational Safety and Health Guide</p>
-                    </div>
-                    
-                </div>
-            `;
-            
-            const element = document.createElement('div');
-            element.innerHTML = pdfContent;
-            element.style.position = 'absolute';
-            element.style.left = '-9999px';
-            document.body.appendChild(element);
-            
-            const opt = {
-                margin: [10, 10, 10, 10],
-                filename: `Text3_Quiz_${studentName.replace(/\s+/g, '_')}_${completionDate}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { 
-                    scale: 2, 
-                    useCORS: true, 
-                    logging: false,
-                    letterRendering: true
-                },
-                jsPDF: { 
-                    unit: 'mm', 
-                    format: 'a4', 
-                    orientation: 'portrait',
-                    compress: true
-                },
-                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-            };
-            
-            const downloadBtn = document.querySelector('.download-btn');
-            const originalText = downloadBtn.innerHTML;
-            downloadBtn.innerHTML = '⏳ Generating PDF...';
-            downloadBtn.disabled = true;
-            
-            html2pdf().set(opt).from(element).save().then(() => {
-                document.body.removeChild(element);
-                downloadBtn.innerHTML = originalText;
-                downloadBtn.disabled = false;
-                alert('✅ PDF downloaded successfully!');
-            }).catch((error) => {
-                document.body.removeChild(element);
-                downloadBtn.innerHTML = originalText;
-                downloadBtn.disabled = false;
-                console.error('PDF generation error:', error);
-                alert('❌ PDF generation failed. Please try the "Check Answers" button first, then download again.');
-            });
+            doc.save(`Text3_Quiz_${studentName.replace(/\s+/g, '_')}_${completionDate}.pdf`);
+            alert('✅ PDF downloaded successfully! Review your incorrect answers and try again to see the correct answers.');
         }
         
-        // Clear error on input
         document.getElementById('studentName').addEventListener('input', function() {
             if (this.value.trim() !== '') {
                 document.getElementById('nameError').classList.remove('show');
