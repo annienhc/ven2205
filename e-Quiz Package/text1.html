@@ -1784,7 +1784,7 @@
             }
         }
         
-        // Tooltip for clickable words - IMPROVED POSITIONING
+        // Tooltip for clickable words
         const clickableWords = document.querySelectorAll('.clickable-word');
         const tooltip = document.getElementById('tooltip');
         
@@ -1809,7 +1809,7 @@
                 
                 // Position tooltip directly below the word (centered horizontally)
                 let left = wordRect.left + (wordRect.width / 2) - (tooltipRect.width / 2);
-                let top = wordRect.bottom + window.scrollY + 8; // 8px gap below the word
+                let top = wordRect.bottom + window.scrollY + 8;
                 
                 // Adjust if tooltip goes off the right edge of screen
                 if (left + tooltipRect.width > window.innerWidth - 10) {
@@ -1933,7 +1933,7 @@
             }
         }
         
-        // Download PDF - IMPROVED VERSION
+        // Download PDF - FIXED VERSION
         function downloadPDF() {
             const formData = new FormData(quizForm);
             const studentName = formData.get('studentName')?.trim() || '';
@@ -2053,12 +2053,27 @@
                 </div>
             `;
             
-            // Create temporary container
+            // Create temporary container - KEEP IT VISIBLE
             const element = document.createElement('div');
             element.innerHTML = pdfContent;
-            element.style.position = 'absolute';
-            element.style.left = '-9999px';
+            element.style.position = 'fixed';
+            element.style.top = '0';
+            element.style.left = '0';
+            element.style.width = '100%';
+            element.style.zIndex = '99999';
+            element.style.background = 'white';
+            element.style.overflow = 'auto';
+            element.style.maxHeight = '100vh';
             document.body.appendChild(element);
+            
+            // Show loading message
+            const downloadBtn = document.querySelector('.download-btn');
+            const originalText = downloadBtn.innerHTML;
+            downloadBtn.innerHTML = '⏳ Generating PDF...';
+            downloadBtn.disabled = true;
+            
+            // Scroll to top to ensure content is visible
+            window.scrollTo(0, 0);
             
             // PDF options
             const opt = {
@@ -2069,7 +2084,8 @@
                     scale: 2, 
                     useCORS: true, 
                     logging: false,
-                    letterRendering: true
+                    letterRendering: true,
+                    windowWidth: 1200
                 },
                 jsPDF: { 
                     unit: 'mm', 
@@ -2080,26 +2096,22 @@
                 pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
             };
             
-            // Show loading message
-            const downloadBtn = document.querySelector('.download-btn');
-            const originalText = downloadBtn.innerHTML;
-            downloadBtn.innerHTML = '⏳ Generating PDF...';
-            downloadBtn.disabled = true;
-            
-            // Generate PDF
-            html2pdf().set(opt).from(element).save().then(() => {
-                // Clean up
-                document.body.removeChild(element);
-                downloadBtn.innerHTML = originalText;
-                downloadBtn.disabled = false;
-                alert('✅ PDF downloaded successfully!');
-            }).catch((error) => {
-                document.body.removeChild(element);
-                downloadBtn.innerHTML = originalText;
-                downloadBtn.disabled = false;
-                console.error('PDF generation error:', error);
-                alert('❌ PDF generation failed. Please try the "Check Answers" button first, then download again.');
-            });
+            // Generate PDF with a small delay to ensure rendering
+            setTimeout(() => {
+                html2pdf().set(opt).from(element).save().then(() => {
+                    // Clean up
+                    document.body.removeChild(element);
+                    downloadBtn.innerHTML = originalText;
+                    downloadBtn.disabled = false;
+                    alert('✅ PDF downloaded successfully!');
+                }).catch((error) => {
+                    document.body.removeChild(element);
+                    downloadBtn.innerHTML = originalText;
+                    downloadBtn.disabled = false;
+                    console.error('PDF generation error:', error);
+                    alert('❌ PDF generation failed. Please try again.');
+                });
+            }, 100);
         }
         
         // Clear error on input
